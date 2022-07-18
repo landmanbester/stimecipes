@@ -1,0 +1,695 @@
+_include:
+  - lb-cabs.yaml
+
+opts:
+  log:
+    dir: logs
+    nest: 2
+
+
+crosscal:
+  name: CROSSCAL
+  info: The ESO137 cross calibration and diagnostics recipe
+
+  inputs:
+    ms_primary:
+      dtype: MS
+      required: true
+      abbreviation: msp
+    ms_target:
+      dtype: MS
+      required: true
+      abbreviation: mst
+    basedir:
+      default: 'out'
+    cball_model:
+      default: 'input/fitted.PKS1934.LBand.wsclean.cat.txt'
+    tclr_config:
+      default: 'input/mk_rfi_flagging_calibrator_fields_firstpass.yaml'
+    data_column:
+      default: DATA
+      aliases: ['*.input_ms.data_column']
+    sigma_column:
+      default: SIGMA_SPECTRUM
+      aliases: ['*.input_ms.sigma_column']
+      info: Original std of noise used to construct weights
+    weight_column:
+      default: WEIGHT_SPECTRUM
+      info: Modified weights to be writtent to this column
+    model_column:
+      dtype: str
+      default: MODEL_DATA
+    nthreads:
+      dtype: int
+      default: 64
+    fmask:
+      dtype: str
+      default: ':128,2697:2705,-128:'
+      info: Channel ranges to flag
+
+  steps:
+    init_primary_model:
+      cab: crystalball
+      info: 'Populate MODEL_DATA column'
+      params:
+        ms: '{recipe.ms_primary}'
+        sky_model: '{recipe.cball_model}'
+        num_sources: 1000
+        output_column: '{recipe.model_column}'
+        num_workers: '{recipe.nthreads}'
+        memory_fraction: 0.5
+
+    backup_flag_raw:
+      cab: qcalbackup
+      info: 'Back up original MS flags'
+      params:
+        ms_path: '{recipe.ms_primary}'
+        zarr_dir: '{recipe.basedir}/initial_flags'
+        column: FLAG
+
+    backup_flagrow_raw:
+      cab: qcalbackup
+      info: 'Back up original MS flags'
+      params:
+        ms_path: '{recipe.ms_primary}'
+        zarr_dir: '{recipe.basedir}/initial_flags'
+        column: FLAG_ROW
+
+    flag_edges:
+      cab: pfbmisc.fledges
+      info: Apply fixed frequency flag mask
+      params:
+        ms: "{recipe.ms_primary}"
+        row_chunk: -1
+        franges: '{recipe.fmask}'
+        nthreads: '{recipe.nthreads}'
+
+    init_flags:
+      cab: tricolour
+      info: "Initial flagging on primary"
+      params:
+        ms: "{recipe.ms_primary}"
+        config: "{recipe.tclr_config}"
+        nworkers: "{recipe.nthreads}"
+
+    backup_flag_precal:
+      cab: qcalbackup
+      info: 'Back up precal flags'
+      params:
+        ms_path: '{recipe.ms_primary}'
+        zarr_dir: '{recipe.basedir}/precal_flags'
+        column: FLAG
+
+    backup_flagrow_precal:
+      cab: qcalbackup
+      info: 'Back up precal flags'
+      params:
+        ms_path: '{recipe.ms_primary}'
+        zarr_dir: '{recipe.basedir}/precal_flags'
+        column: FLAG_ROW
+
+    # we need the restimator step here but how do we use the output??
+
+    kgb:
+      cab: quartical
+      info: DGKB on the primary where
+            D = a global delay,
+            G = time variable complex gain,
+            K = per scan delay refinement
+            B = frequency variable complex gain (bandpass)
+      params:
+        input_ms.path: '{recipe.ms_primary}'
+        input_ms.time_chunk: '0'
+        input_ms.freq_chunk: '0'
+        input_ms.select_uv_range: [150,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe: '{recipe.model_column}'
+        input_model.apply_p_jones: false
+        solver.terms: [D,G,K,B]
+        solver.iter_recipe: [0,25,25,50,0,15,15,30,0,5,5,10]
+        solver.propagate_flags: true
+        solver.robust: true
+        solver.reweighting_flag_threshold: 0.25
+        solver.threads: 8
+        solver.reference_antenna: 57
+        output.directory: '{recipe.basedir}/kgb.qc'
+        output.overwrite: true
+        output.products:
+        output.columns:
+        output.flags: true
+        output.apply_p_jones_inv: false
+        output.net_gain: false
+        mad_flags.enable: false
+        dask.threads: 8
+        dask.scheduler: distributed
+        D.type: delay
+        D.time_interval: 0
+        D.freq_interval: 0
+        D.respect_scan_boundaries: false
+        G.type: complex
+        G.time_interval: 4
+        G.freq_interval: 0
+        K.type: delay
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: false
+        B.type: complex
+        B.time_interval: 0
+        B.freq_interval: 4
+        B.respect_scan_boundaries: false
+
+    bandsmooth:
+      cab: pfbmisc.bsmooth
+      info: Smooth weighted average bandpass solutions
+      params:
+        gain_dir: '{recipe.basedir}/kgb.qc/gains.qc'  # smoothed bandpass will be in smoothed.qc next to this folder
+        gain_term: B
+        postfix: ''
+        reject_amp_thresh: 1.5
+        reject_phase_thresh: 8.5
+        filter_size: 17
+        do_plots: true
+
+    # add G smoothing here
+
+    resid1:
+      cab: quartical
+      info: Compute residual after smoothing bandpass
+      params:
+        input_ms.path: '{recipe.ms_primary}'
+        input_ms.time_chunk: '0'
+        input_ms.freq_chunk: 128
+        input_ms.select_uv_range: [0,0]
+        input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe: '{recipe.model_column}'
+        input_model.apply_p_jones: false
+        solver.terms: [D,G,K,B]
+        solver.iter_recipe: [0,0,0,0]
+        solver.propagate_flags: true
+        solver.robust: false
+        solver.threads: 1
+        solver.reference_antenna: 57
+        output.directory: '{recipe.basedir}/kgb_smoothed.qc'
+        output.overwrite: true
+        output.products: [residual]
+        output.columns: [RESIDUAL]
+        output.flags: true
+        output.apply_p_jones_inv: false
+        output.net_gain: false
+        mad_flags.enable: false
+        dask.threads: 64
+        dask.scheduler: distributed
+        D.type: delay
+        D.load_from: '{recipe.basedir}/kgb.qc/gains.qc/D'
+        D.interp_method: 2dlinear
+        D.interp_mode: ampphase
+        D.time_interval: 0
+        D.freq_interval: 0
+        D.respect_scan_boundaries: false
+        D.initial_estimate: false
+        G.type: complex
+        G.load_from: '{recipe.basedir}/kgb.qc/gains.qc/G'
+        G.interp_method: 2dlinear
+        G.interp_mode: ampphase
+        G.time_interval: 1
+        G.freq_interval: 0
+        K.type: delay
+        K.load_from: '{recipe.basedir}/kgb.qc/gains.qc/K'
+        K.interp_method: 2dlinear
+        K.interp_mode: ampphase
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: false
+        B.type: complex
+        B.load_from: '{recipe.basedir}/kgb.qc/smoothed.qc/B'
+        B.interp_method: 2dlinear
+        B.interp_mode: ampphase
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.respect_scan_boundaries: false
+
+    backup_flag_postcal:
+      cab: qcalbackup
+      info: 'Back up post calibration flags'
+      params:
+        ms_path: '{recipe.ms_primary}'
+        zarr_dir: '{recipe.basedir}/postcal_flags'
+        column: FLAG
+
+    backup_flagrow_postcal:
+      cab: qcalbackup
+      info: 'Back up post calibration flags'
+      params:
+        ms_path: '{recipe.ms_primary}'
+        zarr_dir: '{recipe.basedir}/postcal_flags'
+        column: FLAG_ROW
+
+    chi2plots_preflag:
+      cab: surfchi2
+      info: Plot mean chisq per scan and baseline before flagging
+      params:
+        dataout: '{recipe.basedir}/svis_preflag'
+        imagesout: '{recipe.basedir}/svis_preflag'
+        wcol: SIGMA_SPECTRUM
+        nthreads: '{recipe.nthreads}'
+        ms: '{recipe.ms_primary}'
+
+    chi2flag:
+      cab: flagchi2
+      info: Flag and unflag individual data points based on their chi2 values
+      params:
+        wcol: SIGMA_SPECTRUM
+        nthreads: '{recipe.nthreads}'
+        ms: '{recipe.ms_primary}'
+        flag_above: 2.0
+        unflag_below: 0.0
+
+    # reflag_edges:
+    #   cab: pfbmisc.fledges
+    #   info: Apply fixed frequency flag mask
+    #   params:
+    #     ms: "{recipe.ms_primary}"
+    #     row_chunk: -1
+    #     franges: '{recipe.fmask}'
+
+    chi2plots_postflag:
+      cab: surfchi2
+      info: Plot mean chisq per scan and baseline after flagging
+      params:
+        dataout: '{recipe.basedir}/svis_postflag'
+        imagesout: '{recipe.basedir}/svis_postflag'
+        wcol: SIGMA_SPECTRUM
+        nthreads: '{recipe.nthreads}'
+        ms: '{recipe.ms_primary}'
+
+    kgb2:
+      cab: quartical
+      info: Second round of DGKB on the primary
+      params:
+        input_ms.path: '{recipe.ms_primary}'
+        input_ms.time_chunk: '0'
+        input_ms.freq_chunk: '0'
+        input_ms.select_uv_range: [0,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe: '{recipe.model_column}'
+        input_model.apply_p_jones: false
+        solver.terms: [D,G,K,B]
+        solver.iter_recipe: [0,15,15,30,0,10,10,20,0,5,5,10,0,5,5,5]
+        solver.propagate_flags: true
+        solver.robust: true
+        solver.reweighting_flag_threshold: 0.3
+        solver.threads: 8
+        solver.reference_antenna: 57
+        output.directory: '{recipe.basedir}/kgb2.qc'
+        output.overwrite: true
+        output.products:
+        output.columns:
+        output.flags: true
+        output.apply_p_jones_inv: false
+        output.net_gain: false
+        mad_flags.enable: false
+        dask.threads: 8
+        dask.scheduler: distributed
+        D.type: delay
+        D.load_from: '{recipe.basedir}/kgb.qc/gains.qc/D'
+        D.interp_method: 2dlinear
+        D.interp_mode: ampphase
+        D.time_interval: 0
+        D.freq_interval: 0
+        D.respect_scan_boundaries: false
+        D.initial_estimate: false
+        G.type: complex
+        G.load_from: '{recipe.basedir}/kgb.qc/gains.qc/G'
+        G.interp_method: 2dlinear
+        G.interp_mode: ampphase
+        G.time_interval: 2
+        G.freq_interval: 0
+        K.type: delay
+        # K.load_from: '{recipe.basedir}/kgb.qc/gains.qc/K'  # check what happens when loading
+        K.interp_method: 2dlinear
+        K.interp_mode: ampphase
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: false
+        B.type: complex
+        B.load_from: '{recipe.basedir}/kgb.qc/smoothed.qc/B'
+        B.interp_method: 2dlinear
+        B.interp_mode: ampphase
+        B.time_interval: 0
+        B.freq_interval: 2
+        B.respect_scan_boundaries: false
+
+    bandsmooth2:
+      cab: pfbmisc.bsmooth
+      info: Smooth weighted average bandpass solutions
+      params:
+        gain_dir: '{recipe.basedir}/kgb2.qc/gains.qc'  # smoothed bandpass will be in smoothed.qc next to this folder
+        gain_term: B
+        postfix: ''
+        reject_amp_thresh: 1.5
+        reject_phase_thresh: 8.5
+        filter_size: 11
+        do_plots: true
+
+    resid2:
+      cab: quartical
+      info: Compute residual after smoothing bandpass
+      params:
+        input_ms.path: '{recipe.ms_primary}'
+        input_ms.time_chunk: '0'
+        input_ms.freq_chunk: 128
+        input_ms.select_uv_range: [0,0]
+        input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe: '{recipe.model_column}'
+        input_model.apply_p_jones: false
+        solver.terms: [D,G,K,B]
+        solver.iter_recipe: [0,0,0,0]
+        solver.propagate_flags: false
+        solver.robust: false
+        solver.threads: 1
+        solver.reference_antenna: 57
+        output.directory: '{recipe.basedir}/kgb2_smoothed.qc'
+        output.overwrite: true
+        output.products: [residual]
+        output.columns: [RESIDUAL]
+        output.flags: true
+        output.apply_p_jones_inv: false
+        output.net_gain: false
+        mad_flags.enable: false
+        dask.threads: 64
+        dask.scheduler: distributed
+        D.type: delay
+        D.load_from: '{recipe.basedir}/kgb2.qc/gains.qc/D'
+        D.interp_method: 2dlinear
+        D.interp_mode: ampphase
+        D.time_interval: 0
+        D.freq_interval: 0
+        D.respect_scan_boundaries: false
+        D.initial_estimate: false
+        G.type: complex
+        G.load_from: '{recipe.basedir}/kgb2.qc/gains.qc/G'
+        G.interp_method: 2dlinear
+        G.interp_mode: ampphase
+        G.time_interval: 1
+        G.freq_interval: 0
+        K.type: delay
+        K.load_from: '{recipe.basedir}/kgb2.qc/gains.qc/K'
+        K.interp_method: 2dlinear
+        K.interp_mode: ampphase
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: false
+        B.type: complex
+        B.load_from: '{recipe.basedir}/kgb2.qc/smoothed.qc/B'
+        B.interp_method: 2dlinear
+        B.interp_mode: ampphase
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.respect_scan_boundaries: false
+
+    chi2plots_final:
+      cab: surfchi2
+      info: Plot mean chisq per scan and baseline before transfer
+      params:
+        dataout: '{recipe.basedir}/svis_final'
+        imagesout: '{recipe.basedir}/svis_final'
+        wcol: SIGMA_SPECTRUM
+        nthreads: '{recipe.nthreads}'
+        ms: '{recipe.ms_primary}'
+
+    transfer:
+      cab: quartical
+      info: "Transfer gains to the targer"
+      params:
+        input_ms.path: '{recipe.ms_target}'
+        input_ms.time_chunk: 0
+        input_ms.freq_chunk: 64
+        input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe: DATA   # MODEL_DATA may not exist at this stage
+        input_model.apply_p_jones: false
+        solver.terms: [D,G,K,B]
+        solver.iter_recipe: [0,0,0,0]
+        solver.propagate_flags: true
+        solver.robust: false
+        solver.threads: 1
+        solver.reference_antenna: 57
+        output.directory: '{recipe.basedir}/target_gains_init.qc'
+        output.overwrite: false
+        output.products:
+        output.columns:
+        output.flags: true
+        output.apply_p_jones_inv: false
+        output.net_gain: true
+        mad_flags.enable: false
+        dask.threads: '{recipe.nthreads}'
+        dask.scheduler: threads
+        D.type: delay
+        D.load_from: '{recipe.basedir}/kgb2.qc/gains.qc/D'
+        D.interp_method: 2dlinear
+        D.interp_mode: ampphase
+        D.time_interval: 0
+        D.freq_interval: 0
+        D.respect_scan_boundaries: false
+        D.initial_estimate: false
+        G.type: complex
+        G.load_from: '{recipe.basedir}/kgb2.qc/gains.qc/G'
+        G.interp_method: 2dlinear
+        G.interp_mode: ampphase
+        G.time_interval: 1
+        G.freq_interval: 0
+        K.type: delay
+        K.load_from: '{recipe.basedir}/kgb2.qc/gains.qc/K'
+        K.interp_method: 2dlinear
+        K.interp_mode: ampphase
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: false
+        B.type: complex
+        B.load_from: '{recipe.basedir}/kgb2.qc/smoothed.qc/B'
+        B.interp_method: 2dlinear
+        B.interp_mode: ampphase
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.respect_scan_boundaries: false
+
+    backup_flag_raw_target:
+      cab: qcalbackup
+      info: 'Back up original target flags'
+      params:
+        ms_path: '{recipe.ms_target}'
+        zarr_dir: '{recipe.basedir}/initial_flags_target'
+        column: FLAG
+
+    backup_flagrow_raw_target:
+      cab: qcalbackup
+      info: 'Back up original target flags'
+      params:
+        ms_path: '{recipe.ms_target}'
+        zarr_dir: '{recipe.basedir}/initial_flags_target'
+        column: FLAG_ROW
+
+    flag_edges_target:
+      cab: pfbmisc.fledges
+      info: Apply fixed frequency flag mask
+      params:
+        ms: "{recipe.ms_target}"
+        row_chunk: 100000
+        franges: '{recipe.fmask}'
+        nthreads: '{recipe.nthreads}'
+
+    init_flags_target:
+      cab: tricolour
+      info: "Initial flagging on primary"
+      params:
+        ms: "{recipe.ms_target}"
+        config: "{recipe.tclr_config}"
+        nworkers: "{recipe.nthreads}"
+
+    backup_flag_precal_target:
+      cab: qcalbackup
+      info: 'Back up precal flags'
+      params:
+        ms_path: '{recipe.ms_target}'
+        zarr_dir: '{recipe.basedir}/precal_flags'
+        column: FLAG
+
+    backup_flagrow_precal_target:
+      cab: qcalbackup
+      info: 'Back up precal flags'
+      params:
+        ms_path: '{recipe.ms_target}'
+        zarr_dir: '{recipe.basedir}/precal_flags'
+        column: FLAG_ROW
+
+selfcal:
+  name: ESOCAL
+  info: The ESO137 self-calibration and diagnostics recipe
+
+  inputs:
+    ms:
+      dtype: MS
+      required: true
+    basedir:
+      default: 'out'
+    data_column:
+      default: DATA
+      aliases: ['*.input_ms.data_column']
+    sigma_column:
+      default: SIGMA_SPECTRUM
+      aliases: ['*.input_ms.sigma_column']
+      info: Original std of noise used to construct weights
+    weight_column:
+      default: WEIGHT_SPECTRUM
+      info: Modified weights to be writtent to this column
+    model_column:
+      dtype: str
+      default: MODEL_DATA
+    nband:
+      default: 16
+      aliases: ['*.nband']
+      info: Number of imaging bands
+    scheduler:
+      dtype: str
+      default: threads
+      aliases: ['*.scheduler']
+      info: Dask scheduler to use
+    nthreads:
+      dtype: int
+      default: 64
+    fmask:
+      dtype: str
+      default: ':128,2697:2705,-128:'
+      info: Channel ranges to flag
+
+  steps:
+    init1:
+      cab: pfb.init
+      info: 'Initialise imaging data products'
+      params:
+        ms: '{recipe.ms}'
+        output_filename: '{recipe.basedir}/stage1'
+        data_column: DATA
+        sigma_column: SIGMA_SPECTRUM
+        gain_table: '{recipe.basedir}/target_gains_init.qc/gains.qc'
+        gain_term: NET
+        utimes_per_chunk: 150
+        nthreads: '{recipe.nthreads}'
+        scheduler: threads
+
+    grid1:
+      cab: pfb.grid
+      info: 'Grid data for initial imaging'
+      params:
+        output_filename: '{recipe.basedir}/stage1'
+        robustness: -1
+        fits_cubes: true
+        residual: false
+        field_of_view: 2.5
+        super_resolution_factor: 1.5
+        nthreads: '{recipe.nthreads}'
+
+    clean1:
+      cab: pfb.clean
+      info: Initial cleaning
+      params:
+        output_filename: '{recipe.basedir}/stage1'
+        use_clark: true
+        update_mask: true
+        fits_cubes: true
+        do_residual: true
+        dirosion: 3
+        nmiter: 5
+        nthreads: '{recipe.nthreads}'
+
+    fwdbwd1:
+      cab: pfb.fwdbwd
+      info: Forward backward steps with mask defined by clean1
+      params:
+        output_filename: '{recipe.basedir}/stage1'
+        niter: 5
+        sigma21: 1e-5
+        alpha: 1e-5
+        fits_cubes: true
+        nthreads: '{recipe.nthreads}'
+
+    degrid1:
+      cab: pfb.degrid
+      info: Populate MODEL_DATA with model visibilities
+      params:
+        ms: '{recipe.ms}'
+        output_filename: '{recipe.basedir}/stage1'
+        nband_out: 32
+        spectral_poly_order: 4
+
+    selfcal1:
+      cab: quartical
+      info: First round of selfcal
+      params:
+        input_ms.path: '{recipe.ms}'
+        input_ms.time_chunk: 4
+        input_ms.freq_chunk: 0
+        input_ms.select_uv_range: [0, 250]
+        input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe: '{recipe.model_column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G,K]
+        solver.iter_recipe: [0,40,0,20,0,10,0,5]
+        solver.propagate_flags: true
+        solver.robust: true
+        solver.reweighting_flag_threshold: 0.01
+        solver.threads: 1
+        solver.reference_antenna: 57
+        output.directory: '{recipe.basedir}/target_gains_stage1.qc'
+        output.overwrite: true
+        output.products: [residual]
+        output.columns: [RESIDUAL]
+        output.flags: true
+        output.apply_p_jones_inv: false
+        output.net_gain: true
+        mad_flags.enable: false
+        dask.threads: '{recipe.nthreads}'
+        dask.scheduler: threads
+        G.type: complex
+        G.load_from: '{recipe.basedir}/target_gains_init.qc/gains.qc/NET'
+        G.interp_method: 2dlinear
+        G.interp_mode: ampphase
+        G.time_interval: 1
+        G.freq_interval: 0
+        K.type: delay
+        K.load_from:
+        K.interp_method: 2dlinear
+        K.interp_mode: ampphase
+        K.time_interval: 4
+        K.freq_interval: 0
+        K.initial_estimate: false
+
+    init2:
+      cab: pfb.init
+      info: 'Initialise imaging data products after first selfcal round'
+      params:
+        ms: '{recipe.ms}'
+        output_filename: '{recipe.basedir}/stage2'
+        data_column: DATA
+        sigma_column: SIGMA_SPECTRUM
+        gain_table: '{recipe.basedir}/target_gains_stage1.qc/gains.qc'
+        gain_term: NET
+        utimes_per_chunk: 50
+        nthreads: '{recipe.nthreads}'
+
+    grid2:
+      cab: pfb.grid
+      info: 'Grid data for stage 2 imaging'
+      params:
+        output_filename: '{recipe.basedir}/stage2'
+        robustness: -1
+        fits_cubes: true
+        residual: false
+        field_of_view: 2.5
+        super_resolution_factor: 1.5
+

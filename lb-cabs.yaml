@@ -1,0 +1,227 @@
+_include:
+  - (quartical)stimela_cabs.yaml
+  - (pfb)stimela_cabs.yaml
+
+cabs:
+  crystalball:
+    command: crystalball
+    virtual_env: ~/.venv/cball
+    policies:
+      prefix: '--'
+      replace: {'_': '-'}
+    inputs:
+      ms:
+        dtype: MS
+        writable: true
+        required: true
+        policies:
+          positional: true
+      output_column:
+        dtype: str
+        required: true
+      sky_model:
+        dtype: File
+        required: true
+      within:
+        dtype: File
+      num_sources:
+        dtype: int
+      num_workers:
+        dtype: int
+      memory_fraction:
+        dtype: float
+
+  tricolour:
+    command: tricolour
+    virtual_env: ~/.venv/tclr
+    policies:
+      prefix: '--'
+      replace: {'_': '-'}
+    inputs:
+      ms:
+        dtype: MS
+        writable: true
+        required: true
+        policies:
+          positional: true
+      config:
+        dtype: str
+      ignore_flags:
+        dtype: bool
+        default: false
+      flagging_strategy:
+        choices: [standard,polarisation,total_power]
+        default: polarisation
+      row_chunks:
+        dtype: int
+        default: 10000
+      baseline_chunks:
+        dtype: int
+        default: 16
+      nworkers:
+        dtype: int
+        default: 64
+      dilate_mask:
+        dtype: int
+      data_column:
+        dtype: str
+        default: DATA
+      field_names:
+        dtype: List[str]
+        policies:
+          repeat: list
+      scan_numbers:
+        dtype: str
+      disable_post_mortem:
+        dtype: bool
+        default: false
+      window_backend:
+        choices: ['numpy','zarr-disk']
+        default: 'numpy'
+      temporary_directory:
+        dtype: str
+      subtract_model_column:
+        dtype: str
+
+  ragavi:
+    command: ragavi-gains-quartical
+    virtual_env: ~/.venv/rgvi
+    policies:
+      prefix: '--'
+      replace: {'_': '-'}
+    inputs:
+      table:
+        dtype: str
+        required: true
+        info: Path to Quartical gain table
+      gtype:
+        dtype: str
+        required: true
+        info: Which gain term to plot
+      out_dir:
+        dtype: str
+        info: Output directory
+      ant:
+        dtype: str
+        info: Antennas to plot
+      chan:
+        dtype: str
+        info: Channel range to plot
+      ddid:
+        dtype: str
+        info: DDID's to plot
+      field:
+        dtype: str
+        info: Field ID's to plot
+      corr:
+        dtype: str
+        info: Correlations to plot
+      htmlname:
+        dtype: str
+        info: Name of output HTML file
+      yaxis:
+        dtype: str
+        info: What to plot on the y axis (amp/phase/real/imag)
+      xaxis:
+        choices: ['time','antenna','channel']
+        info: What to plot on the x axis
+      plotname:
+        dtype: str
+        info: Output name + extention type
+
+  surfchi2:
+    command: surfchi2
+    virtual_env: ~/.venv/svis
+    policies:
+      prefix: '--'
+      replace: {'_': '-'}
+    inputs:
+      ms:
+        dtype: MS
+        writable: true
+        required: true
+        policies:
+          positional: true
+      rcol:
+        dtype: str
+        default: RESIDUAL
+      wcol:
+        dtype: str
+        default: SIGMA_SPECTRUM
+      fcol:
+        dtype: str
+        default: FLAG
+      dataout:
+        dtype: str
+        default: ''
+      imagesout:
+        dtype: str
+        default: ''
+      nthreads:
+        dtype: int
+        default: 32
+      ntimes:
+        dtype: int
+        default: -1
+      nfreq:
+        dtype: int
+        default: -1
+      use_corrs:
+        dtype: str
+
+  flagchi2:
+    command: flagchi2
+    virtual_env: ~/.venv/svis
+    policies:
+      prefix: '--'
+      replace: {'_': '-'}
+    inputs:
+      ms:
+        dtype: MS
+        writable: true
+        required: true
+        policies:
+          positional: true
+      rcol:
+        dtype: str
+        default: RESIDUAL
+      wcol:
+        dtype: str
+        default: SIGMA_SPECTRUM
+      fcol:
+        dtype: str
+        default: FLAG
+      nthreads:
+        dtype: int
+        default: 32
+      flag_above:
+        dtype: float
+        default: 5.0
+      unflag_below:
+        dtype: float
+        default: 1.5
+      nrows:
+        dtype: int
+        default: 100000
+      nfreqs:
+        dtype: int
+        default: 256
+      use_corrs:
+        dtype: str
+
+  # casasplit:
+  #   command: casa --nogui --log2term -c 'split(vis="{current.ms}", outputvis="{current.outms}", field="{current.field}", columns="all")'
+  #   policies:
+  #     skip: true
+  #   inputs:
+  #     ms:
+  #       dtype: MS
+  #       required: true
+  #       default: '{recipe.ms}'
+  #     outms:
+  #       dtype: MS
+  #       required: true
+  #       default: '{recipe.ms_primary}'
+  #     field:
+  #       dtype: Optional[int, str]
+  #       default: 0
