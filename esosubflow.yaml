@@ -208,6 +208,7 @@ crosscal:
         output_filename: '{recipe.basedir}/stage1'
         nband_out: 8
         spectral_poly_order: 2
+        nthreads: '{recipe.nthreads}'
 
     selfcal1:
       cab: quartical
@@ -271,7 +272,8 @@ crosscal:
       params:
         output_filename: '{recipe.basedir}/stage2'
         robustness: -1
-        fits_cubes: true
+        fits_cubes: false
+        fits_mfs: false
         residual: false
         field_of_view: 2.5
         super_resolution_factor: 1.5

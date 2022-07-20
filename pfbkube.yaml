@@ -1,0 +1,23 @@
+_include:
+  - lb-cabs.yaml
+
+opts:
+  log:
+    dir: test-logs/logs-{config.run.datetime}
+    nest: 3
+    symlink: logs
+
+recipe:
+  name: "pfbkube init recipe"
+  info: "Example of how to run the pfb init worker on kubernetes cluster"
+
+  steps:
+    test_init:
+      cab: pfbkube
+      params:
+        ms: "s3://pfb-bucket/ms_primary_subset.zarr"
+        output_filename: "s3://pfb-bucket/test"
+        overwrite: true
+        nband: 4
+        sigma_column: SIGMA_SPECTRUM
+
