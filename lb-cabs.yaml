@@ -1,36 +1,8 @@
 _include:
-  - (quartical)stimela_cabs.yaml
   - (pfb)stimela_cabs.yaml
+  - (quartical)stimela_cabs.yaml
 
 cabs:
-  pfbkube:
-    _use: pfb.init
-    image: pfbkube:local
-    backend: kubernetes
-    runtime:
-      kube:
-        namespace: pfb
-        dask_cluster:
-          name: pfb-test
-          persist: true
-          num_workers: 4
-          cpu_limit: 4
-          memory_limit: "16Gi"
-          threads_per_worker: 4
-        inject_files:
-          ~/.config/dask-ms/storage_options.json:
-            format: json
-            content:
-              key: bester
-              secret: bester123
-              client_kwargs:
-                endpoint_url: https://minio:443
-                region_name: af-cpt
-                verify: false
-        # list of command to be executed inside the pod before launching the main command
-        pre_commands:
-          - cat ~/.config/dask-ms/storage_options.json
-
   crystalball:
     command: crystalball
     virtual_env: ~/.venv/cball

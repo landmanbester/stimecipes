@@ -66,7 +66,7 @@ crosscal:
             K = per scan delay refinement
             B = frequency variable complex gain (bandpass)
       params:
-        input_ms.path: '{recipe.basedir}/{recipe.ms_primary}'
+        input_ms.path: '{recipe.ms_primary}'
         input_ms.time_chunk: '0'
         input_ms.freq_chunk: '0'
         input_ms.select_uv_range: [150,0]
@@ -82,7 +82,7 @@ crosscal:
         solver.threads: 4
         solver.reference_antenna: 57
         output.gain_directory: '{recipe.basedir}/kgb.qc'
-        output.log_directory: '/home/bester/projects/ESO137'
+        output.log_directory: '/home/bester/projects/ESO137/out'
         output.overwrite: true
         output.products:
         output.columns:
@@ -112,7 +112,7 @@ crosscal:
       cab: quartical
       info: "Transfer gains to the targer"
       params:
-        input_ms.path: '{recipe.basedir}/{recipe.ms_target}'
+        input_ms.path: '{recipe.ms_target}'
         input_ms.time_chunk: 0
         input_ms.freq_chunk: 64
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
@@ -126,7 +126,7 @@ crosscal:
         solver.threads: 1
         solver.reference_antenna: 57
         output.gain_directory: '{recipe.basedir}/target_gains_init.qc'
-        output.log_directory: '/home/bester/projects/ESO137'
+        output.log_directory: '/home/bester/projects/ESO137/out'
         output.overwrite: true
         output.products:
         output.columns:
@@ -169,7 +169,7 @@ crosscal:
       cab: pfb.init
       info: 'Initialise imaging data products'
       params:
-        ms: '{recipe.basedir}/{recipe.ms_target}'
+        ms: '{recipe.ms_target}'
         output_filename: '{recipe.basedir}/stage1'
         data_column: DATA
         sigma_column: SIGMA_SPECTRUM
@@ -195,7 +195,7 @@ crosscal:
       info: Forward backward steps with mask defined by clean1
       params:
         output_filename: '{recipe.basedir}/stage1'
-        niter: 5
+        niter: 1
         sigma21: 1e-5
         alpha: 1e-5
         nthreads: '{recipe.nthreads}'
@@ -204,7 +204,7 @@ crosscal:
       cab: pfb.degrid
       info: Populate MODEL_DATA with model visibilities
       params:
-        ms: '{recipe.basedir}/{recipe.ms_target}'
+        ms: '{recipe.ms_target}'
         output_filename: '{recipe.basedir}/stage1'
         nband_out: 8
         spectral_poly_order: 2
@@ -214,7 +214,7 @@ crosscal:
       cab: quartical
       info: First round of selfcal
       params:
-        input_ms.path: '{recipe.basedir}/{recipe.ms_target}'
+        input_ms.path: '{recipe.ms_target}'
         input_ms.time_chunk: 4
         input_ms.freq_chunk: 0
         input_ms.select_uv_range: [0, 150]
@@ -230,7 +230,7 @@ crosscal:
         solver.threads: 1
         solver.reference_antenna: 57
         output.gain_directory: '{recipe.basedir}/target_gains_stage1.qc'
-        output.log_directory: '/home/bester/projects/ESO137'
+        output.log_directory: '/home/bester/projects/ESO137/out'
         output.overwrite: true
         output.products: [residual]
         output.columns: [RESIDUAL]
@@ -257,7 +257,7 @@ crosscal:
       cab: pfb.init
       info: 'Initialise imaging data products after first selfcal round'
       params:
-        ms: '{recipe.basedir}/{recipe.ms_target}'
+        ms: '{recipe.ms_target}'
         output_filename: '{recipe.basedir}/stage2'
         data_column: DATA
         sigma_column: SIGMA_SPECTRUM

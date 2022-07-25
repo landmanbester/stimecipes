@@ -1,5 +1,5 @@
 _include:
-  - lb-cabs.yaml
+  - (pfb)stimela_cabs.yaml
 
 opts:
   log:
@@ -7,17 +7,47 @@ opts:
     nest: 3
     symlink: logs
 
-recipe:
-  name: "pfbkube init recipe"
-  info: "Example of how to run the pfb init worker on kubernetes cluster"
+cabs:
+  pfbkube:
+    _use: pfb.init
+    image: pfbkube:local
+    backend: kubernetes
+    runtime:
+      kube:
+        namespace: pfb
+        dask_cluster:
+          name: pfb-test
+          persist: true
+          num_workers: 4
+          cpu_limit: 4
+          memory_limit: "16Gi"
+          threads_per_worker: 4
+        local_mounts:
+          cwd:
+            path: .
+          dask-storage-config:
+            path: test_dask_storage_options.json
+            dest: /.config/dask-ms/storage_options.json
+          numba-cache:
+            path: ~/.cache/numba
+            mkdir: true
+          env:
+          NUMBA_CACHE_DIR: ~/.cache/numba
+        # list of command to be executed inside the pod before launching the main command
+        pre_commands:
+          - cat ~/.config/dask-ms/storage_options.json
 
-  steps:
-    test_init:
-      cab: pfbkube
-      params:
-        ms: "s3://pfb-bucket/ms_primary_subset.zarr"
-        output_filename: "s3://pfb-bucket/test"
-        overwrite: true
-        nband: 4
-        sigma_column: SIGMA_SPECTRUM
+# recipe:
+#   name: "pfbkube init recipe"
+#   info: "Example of how to run the pfb init worker on kubernetes cluster"
+
+#   steps:
+#     test_init:
+#       cab: pfbkube
+#       params:
+#         ms: "s3://pfb-bucket/ms_primary_subset.zarr"
+#         output_filename: "s3://pfb-bucket/test"
+#         overwrite: true
+#         nband: 4
+#         sigma_column: SIGMA_SPECTRUM
 
