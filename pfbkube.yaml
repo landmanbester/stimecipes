@@ -31,14 +31,18 @@ cabs:
           numba-cache:
             path: ~/.cache/numba
             mkdir: true
+          scabha-cache:
+            path: "~/.cache/configuratt"
+            mkdir: true
           root:
             path: /etc
             dest: /test/etc
         env:
           NUMBA_CACHE_DIR: ~/.cache/numba
+          CONFIGURATT_CACHE_DIR: ~/.cache/configuratt
         # # list of command to be executed inside the pod before launching the main command
-        # pre_commands:
-        #   - cat ~/.config/dask-ms/storage_options.yaml
+        pre_commands:
+          - cat ~/.config/dask-ms/storage_options.yaml
 
 recipe:
   name: "pfbkube init recipe"
@@ -55,16 +59,5 @@ recipe:
         sigma_column: SIGMA_SPECTRUM
         host_address: pfb-test-cluster:8786
         scheduler: distributed
-
-    # test_init:
-    #   cab: pfb_init
-    #   params:
-    #     ms: msdir/ms1_primary_subset.zarr
-    #     output_filename: out/test
-    #     overwrite: true
-    #     nband: 4
-    #     sigma_column: SIGMA_SPECTRUM
-    #     # host_address: pfb-test-cluster:8786
-    #     scheduler: threads
-
-
+        nthreads: 1
+        mem_limit: 32
