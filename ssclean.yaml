@@ -1,0 +1,186 @@
+_include:
+  - (pfb)stimela_cabs.yaml
+
+opts:
+  log:
+    dir: logs
+    nest: 2
+
+ssclean:
+  name: SSCLEAN
+  info: Recipe to perform single scale clean with pfb-clean
+
+  inputs:
+    ms:
+      dtype: MS
+      required: true
+    nband:
+      required: True
+      aliases: ['*.nband']
+      info:
+        Number of imaging bands
+    output_filename:
+      required: True
+      aliases: ["*.output_filename"]
+      info: Basename of ouput products
+    data_column:
+      dtype: str
+      default: CORRECTED_DATA
+      info:
+        Which column to image
+    weight_column:
+      dtype: str
+      default: WEIGHT_SPECTRUM
+    model_column:
+      dtype: str
+      default: MODEL_DATA
+    field_of_view:
+      dtype: float
+      info:
+        Field of view in degrees
+    super_resolution_factor:
+      dtype: float
+      default: 2
+      info:
+        Will over-sample Nyquist by this factor at max frequency
+    cell_size:
+      dtype: float
+      info:
+        Cell size in arc-seconds
+    nx:
+      dtype: int
+      info:
+        Number of x pixels
+    ny:
+      dtype: int
+      info:
+        Number of y pixels
+    mask:
+      dtype: str
+      info:
+        Path to mask.fits
+    nmiter:
+      dtype: int
+      default: 10
+      info:
+        Number of major iterations
+    threshold:
+      dtype: float
+      info:
+        Absolute threshold at which to stop cleaning.
+        By default it is set automatically using sigmathreshold parameter
+    sigmathreshold:
+      dtype: float
+      default: 5.0
+      info:
+        Multiple of the rms at which to terminate the minor cycle
+    gamma:
+      dtype: float
+      default: 0.1
+      info:
+        Minor loop gain
+    peak_factor:
+      dtype: float
+      default: 0.15
+      info:
+        Peak factor i.e. stop minor cycle once threshold has reached
+        max(residual) * peak_factor
+    outputs:
+      dtype: str
+      default: mMrRiI
+      info:
+        Output products. (m)odel, (r)esidual, (i)mage, (c)lean beam.
+        Captitals for cubes, lower case for MFS images.
+    precision:
+      default: double
+      aliases: ["*.precision"]
+    epsilon:
+      default: 1e-7
+      aliases: ["*.epsilon"]
+      info:
+        Gridder accuracy
+    wstack:
+      default: true
+      aliases: ["*.wstack"]
+      info:
+        Perform w-correction via improved w-stacking
+    robustness:
+      default: 0
+      aliases: ["*.robustness"]
+      info:
+        Robustness factor for Briggs weighting. None means natural.
+        A value of less than -2 implies uniform
+    host_address:
+      dtype: str
+      info:
+        Address where the distributed client lives. Will use a local cluster if no
+        address is provided and scheduler is set to distributed.
+    nworkers:
+      dtype: int
+      info:
+        Number of worker processes.
+    nthreads_per_worker:
+      dtype: int
+      info:
+        Number of threads per worker process.
+    nvthreads:
+      dtype: int
+      info:
+        Number of threads used to scale vertically (eg. for FFTs).
+    nthreads:
+      aliases: ['*.nthreads']
+      info:
+        Total number of threads to use between all processes.
+        Will use all available resources by default
+    scheduler:
+      default: threads
+      aliases: ["*.scheduler"]
+      info:
+        Which dask scheduler to use.
+
+  steps:
+    init:
+      cab: pfb_init
+      info:
+        Precompute visibilities for output products.
+        In this case simply the Stokes I visibilities.
+      params:
+        ms: '{recipe.ms}'
+        data_column: '{recipe.data_column}'
+        weight_column: '{recipe.weight_column}'
+        max_field_of_view: {"recipe.max_field_of_view"}
+
+    grid:
+      cab: pfb_grid
+      info:
+        Flip visibilties into image space data products
+      params:
+        residual: false
+        field_of_view: {"recipe.field_of_view"}
+        super_resolution_factor: {"recipe.super_resolution_factor"}
+        cell_size: {"recipe.cell_size"}
+        nx: {"recipe.nx"}
+        ny: {"recipe.ny"}
+
+    clean:
+      cab: pfb_clean
+      info:
+        Deconvolve with single scale modified Clark clean algorithm
+      params:
+        mask: {"recipe.mask"}
+        do_residual: true
+        nmiter: {"recipe.nmiter"}
+        threshold: {"recipe.threshold"}
+        sigmathreshold: {"recipe.sigma_threshold"}
+        gamma: {"recipe.gamma"}
+        peak_factor: {"recipe.peak_factor"}
+        sub_peak_factor: {"recipe.sub_peak_factor"}
+
+    restore:
+      cab: pfb_restore
+      info:
+        Restore image and render data products to fits files
+      params:
+        model_name: CLEAN_MODEL
+        residual_name: CLEAN_RESIDUAL
+        outputs: {"recipe.outputs"}
