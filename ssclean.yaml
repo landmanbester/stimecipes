@@ -43,35 +43,14 @@ ssclean:
       default: 2
       info:
         Will over-sample Nyquist by this factor at max frequency
-    cell_size:
-      dtype: float
-      info:
-        Cell size in arc-seconds
-    nx:
-      dtype: int
-      info:
-        Number of x pixels
-    ny:
-      dtype: int
-      info:
-        Number of y pixels
-    mask:
-      dtype: str
-      info:
-        Path to mask.fits
     nmiter:
       dtype: int
       default: 10
       info:
         Number of major iterations
-    threshold:
-      dtype: float
-      info:
-        Absolute threshold at which to stop cleaning.
-        By default it is set automatically using sigmathreshold parameter
     sigmathreshold:
       dtype: float
-      default: 5.0
+      default: 2.0
       info:
         Multiple of the rms at which to terminate the minor cycle
     gamma:
@@ -110,23 +89,6 @@ ssclean:
       info:
         Robustness factor for Briggs weighting. None means natural.
         A value of less than -2 implies uniform
-    host_address:
-      dtype: str
-      info:
-        Address where the distributed client lives. Will use a local cluster if no
-        address is provided and scheduler is set to distributed.
-    nworkers:
-      dtype: int
-      info:
-        Number of worker processes.
-    nthreads_per_worker:
-      dtype: int
-      info:
-        Number of threads per worker process.
-    nvthreads:
-      dtype: int
-      info:
-        Number of threads used to scale vertically (eg. for FFTs).
     nthreads:
       aliases: ['*.nthreads']
       info:
@@ -148,7 +110,7 @@ ssclean:
         ms: '{recipe.ms}'
         data_column: '{recipe.data_column}'
         weight_column: '{recipe.weight_column}'
-        max_field_of_view: {"recipe.max_field_of_view"}
+        max_field_of_view: '{recipe.field_of_view}'
 
     grid:
       cab: pfb_grid
@@ -156,25 +118,19 @@ ssclean:
         Flip visibilties into image space data products
       params:
         residual: false
-        field_of_view: {"recipe.field_of_view"}
-        super_resolution_factor: {"recipe.super_resolution_factor"}
-        cell_size: {"recipe.cell_size"}
-        nx: {"recipe.nx"}
-        ny: {"recipe.ny"}
+        field_of_view: '{recipe.field_of_view}'
+        super_resolution_factor: '{recipe.super_resolution_factor}'
 
     clean:
       cab: pfb_clean
       info:
         Deconvolve with single scale modified Clark clean algorithm
       params:
-        mask: {"recipe.mask"}
         do_residual: true
-        nmiter: {"recipe.nmiter"}
-        threshold: {"recipe.threshold"}
-        sigmathreshold: {"recipe.sigma_threshold"}
-        gamma: {"recipe.gamma"}
-        peak_factor: {"recipe.peak_factor"}
-        sub_peak_factor: {"recipe.sub_peak_factor"}
+        nmiter: '{recipe.nmiter}'
+        sigmathreshold: '{recipe.sigmathreshold}'
+        gamma: '{recipe.gamma}'
+        peak_factor: '{recipe.peak_factor}'
 
     restore:
       cab: pfb_restore
@@ -183,4 +139,4 @@ ssclean:
       params:
         model_name: CLEAN_MODEL
         residual_name: CLEAN_RESIDUAL
-        outputs: {"recipe.outputs"}
+        outputs: '{recipe.outputs}'
