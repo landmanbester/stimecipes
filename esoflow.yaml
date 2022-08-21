@@ -23,7 +23,7 @@ crosscal:
     basedir:
       default: 'out'
     cball_model:
-      default: 'input/fitted.PKS1934.LBand.wsclean.cat.txt'
+      default: 'input/fitted.PKS1934.UBand.wsclean.cat.txt'
     tclr_config:
       default: 'input/mk_rfi_flagging_calibrator_fields_firstpass.yaml'
     data_column:
@@ -41,7 +41,7 @@ crosscal:
       default: MODEL_DATA
     nthreads:
       dtype: int
-      default: 64
+      default: 32
     fmask:
       dtype: str
       default: ':128,2697:2705,-128:'
@@ -135,11 +135,11 @@ crosscal:
         output.gain_directory: '{recipe.basedir}/gkb.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        output.products:
-        output.columns:
+        output.products: []
+        output.columns: []
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: None
+        output.net_gains: []
         mad_flags.enable: false
         dask.threads: 8
         dask.scheduler: distributed
@@ -186,7 +186,7 @@ crosscal:
         solver.robust: false
         solver.threads: 4
         solver.reference_antenna: 57
-        output.gain_directory: '{recipe.basedir}/gkb.qc/smoothed.qc'
+        output.gain_directory: '{recipe.basedir}/gkb2.qc/'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
         output.products: [residual]
