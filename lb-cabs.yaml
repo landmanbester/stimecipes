@@ -209,19 +209,19 @@ cabs:
       use_corrs:
         dtype: str
 
-  # casasplit:
-  #   command: casa --nogui --log2term -c 'split(vis="{current.ms}", outputvis="{current.outms}", field="{current.field}", columns="all")'
-  #   policies:
-  #     skip: true
-  #   inputs:
-  #     ms:
-  #       dtype: MS
-  #       required: true
-  #       default: '{recipe.ms}'
-  #     outms:
-  #       dtype: MS
-  #       required: true
-  #       default: '{recipe.ms_primary}'
-  #     field:
-  #       dtype: Optional[int, str]
-  #       default: 0
+  casasplit:
+    command: casa --nogui --log2term -c 'split(vis="{current.ms}", outputvis="{current.outms}", field="{current.field}", columns="all")'
+    policies:
+      skip: true
+    inputs:
+      ms:
+        dtype: MS
+        required: true
+        default: '{recipe.ms}'
+      outms:
+        dtype: MS
+        required: true
+        default: '{recipe.ms_primary}'
+      field:
+        dtype: Optional[int, str]
+        default: 0
