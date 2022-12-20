@@ -1,0 +1,41 @@
+_include:
+  - casacabs.yaml
+
+opts:
+  log:
+    dir: logs
+    nest: 2
+
+gotriA:
+  name: triA
+  info: Simple CASA recipe
+
+  inputs:
+    ms_primary:
+      dtype: MS
+      required: true
+      abbreviation: msp
+    ms_secondary:
+      dtype: MS
+      required: true
+      abbreviation: mss
+    ms_target:
+      dtype: MS
+      required: true
+      abbreviation: mst
+
+
+  steps:
+    listprim:
+      cab: casa.listobs
+      params:
+        vis: '{recipe.ms_primary}'
+    listsec:
+      cab: casa.listobs
+      params:
+        vis: '{recipe.ms_secondary}'
+    listtar:
+      cab: casa.listobs
+      params:
+        vis: '{recipe.ms_target}'
+

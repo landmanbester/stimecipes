@@ -1,0 +1,56 @@
+
+cabs:
+  casa.listobs:
+    command: listobs
+    flavour: casa-task
+    inputs:
+      vis:
+        dtype: MS
+        required: true
+      selectdata:
+        dtype: bool
+        default: true
+      field:
+        dtype: str
+        default: ''
+      spw:
+        dtype: str
+        default: ''
+      antenna:
+        dtype: str
+        default: ''
+      timerange:
+        dtype: str
+        default: ''
+      correlation:
+        dtype: str
+      scan:
+        dtype: str
+        default: ''
+      intent:
+        dtype: str
+        default: ''
+      feed:
+        dtype: str
+        default: ''
+      array:
+        dtype: str
+        default: ''
+      uvrange:
+        dtype: str
+        default: ''
+      observation:
+        dtype: str
+        default: ''
+      verbose:
+        dtype: bool
+        default: true
+      listfile:
+        dtype: str
+        default: ''
+      listunfl:
+        dtype: bool
+        default: false
+      cachesize:
+        dtype: int
+        default: 50
