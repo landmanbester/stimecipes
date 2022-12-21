@@ -1,0 +1,32 @@
+
+
+
+field:
+  dtype: str
+  default: ''
+spw:
+  dtype: str
+  default: ''
+antenna:
+  dtype: str
+  default: ''
+timerange:
+  dtype: str
+  default: ''
+correlation:
+  dtype: str
+scan:
+  dtype: str
+  default: ''
+intent:
+  dtype: str
+  default: ''
+feed:
+  dtype: str
+  default: ''
+array:
+  dtype: str
+  default: ''
+uvrange:
+  dtype: str
+  default: ''

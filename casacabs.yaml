@@ -1,4 +1,5 @@
 
+
 cabs:
   casa.listobs:
     command: listobs
@@ -10,35 +11,8 @@ cabs:
       selectdata:
         dtype: bool
         default: true
-      field:
-        dtype: str
-        default: ''
-      spw:
-        dtype: str
-        default: ''
-      antenna:
-        dtype: str
-        default: ''
-      timerange:
-        dtype: str
-        default: ''
-      correlation:
-        dtype: str
-      scan:
-        dtype: str
-        default: ''
-      intent:
-        dtype: str
-        default: ''
-      feed:
-        dtype: str
-        default: ''
-      array:
-        dtype: str
-        default: ''
-      uvrange:
-        dtype: str
-        default: ''
+      _include:
+        - selectdata.yaml
       observation:
         dtype: str
         default: ''
@@ -54,3 +28,148 @@ cabs:
       cachesize:
         dtype: int
         default: 50
+
+  casa.flagmanager:
+    command: flagmanager
+    flavour: casa-task
+    inputs:
+      vis:
+        dtype: MS
+        required: true
+      mode:
+        dtype: str
+        default: list
+        choices:
+          - list
+          - save
+          - restore
+          - delete
+          - rename
+      versionname:
+        dtype: str
+        default: 'OBSERVATORY_FLAGS'
+
+  casa.flagdata:
+    command: flagdata
+    flavour: casa-task
+    inputs:
+      vis:
+        dtype: MS
+        required: true
+      mode:
+        dtype: str
+        default: manual
+        choices:
+          - list
+          - manual
+          - clip
+          - quack
+          - shadow
+          - elevation
+          - tfcrop
+          - rflag
+          - antint
+          - extent
+          - unflag
+          - summary
+      _include:
+        - selectdata.yaml
+      observation:
+        dtype: str
+        default: ''
+      autocorr:
+        dtype: bool
+        default: false
+      action:
+        dtype: str
+        default: apply
+        choices:
+          - none
+          - apply
+          - calculate
+      display:
+        dtype: str
+        default: data
+        choices:
+          - data
+          - report
+          - both
+      flagbackup:
+        dtype: bool
+        default: true
+      savepars:
+        dtype: bool
+        default: false
+
+  casa.plotms:
+    command: plotms
+    flavour: casa-task
+    inputs:
+      vis:
+        dtype: MS
+        required: true
+      gridrows:
+        dtype: int
+        default: 1
+      gridcols:
+        dtype: int
+        default: 1
+      rowindex:
+        dtype: int
+        default: 0
+      colindex:
+        dtype: int
+        default: 0
+      plotindex:
+        dtype: int
+        default: 0
+      xaxis:
+        dtype: str
+        default: ''
+      yaxis:
+        dtype: str
+        default: ''
+      yaxislocation:
+        dtype: str
+        default: ''
+      selectdata:
+        dtype: bool
+        default: true
+      averagedata:
+        dtype: bool
+        default: true
+      transform:
+        dtype: bool
+        default: false
+      extendflag:
+        dtype: bool
+        default: false
+      iteraxis:
+        dtype: str
+        default: ''
+      customsymbol:
+        dtype: bool
+        default: false
+      coloraxis:
+        dtype: str
+        default: ''
+      customflaggedsymbol:
+        dtype: bool
+        default: false
+      xconnector:
+        dtype: str
+        default: ''
+        choices:
+          - ''
+          - line
+          - step
+      plotrange:
+        dtype: List[float]
+        default: []
+
+      _include:
+        - selectdata.yaml
+        - averagedata.yaml
+
+
+

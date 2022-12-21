@@ -1,0 +1,25 @@
+
+avgchannel:
+  dtype: str
+  default: ''
+avgtime:
+  dtype: str
+  default: ''
+avgscan:
+  dtype: bool
+  default: false
+avgfield:
+  dtype: bool
+  default: false
+avgbaseline:
+  dtype: bool
+  default: false
+avgantenna:
+  dtype: bool
+  default: false
+avgspw:
+  dtype: bool
+  default: false
+scalar:
+  dtype: bool
+  default: false
