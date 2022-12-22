@@ -2,31 +2,46 @@
 
 
 field:
-  dtype: str
   default: ''
+  info: Field names or ids (blank for all)
+  dtype: str
 spw:
-  dtype: str
   default: ''
-antenna:
+  info: Spectral windows:channels (blank for all)
   dtype: str
-  default: ''
 timerange:
-  dtype: str
   default: ''
-correlation:
+  info: Time range (blank for all)
+  dtype: str
+uvrange:
+  default: ''
+  info: UV range (blank for all)
+  dtype: str
+antenna:
+  default: ''
+  info: Baseline/antenna names or ids (blank for all)
   dtype: str
 scan:
-  dtype: str
   default: ''
-intent:
+  info: Scan numbers (blank for all)
   dtype: str
+correlation:
   default: ''
-feed:
+  info: Correlations/polarizations (blank for all)
   dtype: str
-  default: ''
 array:
-  dtype: str
   default: ''
-uvrange:
+  info: (Sub)array numbers (blank for all)
   dtype: str
+observation:
   default: ''
+  info: Observation IDs (blank for all)
+  dtype: str
+intent:
+  default: ''
+  info: Observing intent (blank for all)
+  dtype: str
+feed:
+  default: ''
+  info: Feed numbers (blank for all)
+  dtype: str

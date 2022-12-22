@@ -6,28 +6,77 @@ cabs:
     flavour: casa-task
     inputs:
       vis:
-        dtype: MS
         required: true
+        info: Name of input visibility file (MS)
+        dtype: MS
       selectdata:
-        dtype: bool
         default: true
-      _include:
-        - selectdata.yaml
+        info: Data selection parameters
+        dtype: bool
+      field:
+        default: ''
+        info: Selection based on field names or field index numbers. Default is all.
+        dtype: str
+      spw:
+        default: ''
+        info: Selection based on spectral- window/frequency/channel.
+        dtype: str
+      antenna:
+        default: ''
+        info: Selection based on antenna/baselines. Default is all.
+        dtype: str
+      timerange:
+        default: ''
+        info: Selection based on time range. Default is entire range.
+        dtype: str
+      correlation:
+        default: ''
+        info: Selection based on correlation. Default is all.
+        dtype: str
+      scan:
+        default: ''
+        info: Selection based on scan numbers. Default is all.
+        dtype: str
+      intent:
+        default: ''
+        info: Selection based on observation intent. Default is all.
+        dtype: str
+      feed:
+        default: ''
+        info: 'Selection based on multi-feed numbers: Not yet implemented'
+        dtype: str
+      array:
+        default: ''
+        info: Selection based on (sub)array numbers. Default is all.
+        dtype: str
+      uvrange:
+        default: ''
+        info: 'Selection based on uv range. Default: entire range. Default units: meters.'
+        dtype: str
       observation:
-        dtype: str
         default: ''
+        info: Selection based on observation ID. Default is all.
+        dtype: str
       verbose:
-        dtype: bool
         default: true
-      listfile:
-        dtype: str
-        default: ''
-      listunfl:
+        info: Controls level of information detail reported. True reports more than False.
         dtype: bool
+      listfile:
+        default: ''
+        info: Name of disk file to write output. Default is none (output is written to logger
+          only).
+        dtype: str
+      listunfl:
         default: false
+        info: List unflagged row counts? If true, it can have significant negative performance
+          impact.
+        dtype: bool
       cachesize:
-        dtype: int
         default: 50
+        info: EXPERIMENTAL. Maximum size in megabytes of cache in which data structures
+          can be held.
+        dtype: int
+
 
   casa.flagmanager:
     command: flagmanager
@@ -36,6 +85,7 @@ cabs:
       vis:
         dtype: MS
         required: true
+        info: Name of input visibility file (MS)
       mode:
         dtype: str
         default: list
@@ -45,6 +95,7 @@ cabs:
           - restore
           - delete
           - rename
+        info: Operation
       versionname:
         dtype: str
         default: 'OBSERVATORY_FLAGS'
@@ -56,9 +107,11 @@ cabs:
       vis:
         dtype: MS
         required: true
+        info: Name of input visibility file (MS)
       mode:
         dtype: str
         default: manual
+        info: Flagging mode
         choices:
           - list
           - manual
@@ -72,11 +125,50 @@ cabs:
           - extent
           - unflag
           - summary
-      _include:
-        - selectdata.yaml
-      observation:
-        dtype: str
+      field:
         default: ''
+        info: Field names or ids (blank for all)
+        dtype: str
+      spw:
+        default: ''
+        info: Spectral windows:channels (blank for all)
+        dtype: str
+      timerange:
+        default: ''
+        info: Time range (blank for all)
+        dtype: str
+      uvrange:
+        default: ''
+        info: UV range (blank for all)
+        dtype: str
+      antenna:
+        default: ''
+        info: Baseline/antenna names or ids (blank for all)
+        dtype: str
+      scan:
+        default: ''
+        info: Scan numbers (blank for all)
+        dtype: str
+      correlation:
+        default: ''
+        info: Correlations/polarizations (blank for all)
+        dtype: str
+      array:
+        default: ''
+        info: (Sub)array numbers (blank for all)
+        dtype: str
+      observation:
+        default: ''
+        info: Observation IDs (blank for all)
+        dtype: str
+      intent:
+        default: ''
+        info: Observing intent (blank for all)
+        dtype: str
+      feed:
+        default: ''
+        info: Feed numbers (blank for all)
+        dtype: str
       autocorr:
         dtype: bool
         default: false
@@ -106,70 +198,873 @@ cabs:
     flavour: casa-task
     inputs:
       vis:
-        dtype: MS
         required: true
+        info: Input MS or CalTable (blank for none)
+        dtype: MS
       gridrows:
-        dtype: int
         default: 1
+        info: Number of subplot rows
+        dtype: int
       gridcols:
-        dtype: int
         default: 1
+        info: Number of subplot columns
+        dtype: int
       rowindex:
-        dtype: int
         default: 0
+        info: Row location of the plot (0-based)
+        dtype: int
       colindex:
-        dtype: int
         default: 0
+        info: Column location of the plot (0-based)
+        dtype: int
       plotindex:
-        dtype: int
         default: 0
+        info: Index to address a subplot (0-based)
+        dtype: int
       xaxis:
-        dtype: str
         default: ''
+        info: Plot x-axis (blank for default/current)
+        dtype: str
       yaxis:
-        dtype: str
         default: ''
+        info: Plot y-axis (blank for default/current)
+        dtype: str
       yaxislocation:
-        dtype: str
         default: ''
+        info: 'Location of the y-axis (blank for default: left)'
+        dtype: str
       selectdata:
-        dtype: bool
         default: true
+        info: Enable data selection parameters
+        dtype: int
+      field:
+        default: ''
+        info: Field names or ids (blank for all)
+        dtype: str
+      spw:
+        default: ''
+        info: Spectral windows:channels (blank for all)
+        dtype: str
+      timerange:
+        default: ''
+        info: Time range (blank for all)
+        dtype: str
+      uvrange:
+        default: ''
+        info: UV range (blank for all)
+        dtype: str
+      antenna:
+        default: ''
+        info: Baseline/antenna names or ids (blank for all)
+        dtype: str
+      scan:
+        default: ''
+        info: Scan numbers (blank for all)
+        dtype: str
+      correlation:
+        default: ''
+        info: Correlations/polarizations (blank for all)
+        dtype: str
+      array:
+        default: ''
+        info: (Sub)array numbers (blank for all)
+        dtype: str
+      observation:
+        default: ''
+        info: Observation IDs (blank for all)
+        dtype: str
+      intent:
+        default: ''
+        info: Observing intent (blank for all)
+        dtype: str
+      feed:
+        default: ''
+        info: Feed numbers (blank for all)
+        dtype: str
+      msselect:
+        default: ''
+        info: MSSelection TaQL string (blank fornone)
+        dtype: str
       averagedata:
-        dtype: bool
         default: true
+        info: Enable data averaging parameters
+        dtype: int
+      avgchannel:
+        default: ''
+        info: Average over channel (blank False, otherwise value in channels)
+        dtype: str
+      avgtime:
+        default: ''
+        info: Average over time (blank False, otherwise value in seconds)
+        dtype: str
+      avgscan:
+        default: false
+        info: Average over scans. Only valid with time averaging
+        dtype: int
+      avgfield:
+        default: false
+        info: Average over fields. Only valid with time averaging
+        dtype: int
+      avgbaseline:
+        default: false
+        info: Average over all baselines (mutually exclusive with avgantenna)
+        dtype: int
+      avgantenna:
+        default: false
+        info: Average per antenna (mutually exclusive with avgbaseline)
+        dtype: int
+      avgspw:
+        default: false
+        info: Average over all spectral windows
+        dtype: int
+      scalar:
+        default: false
+        info: Scalar averaging (False vectoraveraging)
+        dtype: int
       transform:
-        dtype: bool
         default: false
+        info: Enable data transformations
+        dtype: int
       extendflag:
-        dtype: bool
         default: false
+        info: Extend flagging to other data pointsnot plotted
+        dtype: int
       iteraxis:
-        dtype: str
         default: ''
+        info: The axis over which to iterate
+        dtype: str
       customsymbol:
-        dtype: bool
         default: false
+        info: Enable custom symbol(s) for unflaggedpoints
+        dtype: int
       coloraxis:
-        dtype: str
         default: ''
+        info: Selects data axis for colorizing
+        dtype: str
       customflaggedsymbol:
-        dtype: bool
         default: false
+        info: Enable custom symbol(s) for flaggedpoints
+        dtype: int
       xconnector:
-        dtype: str
         default: ''
-        choices:
-          - ''
-          - line
-          - step
+        info: Set connector for data points(blank="none"; "line","step")
+        dtype: str
       plotrange:
-        dtype: List[float]
         default: []
+        info: Plot axes ranges:[xmin,xmax,ymin,ymax]
+        dtype: list
+      title:
+        default: ''
+        info: Title at top of plot
+        dtype: str
+      titlefont:
+        default: 0
+        info: Font size for plot title
+        dtype: int
+      xlabel:
+        default: ''
+        info: Text for horizontal x-axis. Blank fordefault.
+        dtype: str
+      xaxisfont:
+        default: 0
+        info: Font size for x-axis label
+        dtype: int
+      ylabel:
+        default: ''
+        info: Text for vertical y-axis. Blank fordefault.
+        dtype: str
+      yaxisfont:
+        default: 0
+        info: Font size for y-axis label
+        dtype: int
+      showmajorgrid:
+        default: false
+        info: Show major grid lines
+        dtype: int
+      showminorgrid:
+        default: false
+        info: Show minor grid lines
+        dtype: int
+      showlegend:
+        default: false
+        info: Show a legend on the plot.
+        dtype: int
+      plotfile:
+        default: ''
+        info: Name of plot file to saveautomatically
+        dtype: str
+      showgui:
+        default: false
+        info: Show GUI
+        dtype: int
+      clearplots:
+        default: true
+        info: Remove any existing plots so new onescan replace them.
+        dtype: int
+      callib:
+        default:
+        - ''
+        info: Calibration library string orfilename for on-the-fly calibration.
+        dtype: list
+      headeritems:
+        default: ''
+        info: Comma-separated list of pre-definedpage header items.
+        dtype: str
+      showatm:
+        default: false
+        info: Compute and overlay the atmospherictransmission curve
+        dtype: int
+      showtsky:
+        default: false
+        info: Compute and overlay the skytemperature curve
+        dtype: int
+      showimage:
+        default: false
+        info: Compute and overlay the imagesideband curve
+        dtype: int
 
-      _include:
-        - selectdata.yaml
-        - averagedata.yaml
+  casa.setjy:
+    command: setjy
+    flavour: casa-task
+    inputs:
+      vis:
+        required: true
+        info: Name of input visibility file
+        dtype: MS
+      field:
+        default: ''
+        info: Select field using field id(s) or field name(s)
+        dtype: str
+      spw:
+        default: ''
+        info: Select spectral window/channels
+        dtype: str
+      selectdata:
+        default: true
+        info: Other data selection parameters
+        dtype: bool
+      timerange:
+        default: ''
+        info: Select data based on time range
+        dtype: str
+      scan:
+        default: ''
+        info: Scan number range
+        dtype: str
+      intent:
+        default: ''
+        info: Select observing intent
+        dtype: str
+      observation:
+        default: ''
+        info: Select by observation ID(s)
+        dtype: str
+      scalebychan:
+        default: true
+        info: Scale the flux density on a per channel basis or else on a per spw basis
+        dtype: bool
+      standard:
+        default: Perley-Butler 2017
+        info: Flux density standard
+        dtype: str
+      model:
+        default: ''
+        info: File location for field model
+        dtype: str
+      listmodels:
+        default: false
+        info: List the available models for VLA calibrators or Tb models for Solar System
+          objects
+        dtype: bool
+      interpolation:
+        default: nearest
+        info: Method to be used to interpolate in time
+        dtype: str
+      usescratch:
+        default: false
+        info: Will create if necessary and use the MODEL_DATA
+        dtype: bool
 
+  casa.gaincal:
+    command: gaincal
+    flavour: casa-task
+    inputs:
+      vis:
+        required: true
+        info: Name of input visibility file
+        dtype: MS
+      caltable:
+        default: ''
+        info: Name of output gain calibration table
+        dtype: str
+      field:
+        default: ''
+        info: Select field using field id(s) or field name(s)
+        dtype: str
+      spw:
+        default: ''
+        info: Select spectral window/channels
+        dtype: str
+      intent:
+        default: ''
+        info: Select observing intent
+        dtype: str
+      selectdata:
+        default: true
+        info: Other data selection parameters
+        dtype: bool
+      timerange:
+        default: ''
+        info: Select data based on time range
+        dtype: str
+      uvrange:
+        default: ''
+        info: Select data by baseline length.
+        dtype: str
+      antenna:
+        default: ''
+        info: Select data based on antenna/baseline
+        dtype: str
+      scan:
+        default: ''
+        info: Scan number range
+        dtype: str
+      observation:
+        default: ''
+        info: Select by observation ID(s)
+        dtype: str
+      msselect:
+        default: ''
+        info: Optional complex data selection (ignore for now)
+        dtype: str
+      solint:
+        default: inf
+        info: Solution interval
+        dtype: str
+      combine:
+        default: ''
+        info: Data axes which to combine for solve (obs, scan, spw, and/or field)
+        dtype: str
+      preavg:
+        default: -1.0
+        info: Pre-averaging interval (sec) (rarely needed)
+        dtype: float
+      refant:
+        default: ''
+        info: Reference antenna name(s)
+        dtype: str
+      refantmode:
+        default: flex
+        info: Reference antenna mode
+        dtype: str
+      minblperant:
+        default: 4
+        info: Minimum baselines _per antenna_ required for solve
+        dtype: int
+      minsnr:
+        default: 3.0
+        info: Reject solutions below this SNR
+        dtype: float
+      solnorm:
+        default: false
+        info: Normalize (squared) solution amplitudes (G, T only)
+        dtype: bool
+      gaintype:
+        default: G
+        info: Type of gain solution (G,T,GSPLINE,K,KCROSS)
+        dtype: str
+      smodel:
+        default: []
+        info: Point source Stokes parameters for source model.
+        dtype: list
+      calmode:
+        default: ap
+        info: Type of solution" ('ap', 'p', 'a')
+        dtype: str
+      solmode:
+        default: ''
+        info: 'Robust solving mode: ('''', ''L1'', ''R'',''L1R'')'
+        dtype: str
+      rmsthresh:
+        default: []
+        info: RMS Threshold sequence (for solmode='R' or 'L1R'; see help)
+        dtype: list
+      append:
+        default: false
+        info: Append solutions to the (existing) table
+        dtype: bool
+      docallib:
+        default: false
+        info: Use callib or traditional cal apply parameters
+        dtype: bool
+      gaintable:
+        default: []
+        info: Gain calibration table(s) to apply on the fly
+        dtype: list
+      gainfield:
+        default: []
+        info: Select a subset of calibrators from gaintable(s)
+        dtype: list
+      interp:
+        default: []
+        info: Interpolation parameters for each gaintable, as a list
+        dtype: list
+      spwmap:
+        default: []
+        info: Spectral windows combinations to form for gaintables(s)
+        dtype: list
+      parang:
+        default: false
+        info: Apply parallactic angle correction
+        dtype: bool
 
+  casa.bandpass:
+    command: bandpass
+    flavour: casa-task
+    inputs:
+      vis:
+        required: true
+        info: Name of input visibility file
+        dtype: MS
+      caltable:
+        default: ''
+        info: Name of output bandpass calibration table
+        dtype: str
+      field:
+        default: ''
+        info: Select field using field id(s) or field name(s)
+        dtype: str
+      spw:
+        default: ''
+        info: Select spectral window/channels
+        dtype: str
+      intent:
+        default: ''
+        info: Select observing intent
+        dtype: str
+      selectdata:
+        default: true
+        info: Other data selection parameters
+        dtype: bool
+      timerange:
+        default: ''
+        info: Select data based on time range
+        dtype: str
+      uvrange:
+        default: ''
+        info: Select data within uvrange (default units meters)
+        dtype: str
+      antenna:
+        default: ''
+        info: Select data based on antenna/baseline
+        dtype: str
+      scan:
+        default: ''
+        info: Scan number range
+        dtype: str
+      observation:
+        default: ''
+        info: Select by observation ID(s)
+        dtype: str
+      msselect:
+        default: ''
+        info: Optional complex data selection (ignore for now)
+        dtype: str
+      solint:
+        default: inf
+        info: Solution interval in time[,freq]
+        dtype: str
+      combine:
+        default: ''
+        info: Data axes which to combine for solve (obs, scan, spw, and/or field)
+        dtype: str
+      refant:
+        default: ''
+        info: Reference antenna name(s)
+        dtype: str
+      minblperant:
+        default: 4
+        info: Minimum baselines _per antenna_ required for solve
+        dtype: int
+      minsnr:
+        default: 3.0
+        info: Reject solutions below this SNR (only applies for bandtype = B)
+        dtype: float
+      solnorm:
+        default: false
+        info: Normalize average solution amplitudes to 1.0
+        dtype: bool
+      bandtype:
+        default: B
+        info: Type of bandpass solution (B or BPOLY)
+        dtype: str
+      fillgaps:
+        default: 0
+        info: Fill flagged solution channels by interpolation
+        dtype: int
+      smodel:
+        default: []
+        info: Point source Stokes parameters for source model.
+        dtype: list
+      append:
+        default: false
+        info: Append solutions to the (existing) table
+        dtype: bool
+      docallib:
+        default: false
+        info: Use callib or traditional cal apply parameters
+        dtype: bool
+      gaintable:
+        default: []
+        info: Gain calibration table(s) to apply on the fly
+        dtype: list
+      gainfield:
+        default: []
+        info: Select a subset of calibrators from gaintable(s)
+        dtype: list
+      interp:
+        default: []
+        info: Interpolation parameters for each gaintable, as a list
+        dtype: list
+      spwmap:
+        default: []
+        info: Spectral windows combinations to form for gaintables(s)
+        dtype: list
+      parang:
+        default: false
+        info: Apply parallactic angle correction
+        dtype: bool
+
+  casa.applycal:
+    command: applycal
+    flavour: casa-task
+    inputs:
+      vis:
+        required: true
+        info: Name of input visibility file
+        dtype: MS
+      field:
+        default: ''
+        info: Select field using field id(s) or field name(s)
+        dtype: str
+      spw:
+        default: ''
+        info: Select spectral window/channels
+        dtype: str
+      intent:
+        default: ''
+        info: Select observing intent
+        dtype: str
+      selectdata:
+        default: true
+        info: Other data selection parameters
+        dtype: bool
+      timerange:
+        default: ''
+        info: Select data based on time range
+        dtype: str
+      uvrange:
+        default: ''
+        info: Select data within uvrange (default units meters)
+        dtype: str
+      antenna:
+        default: ''
+        info: Select data based on antenna/baseline
+        dtype: str
+      scan:
+        default: ''
+        info: Scan number range
+        dtype: str
+      observation:
+        default: ''
+        info: Select by observation ID(s)
+        dtype: str
+      msselect:
+        default: ''
+        info: Optional complex data selection (ignore for now)
+        dtype: str
+      docallib:
+        default: false
+        info: Use callib or traditional cal apply parameters
+        dtype: bool
+      gaintable:
+        default: []
+        info: Gain calibration table(s) to apply on the fly
+        dtype: list
+      gainfield:
+        default: []
+        info: Select a subset of calibrators from gaintable(s)
+        dtype: list
+      interp:
+        default: []
+        info: Interpolation parameters for each gaintable, as a list
+        dtype: list
+      spwmap:
+        default: []
+        info: Spectral windows combinations to form for gaintables(s)
+        dtype: list
+      calwt:
+        default:
+        - true
+        info: Calibrate data weights per gaintable.
+        dtype: list
+      parang:
+        default: false
+        info: Apply parallactic angle correction
+        dtype: bool
+      applymode:
+        default: ''
+        info: 'Calibration mode: """calflag","calfl agstrict","trial","flagonly","flagon
+          lystrict", or "calonly"'
+        dtype: str
+      flagbackup:
+        default: true
+        info: Automatically back up the state of flags before the run?
+        dtype: bool
+
+  casa.exportfits:
+    command: exportfits
+    flavour: casa-task
+    inputs:
+      imagename:
+        default: ''
+        info: Name of input CASA image
+        dtype: str
+      fitsimage:
+        default: ''
+        info: Name of output image FITS file
+        dtype: str
+      velocity:
+        default: false
+        info: Use velocity (rather than frequency) as spectral axis
+        dtype: bool
+      optical:
+        default: false
+        info: Use the optical (rather than radio) velocity convention
+        dtype: bool
+      bitpix:
+        default: -32
+        info: Bits per pixel
+        dtype: int
+      minpix:
+        default: 0
+        info: Minimum pixel value (if minpix > maxpix, value is automatically determined)
+        dtype: int
+      maxpix:
+        default: -1
+        info: Maximum pixel value (if minpix > maxpix, value is automatically determined)
+        dtype: int
+      overwrite:
+        default: false
+        info: Overwrite output file if it exists?
+        dtype: bool
+      dropstokes:
+        default: false
+        info: Drop the Stokes axis?
+        dtype: bool
+      stokeslast:
+        default: true
+        info: Put Stokes axis last in header?
+        dtype: bool
+      history:
+        default: true
+        info: Write history to the FITS image?
+        dtype: bool
+      dropdeg:
+        default: false
+        info: Drop all degenerate axes (e.g. Stokes and/or Frequency)?
+        dtype: bool
+
+  casa.tclean:
+    command: tclean
+    flavour: casa-task
+    inputs:
+      vis:
+        required: true
+        info: Name of input visibility file(s)
+        dtype: MS
+      selectdata:
+        default: true
+        info: Enable data selection parameters
+        dtype: int
+      field:
+        default: ''
+        info: field(s) to select
+        dtype: str
+      spw:
+        default: ''
+        info: spw(s)/channels to select
+        dtype: str
+      timerange:
+        default: ''
+        info: Range of time to select from data
+        dtype: str
+      uvrange:
+        default: ''
+        info: Select data within uvrange
+        dtype: str
+      antenna:
+        default: ''
+        info: Select data based on antenna/baseline
+        dtype: str
+      scan:
+        default: ''
+        info: Scan number range
+        dtype: str
+      observation:
+        default: ''
+        info: Observation ID range
+        dtype: str
+      intent:
+        default: ''
+        info: Scan Intent(s)
+        dtype: str
+      datacolumn:
+        default: corrected
+        info: Data column to image
+        dtype: str
+        choices:
+          - data
+          - corrected
+      imagename:
+        default: ''
+        info: Pre-name of output images
+        dtype: str
+      imsize:
+        default:
+        - 100
+        info: Number of pixels
+        dtype: list
+      cell:
+        default:
+        - 1arcsec
+        info: Cell size
+        dtype: list
+      phasecenter:
+        default: ''
+        info: Phase center of the image
+        dtype: str
+      stokes:
+        default: I
+        info: Stokes Planes to make
+        dtype: str
+      projection:
+        default: SIN
+        info: Coordinate projection
+        dtype: str
+      startmodel:
+        default: ''
+        info: Name of starting model image
+        dtype: str
+      specmode:
+        default: mfs
+        info: Spectral definition mode
+        dtype: str
+        choices:
+          - mfs
+          - cube
+          - cubedata
+          - cubesource
+      reffreq:
+        default: ''
+        info: Reference frequency
+        dtype: str
+      gridder:
+        default: standard
+        info: Gridding options
+        dtype: str
+        choices:
+          - standard
+          - wproject
+          - widefield
+          - mosaic
+          - awproject
+      vptable:
+        default: ''
+        info: Name of Voltage Pattern table
+        dtype: str
+      pblimit:
+        default: 0.2
+        info: PB gain level at which to cut off normalizations
+        dtype: float
+      deconvolver:
+        default: hogbom
+        info: Minor cycle algorithm
+        dtype: str
+        choices:
+          - hogbom
+          - clark
+          - multiscale
+          - mtmfs
+          - mem
+          - clarkstokes
+      restoration:
+        default: true
+        info: Do restoration steps (or not)
+        dtype: bool
+      restoringbeam:
+        default: []
+        info: Restoring beam shape to use. Default is the PSF main lobe
+        dtype: list
+      pbcor:
+        default: false
+        info: Apply PB correction on the output restored image
+        dtype: int
+      outlierfile:
+        default: ''
+        info: Name of outlier-field image definitions
+        dtype: str
+      weighting:
+        default: natural
+        info: Weighting scheme
+        dtype: str
+        choices:
+          - natural
+          - uniform
+          - briggs
+          - briggsabs
+      uvtaper:
+        default: []
+        info: uv-taper on outer baselines in uv-plane
+        dtype: list
+      niter:
+        default: 0
+        info: Maximum number of iterations
+        dtype: int
+      usemask:
+        default: user
+        info: Type of mask(s) for deconvolution:user, pb, or auto-multithresh
+        dtype: str
+      mask:
+        default: ''
+        info: Mask (a list of image name(s) orregion file(s) or region string(s) )
+        dtype: str
+      pbmask:
+        default: 0.0
+        info: primary beam mask
+        dtype: float
+      fastnoise:
+        default: true
+        info: 'True: use the faster (old) noisecalculation. False: use the newimproved noise calculations'
+        dtype: bool
+      restart:
+        default: true
+        info: 'True : Re-use existing images. False: Increment imagename'
+        dtype: int
+      savemodel:
+        default: none
+        info: Options to save model visibilities(none, virtual, modelcolumn)
+        dtype: str
+      calcres:
+        default: true
+        info: Calculate initial residual image
+        dtype: int
+      calcpsf:
+        default: true
+        info: Calculate PSF
+        dtype: int
+      parallel:
+        default: false
+        info: Run major cycles in parallel
+        dtype: int
 

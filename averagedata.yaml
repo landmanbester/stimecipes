@@ -1,25 +1,33 @@
 
 avgchannel:
-  dtype: str
   default: ''
+  info: Average over channel (blank False, otherwise value in channels)
+  dtype: str
 avgtime:
-  dtype: str
   default: ''
+  info: Average over time (blank False, otherwise value in seconds)
+  dtype: str
 avgscan:
-  dtype: bool
   default: false
+  info: Average over scans. Only valid with time averaging
+  dtype: int
 avgfield:
-  dtype: bool
   default: false
+  info: Average over fields. Only valid with time averaging
+  dtype: int
 avgbaseline:
-  dtype: bool
   default: false
+  info: Average over all baselines (mutually exclusive with avgantenna)
+  dtype: int
 avgantenna:
-  dtype: bool
   default: false
+  info: Average per antenna (mutually exclusive with avgbaseline)
+  dtype: int
 avgspw:
-  dtype: bool
   default: false
+  info: Average over all spectral windows
+  dtype: int
 scalar:
-  dtype: bool
   default: false
+  info: Scalar averaging (False vectoraveraging)
+  dtype: int
