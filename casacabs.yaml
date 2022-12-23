@@ -181,8 +181,9 @@ cabs:
           - calculate
       display:
         dtype: str
-        default: data
+        default: ''
         choices:
+          - ''
           - data
           - report
           - both
@@ -201,6 +202,10 @@ cabs:
         required: true
         info: Input MS or CalTable (blank for none)
         dtype: MS
+      ydatacolumn:
+        dtype: str
+        default: data
+        info: Which column to plot
       gridrows:
         default: 1
         info: Number of subplot rows
@@ -236,7 +241,7 @@ cabs:
       selectdata:
         default: true
         info: Enable data selection parameters
-        dtype: int
+        dtype: bool
       field:
         default: ''
         info: Field names or ids (blank for all)
@@ -288,7 +293,7 @@ cabs:
       averagedata:
         default: true
         info: Enable data averaging parameters
-        dtype: int
+        dtype: bool
       avgchannel:
         default: ''
         info: Average over channel (blank False, otherwise value in channels)
@@ -300,35 +305,35 @@ cabs:
       avgscan:
         default: false
         info: Average over scans. Only valid with time averaging
-        dtype: int
+        dtype: bool
       avgfield:
         default: false
         info: Average over fields. Only valid with time averaging
-        dtype: int
+        dtype: bool
       avgbaseline:
         default: false
         info: Average over all baselines (mutually exclusive with avgantenna)
-        dtype: int
+        dtype: bool
       avgantenna:
         default: false
         info: Average per antenna (mutually exclusive with avgbaseline)
-        dtype: int
+        dtype: bool
       avgspw:
         default: false
         info: Average over all spectral windows
-        dtype: int
+        dtype: bool
       scalar:
         default: false
         info: Scalar averaging (False vectoraveraging)
-        dtype: int
+        dtype: bool
       transform:
         default: false
         info: Enable data transformations
-        dtype: int
+        dtype: bool
       extendflag:
         default: false
         info: Extend flagging to other data pointsnot plotted
-        dtype: int
+        dtype: bool
       iteraxis:
         default: ''
         info: The axis over which to iterate
@@ -336,7 +341,7 @@ cabs:
       customsymbol:
         default: false
         info: Enable custom symbol(s) for unflaggedpoints
-        dtype: int
+        dtype: bool
       coloraxis:
         default: ''
         info: Selects data axis for colorizing
@@ -344,7 +349,7 @@ cabs:
       customflaggedsymbol:
         default: false
         info: Enable custom symbol(s) for flaggedpoints
-        dtype: int
+        dtype: bool
       xconnector:
         default: ''
         info: Set connector for data points(blank="none"; "line","step")
@@ -363,7 +368,7 @@ cabs:
         dtype: int
       xlabel:
         default: ''
-        info: Text for horizontal x-axis. Blank fordefault.
+        info: Text for horizontal x-axis. Blank for default.
         dtype: str
       xaxisfont:
         default: 0
@@ -371,7 +376,7 @@ cabs:
         dtype: int
       ylabel:
         default: ''
-        info: Text for vertical y-axis. Blank fordefault.
+        info: Text for vertical y-axis. Blank for default.
         dtype: str
       yaxisfont:
         default: 0
@@ -380,31 +385,31 @@ cabs:
       showmajorgrid:
         default: false
         info: Show major grid lines
-        dtype: int
+        dtype: bool
       showminorgrid:
         default: false
         info: Show minor grid lines
-        dtype: int
+        dtype: bool
       showlegend:
         default: false
         info: Show a legend on the plot.
-        dtype: int
+        dtype: bool
       plotfile:
         default: ''
-        info: Name of plot file to saveautomatically
+        info: Name of plot file to save automatically
         dtype: str
       showgui:
         default: false
         info: Show GUI
-        dtype: int
+        dtype: bool
       clearplots:
         default: true
-        info: Remove any existing plots so new onescan replace them.
-        dtype: int
+        info: Remove any existing plots so new one scan replace them.
+        dtype: bool
       callib:
         default:
         - ''
-        info: Calibration library string orfilename for on-the-fly calibration.
+        info: Calibration library string or filename for on-the-fly calibration.
         dtype: list
       headeritems:
         default: ''
@@ -413,15 +418,15 @@ cabs:
       showatm:
         default: false
         info: Compute and overlay the atmospherictransmission curve
-        dtype: int
+        dtype: bool
       showtsky:
         default: false
         info: Compute and overlay the skytemperature curve
-        dtype: int
+        dtype: bool
       showimage:
         default: false
         info: Compute and overlay the imagesideband curve
-        dtype: int
+        dtype: bool
 
   casa.setjy:
     command: setjy

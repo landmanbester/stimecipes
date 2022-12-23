@@ -63,4 +63,27 @@ gotriA:
       params:
         vis: '{recipe.ms_primary}'
         mode: summary
-
+    flagsumsec0:
+      cab: casa.flagdata
+      params:
+        vis: '{recipe.ms_primary}'
+        mode: summary
+    flagsumtar0:
+      cab: casa.flagdata
+      params:
+        vis: '{recipe.ms_primary}'
+        mode: summary
+    plotprimshirt:
+      cab: casa.plotms
+      params:
+        vis: '{recipe.ms_primary}'
+        xaxis: frequency
+        yaxis: amp
+        correlation: XY,YX
+        ydatacolumn: data
+        coloraxis: corr
+        avgbaseline: false
+        uvrange: 1~100m
+        plotfile: primary.short.raw.ampfreq.png
+        showgui: false
+        # overwrite: True
