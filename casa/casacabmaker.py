@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 import sys
+import os
 import subprocess
 import yaml
+import time
 
 def get_type(a):
     if isinstance(a, str):
@@ -15,17 +17,23 @@ def get_type(a):
     elif isinstance(a, list):
         return 'list'
     else:
-        import pdb; pdb.set_trace()
+        raise ValueError('Unknown type')
 
 if __name__=="__main__":
     taskname = sys.argv[1]
 
-    # why does this hang?
-    # x = subprocess.run(['casa', '--nologger', '--log2term', '--nologfile', '-c', f'"help({taskname}); quit()"'],
-    #                    capture_output=True)
+    cmd = f'help({taskname}); import numpy as np; np.savez({taskname}.npz, **{taskname}.parameters) quit()'
+
+    with open(taskname + '.txt', 'w') as output:
+        subprocess.Popen(['casa', '--nologger', '--log2term', '--nologfile', '-c', cmd],
+                         stdout=output)
+
+    # need to wait for the above to finish
+    time.sleep(10)
+
+    quit()
 
     f = open(taskname + '.txt', 'r')
-
     # find just the relevant help string in the file
     fulltxt = f.readlines()
     for i, l in enumerate(fulltxt):
@@ -34,8 +42,6 @@ if __name__=="__main__":
         elif l.find('Returns') > 0:
             lf = i
             break
-
-    # import pdb; pdb.set_trace()
 
     docs = fulltxt[l0:lf]
     x = {}
@@ -49,9 +55,12 @@ if __name__=="__main__":
                 l1 = l[idx:].strip()[1:].strip()
                 if 'Default Value' in l0:
                     try:
-                        x[key]['default'] = eval(l1)
+                        val = eval(l1)
+                        x[key]['default'] = val
+                        x[key]['dtype'] = get_type(val)
                     except:
                         x[key]['default'] = l1
+                        x[key]['dtype'] = 'str'
                 elif 'Allowed Values' in l0:
                     x[key]['choices'] = []
                 else:  # must be a key
@@ -64,7 +73,12 @@ if __name__=="__main__":
                 except:
                     print(f'Check on failure at {key}')
 
+    f.close()
+    # os.remove(taskname + '.txt')
 
+    if 'vis' in x.keys():
+        x['vis']['required'] = True
+        x['vis']['dtype'] = 'MS'
 
     with open(f'{taskname}.yaml', 'w') as out:
         yaml.dump(x, out, default_flow_style=False, sort_keys=False)
