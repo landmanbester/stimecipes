@@ -38,6 +38,20 @@ standard:
   default: Perley-Butler 2017
   info: Flux density standard
   dtype: str
+  choices:
+    - Perley-Butler 2017
+    - Perley-Butler 2013
+    - Perley-Butler 2010
+    - Perley-Taylor 99
+    - Baars
+    - Perley 90
+    - Perley-Taylor 95
+    - Butler-JPL-Horizons 2012
+    - Butler-JPL-Horizons 2010
+    - Scaife-Heald 2012
+    - Stevens-Reynolds 2016
+    - manual
+    - fluxscale
 model:
   default: ''
   info: File location for field model

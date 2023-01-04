@@ -107,21 +107,21 @@ docallib:
   info: Use callib or traditional cal apply parameters
   dtype: bool
 gaintable:
-  default: []
+  default: ''
   info: Gain calibration table(s) to apply on the fly
-  dtype: list
+  dtype: Union[List[str], str]
 gainfield:
-  default: []
+  default: ''
   info: Select a subset of calibrators from gaintable(s)
-  dtype: list
+  dtype: Union[List[str], str]
 interp:
-  default: []
+  default: ''
   info: Interpolation parameters for each gaintable, as a list
-  dtype: list
+  dtype: Union[List[str], str]
 spwmap:
-  default: []
+  default: ''
   info: Spectral windows combinations to form for gaintables(s)
-  dtype: list
+  dtype: Union[List[str], str]
 parang:
   default: false
   info: Apply parallactic angle correction

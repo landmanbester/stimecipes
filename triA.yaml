@@ -43,16 +43,19 @@ gotriA:
       params:
         vis: '{recipe.ms_primary}'
         mode: save
+        versionname: OBSERVATORY_FLAGS
     bkpsec0:
       cab: casa.flagmanager
       params:
         vis: '{recipe.ms_secondary}'
         mode: save
+        versionname: OBSERVATORY_FLAGS
     bkptar0:
       cab: casa.flagmanager
       params:
         vis: '{recipe.ms_target}'
         mode: save
+        versionname: OBSERVATORY_FLAGS
     lstprim0:
       cab: casa.flagmanager
       params:
@@ -73,17 +76,57 @@ gotriA:
       params:
         vis: '{recipe.ms_primary}'
         mode: summary
-    plotprimshirt:
-      cab: casa.plotms
+    # plotprimshirt:
+    #   cab: casa.plotms
+    #   params:
+    #     vis: '{recipe.ms_primary}'
+    #     xaxis: frequency
+    #     yaxis: amp
+    #     correlation: XY,YX
+    #     ydatacolumn: data
+    #     coloraxis: corr
+    #     avgbaseline: false
+    #     uvrange: 1~100m
+    #     plotfile: primary.short.raw.ampfreq.png
+    #     showgui: false
+    #     # overwrite: True
+    flagprim0:
+      cab: casa.flagdata
       params:
         vis: '{recipe.ms_primary}'
-        xaxis: frequency
-        yaxis: amp
-        correlation: XY,YX
-        ydatacolumn: data
-        coloraxis: corr
-        avgbaseline: false
-        uvrange: 1~100m
-        plotfile: primary.short.raw.ampfreq.png
-        showgui: false
-        # overwrite: True
+        spw: "0:1.087~1.0915ghz"
+    setflux:
+      cab: casa.setjy
+      params:
+        vis: '{recipe.ms_primary}'
+        standard: Stevens-Reynolds 2016
+        field: J1939-6342
+    primK:
+      cab: casa.gaincal
+      params:
+        vis: '{recipe.ms_primary}'
+        field: J1939-6342
+        caltable: prim.K0
+        gaintype: K
+        refant: m000
+    primG:
+      cab: casa.gaincal
+      params:
+        vis: '{recipe.ms_primary}'
+        field: J1939-6342
+        caltable: prim.G0
+        gaintype: G
+        refant: m000
+        interp: nearest
+        gaintable: [prim.K0]
+        gainfield: J1939-6342
+    bandpass:
+      cab: casa.bandpass
+      params:
+        vis: '{recipe.ms_primary}'
+        field: J1939-6342
+        caltable: prim.B0
+        refant: m000
+
+
+

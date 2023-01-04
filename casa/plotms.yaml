@@ -186,6 +186,7 @@ xdatacolumn:
   default: ''
   dtype: str
   choices:
+  - ''
   - data
   - corrected
   - model
@@ -208,6 +209,7 @@ xframe:
   default: ''
   dtype: str
   choices:
+  - ''
   - icrs
   - j2000
   - b1950
@@ -218,6 +220,7 @@ xinterp:
   default: ''
   dtype: str
   choices:
+  - ''
   - nearest
   - cubic spline
   - spline
@@ -409,6 +412,7 @@ yframe:
   default: ''
   dtype: str
   choices:
+  - ''
   - icrs
   - j2000
   - b1950
@@ -419,6 +423,7 @@ yinterp:
   default: ''
   dtype: str
   choices:
+  - ''
   - nearest
   - cubic spline
   - spline
@@ -427,6 +432,7 @@ yaxislocation:
   default: ''
   dtype: str
   choices:
+  - ''
   - left
   - right
 selectdata:
@@ -526,6 +532,7 @@ freqframe:
   default: ''
   dtype: str
   choices:
+  - ''
   - LSRK
   - LSRD
   - BARY
@@ -567,6 +574,7 @@ iteraxis:
   default: ''
   dtype: str
   choices:
+  - ''
   - scan
   - Scan
   - field
@@ -708,6 +716,7 @@ xconnector:
   default: ''
   dtype: str
   choices:
+  - ''
   - none
   - line
   - step
@@ -755,6 +764,7 @@ majorstyle:
   default: ''
   dtype: str
   choices:
+  - ''
   - solid
   - dash
   - dot
@@ -776,6 +786,7 @@ minorstyle:
   default: ''
   dtype: str
   choices:
+  - ''
   - solid
   - dash
   - dot
@@ -793,6 +804,7 @@ legendposition:
   default: ''
   dtype: str
   choices:
+  - ''
   - upperRight
   - upperLeft
   - lowerRight
@@ -811,6 +823,7 @@ expformat:
   default: ''
   dtype: str
   choices:
+  - ''
   - jpg
   - png
   - pdf
@@ -826,6 +839,7 @@ exprange:
   default: ''
   dtype: str
   choices:
+  - ''
   - current
   - all
 highres:
