@@ -61,3 +61,10 @@ cabs:
     inputs:
       _include: casa/tclean.yaml
 
+  casa.importfits:
+    command: importfits
+    flavour: casa-task
+    inputs:
+      _include: casa/importfits.yaml
+
+

@@ -15,3 +15,29 @@ bitpix:
   info: Bits per pixel
   dtype: int
 minpix:
+  default: 0
+  info: Minimum pixel value (if minpix > maxpix, value is automatically determined)
+  dtype: int
+maxpix:
+  default: -1
+  info: Maximum pixel value (if minpix > maxpix, value is automatically determined)
+overwrite:
+  default: false
+  info: Overwrite output file if it exists?
+  dtype: bool
+dropstokes:
+  default: false
+  info: Drop the Stokes axis?
+  dtype: bool
+stokeslast:
+  default: true
+  info: Put Stokes axis last in header?
+  dtyoe: bool
+history:
+  default: true
+  info: Write history to the FITS image?
+  dtyoe: bool
+dropdeg:
+  default: false
+  info: Drop all degenerate axes (e.g. Stokes and/or Frequency)?
+  dtype: bool
