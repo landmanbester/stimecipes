@@ -1,6 +1,6 @@
-_include:
-  - (pfb)stimela_cabs.yaml
-  - (quartical)stimela_cabs.yaml
+# _include:
+#   - (pfb)stimela_cabs.yaml
+#   - (quartical)stimela_cabs.yaml
 
 cabs:
   crystalball:
@@ -209,19 +209,38 @@ cabs:
       use_corrs:
         dtype: str
 
-  casasplit:
-    command: casa --nogui --log2term -c 'split(vis="{current.ms}", outputvis="{current.outms}", field="{current.field}", columns="all")'
+  breizorro:
+    command: breizorro
     policies:
-      skip: true
+      replace: {'_': '-'}
     inputs:
-      ms:
-        dtype: MS
+      restored_image:
+        dtype: File
+      mask_image:
+        dtype: File
+      merge:
+        dtype: Union[str, List[str]]
+      subtract:
+        dtype: Union[str, List[str]]
+      threshold:
+        dtype: float
+        default: 6.5
+      dilate:
+        dtype: int
+      number_islands:
+        dtype: bool
+      extract_islands:
+        dtype: List[str]
+        policies:
+          repeat: list
+      remove_islands:
+        dtype: List[str]
+        policies:
+          repeat: list
+      invert:
+        dtype: bool
+      make_binary:
+        dtype: bool
+      outfile:
+        dtype: File
         required: true
-        default: '{recipe.ms}'
-      outms:
-        dtype: MS
-        required: true
-        default: '{recipe.ms_primary}'
-      field:
-        dtype: Optional[int, str]
-        default: 0

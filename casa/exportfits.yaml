@@ -21,6 +21,7 @@ minpix:
 maxpix:
   default: -1
   info: Maximum pixel value (if minpix > maxpix, value is automatically determined)
+  dtype: int
 overwrite:
   default: false
   info: Overwrite output file if it exists?
@@ -32,11 +33,11 @@ dropstokes:
 stokeslast:
   default: true
   info: Put Stokes axis last in header?
-  dtyoe: bool
+  dtype: bool
 history:
   default: true
   info: Write history to the FITS image?
-  dtyoe: bool
+  dtype: bool
 dropdeg:
   default: false
   info: Drop all degenerate axes (e.g. Stokes and/or Frequency)?

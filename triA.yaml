@@ -1,5 +1,6 @@
 _include:
   - casacabs.yaml
+  - lb-cabs.yaml
 
 opts:
   log:
@@ -209,6 +210,12 @@ gotriA:
       params:
         vis: '{recipe.ms_target}'
         spw: "0:1.087~1.0915ghz"
+    bkptarget1:
+      cab: casa.flagmanager
+      params:
+        vis: '{recipe.ms_target}'
+        mode: save
+        versionname: TRANSFER_CAL_FLAGS
     clean0:
       cab: casa.tclean
       params:
@@ -228,6 +235,119 @@ gotriA:
         robust: 0
         niter: 5000
         savemodel: modelcolumn
+    exportimage0:
+      cab: casa.exportfits
+      params:
+        imagename: RXCJ1638.2-6420.1GC.image
+        fitsimage: RXCJ1638.2-6420.1GC.image.fits
+        overwrite: true
+    exportresid0:
+      cab: casa.exportfits
+      params:
+        imagename: RXCJ1638.2-6420.1GC.residual
+        fitsimage: RXCJ1638.2-6420.1GC.residual.fits
+        overwrite: true
+    mask0:
+      cab: breizorro
+      params:
+        restored_image: RXCJ1638.2-6420.1GC.image.fits
+        outfile: RXCJ1638.2-6420.1GC.FITSMASK.fits
+    importmask:
+      cab: casa.importfits
+      params:
+        imagename: RXCJ1638.2-6420.1GC.FITSMASK
+        fitsimage: RXCJ1638.2-6420.1GC.FITSMASK.fits
+    clean1:
+      cab: casa.tclean
+      params:
+        vis: '{recipe.ms_target}'
+        field: RXCJ1638.2-6420
+        imagename: RXCJ1638.2-6420.1GC.usermasked
+        datacolumn: corrected
+        imsize: [4096]
+        cell: [2.2arcsec]
+        stokes: I
+        nchan: 2
+        specmode: mfs
+        gridder: widefield
+        wprojplanes: 1
+        facets: 3
+        weighting: briggs
+        robust: 0
+        niter: 5000
+        savemodel: modelcolumn
+        mask: RXCJ1638.2-6420.1GC.FITSMASK
+    exportimage1:
+      cab: casa.exportfits
+      params:
+        imagename: RXCJ1638.2-6420.1GC.usermasked.image
+        fitsimage: RXCJ1638.2-6420.1GC.usermasked.image.fits
+        overwrite: true
+    exportresid1:
+      cab: casa.exportfits
+      params:
+        imagename: RXCJ1638.2-6420.1GC.usermasked.residual
+        fitsimage: RXCJ1638.2-6420.1GC.usermasked.residual.fits
+        overwrite: true
+    restoretargetflags:
+      cab: casa.flagmanager
+      params:
+        vis: '{recipe.ms_target}'
+        mode: restore
+        versionname: TRANSFER_CAL_FLAGS
+    selfcaltarget0:
+      cab: casa.gaincal
+      params:
+        vis: '{recipe.ms_target}'
+        field: RXCJ1638.2-6420
+        caltable: target.G0
+        gaintype: G
+        calmode: p
+        refant: m000
+        interp: [linear, linear, nearest]
+        gaintable: [prim.B0, prim.F0, sec.K0]
+        gainfield: [J1939-6342, J1939-6342, J1859-6615]
+        solint: 48s
+    correcttarget0:
+      cab: casa.applycal
+      params:
+        vis: '{recipe.ms_target}'
+        field: RXCJ1638.2-6420
+        interp: [nearest, linear, nearest, linear]
+        gaintable: [prim.B0, prim.F0, sec.K0, target.G0]
+        gainfield: [J1939-6342, J1939-6342, J1859-6615, RXCJ1638.2-6420]
+    clean2:
+      cab: casa.tclean
+      params:
+        vis: '{recipe.ms_target}'
+        field: RXCJ1638.2-6420
+        imagename: RXCJ1638.2-6420.SC0.usermasked
+        datacolumn: corrected
+        imsize: [4096]
+        cell: [2.2arcsec]
+        stokes: I
+        nchan: 2
+        specmode: mfs
+        gridder: widefield
+        wprojplanes: 1
+        facets: 3
+        weighting: briggs
+        robust: 0
+        niter: 7000
+        savemodel: modelcolumn
+        mask: RXCJ1638.2-6420.1GC.FITSMASK
+    exportimage2:
+      cab: casa.exportfits
+      params:
+        imagename: RXCJ1638.2-6420.SC0.usermasked.image
+        fitsimage: RXCJ1638.2-6420.SC0.usermasked.image.fits
+        overwrite: true
+    exportresid2:
+      cab: casa.exportfits
+      params:
+        imagename: RXCJ1638.2-6420.SC0.usermasked.residual
+        fitsimage: RXCJ1638.2-6420.SC0.usermasked.residual.fits
+        overwrite: true
 
 
 
