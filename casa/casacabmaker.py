@@ -23,7 +23,7 @@ if __name__=="__main__":
     taskname = sys.argv[1]
 
     # preferable to build the cab from the docstring but they don't all adhere
-    # to a consistent format (note thi smay produce garbage)
+    # to a consistent format (note this may produce garbage)
     try:
         # import numpy as np; np.savez({taskname}.npz, **{taskname}.parameters)
         cmd = f'help({taskname}); quit()'

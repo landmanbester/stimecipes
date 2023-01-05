@@ -5,7 +5,7 @@ vis:
 selectdata:
   default: true
   info: Enable data selection parameters
-  dtype: int
+  dtype: bool
 field:
   default: ''
   info: field(s) to select
@@ -53,7 +53,7 @@ imsize:
   default:
   - 100
   info: Number of pixels
-  dtype: list
+  dtype: List[int]
 cell:
   default:
   - 1arcsec
@@ -128,7 +128,7 @@ restoringbeam:
 pbcor:
   default: false
   info: Apply PB correction on the output restored image
-  dtype: int
+  dtype: bool
 outlierfile:
   default: ''
   info: Name of outlier-field image definitions
@@ -169,7 +169,7 @@ fastnoise:
 restart:
   default: true
   info: 'True : Re-use existing images. False: Increment imagename'
-  dtype: int
+  dtype: bool
 savemodel:
   default: none
   info: Options to save model visibilities(none, virtual, modelcolumn)
@@ -177,12 +177,28 @@ savemodel:
 calcres:
   default: true
   info: Calculate initial residual image
-  dtype: int
+  dtype: bool
 calcpsf:
   default: true
   info: Calculate PSF
-  dtype: int
+  dtype: bool
 parallel:
   default: false
   info: Run major cycles in parallel
+  dtype: bool
+nchan:
+  default: 1
+  info: Number of output channels
   dtype: int
+wprojplanes:
+  default: 1
+  info: Number of w-projection Planes
+  dtype: int
+facets:
+  default: 1
+  info: Number of facets
+  dtype: int
+robust:
+  default: 0.5
+  info: Robustness for Briggs weighting
+  dtype: float
