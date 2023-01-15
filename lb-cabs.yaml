@@ -245,6 +245,7 @@ cabs:
       outfile:
         dtype: File
         required: true
+        must_exist: false
 
   wsclean:
     command: wsclean
