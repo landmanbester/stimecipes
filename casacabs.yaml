@@ -21,7 +21,9 @@ cabs:
 
   casa.plotms:
     command: plotms
-    flavour: casa-task
+    flavour:
+      kind: casa-task
+      casa: xvfb-run -a casa
     inputs:
       _include: casa/plotms.yaml
 

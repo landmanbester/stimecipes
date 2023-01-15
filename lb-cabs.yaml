@@ -5,7 +5,7 @@
 cabs:
   crystalball:
     command: crystalball
-    virtual_env: ~/.venv/cball
+    # virtual_env: ~/.venv/cball
     policies:
       prefix: '--'
       replace: {'_': '-'}
@@ -211,6 +211,7 @@ cabs:
 
   breizorro:
     command: breizorro
+    virtual_env: /opt/btlworkshop/venvbreizorro
     policies:
       replace: {'_': '-'}
     inputs:
@@ -244,3 +245,90 @@ cabs:
       outfile:
         dtype: File
         required: true
+
+  wsclean:
+    command: wsclean
+    policies:
+      replace: {'_': '-'}
+    inputs:
+      ms:
+        info: Measurement set(s)
+        writable: true
+        dtype: MS
+        required: true
+        policies:
+          positional: true
+      name:
+        dtype: str
+        required: true
+        info: Output prefix
+      threads:
+        info: Threads
+        dtype: int
+        nom_de_guerre: j
+      weight:
+        info:
+          "Weightmode can be: natural, uniform, briggs. Default: uniform.
+           When using Briggs' weighting, add the robustness parameter, like: '-weight briggs 0.5'"
+        dtype: str
+        policies:
+          split: " "
+          repeat: list
+      column:
+        dtype: str
+        nom_de_guerre: data-column
+      nband:
+        info: Number of output bands
+        dtype: int
+        nom_de_guerre: channels-out
+      size:
+        info: Image size in pixels
+        dtype: Union[int, Tuple[int, int]]
+        required: true
+        policies:
+          repeat: list
+          format_list: ["{0}", "{1}"]
+          format_list_scalar: ["{0}", "{0}"]
+      scale:
+        info: Angular pixel size
+        dtype: Union[str, float]
+        required: true
+      niter:
+        info: Number of minor clean iterations
+        dtype: int
+      nmiter:
+        info: Max number of major clean iterations
+        dtype: int
+      fits-mask:
+        dtype: File
+      threshold:
+        dtype: float
+      sigma:
+        dtype: float
+        info: Estimate noise level using a robust estimator and stop at sigma x stddev
+        nom_de_guerre: auto-threshold
+      gain:
+        dtype: float
+      mgain:
+        dtype: float
+      join-channels:
+        dtype: bool
+      fit-spectral-pol:
+        dtype: int
+      use-wgridder:
+        dtype: bool
+        default: true
+      multiscale:
+        dtype: bool
+        default: false
+      multiscale-max-scales:
+        dtype: int
+        default: 7
+        info: Maximum number of scales to use during cleaning
+      multiscale-gain:
+        dtype: float
+        default: 0.15
+        info: Sub-minor loop gain
+
+
+
