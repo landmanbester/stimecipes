@@ -28,6 +28,7 @@ xaxis:
   default: ''
   dtype: str
   choices:
+  - ''
   - scan
   - Scan
   - field
@@ -229,6 +230,7 @@ yaxis:
   default: ''
   dtype: str
   choices:
+  - ''
   - scan
   - Scan
   - field
@@ -390,6 +392,7 @@ ydatacolumn:
   default: ''
   dtype: str
   choices:
+  - ''
   - data
   - corrected
   - model
@@ -649,6 +652,7 @@ coloraxis:
   default: ''
   dtype: str
   choices:
+  - ''
   - scan
   - Scan
   - field
