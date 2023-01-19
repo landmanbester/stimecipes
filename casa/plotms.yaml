@@ -184,10 +184,9 @@ xaxis:
 xdatacolumn:
   info: Data column to use for x-axis (blank for default/current).  Note that unspecified
     residuals are complex (vector) differences or ratios.
-  default: ''
+  default: data
   dtype: str
   choices:
-  - ''
   - data
   - corrected
   - model

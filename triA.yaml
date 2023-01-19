@@ -77,20 +77,20 @@ gotriA:
       params:
         vis: '{recipe.ms_primary}'
         mode: summary
-    # plotprimshirt:
-    #   cab: casa.plotms
-    #   params:
-    #     vis: '{recipe.ms_primary}'
-    #     xaxis: frequency
-    #     yaxis: amp
-    #     correlation: XY,YX
-    #     ydatacolumn: data
-    #     coloraxis: corr
-    #     avgbaseline: false
-    #     uvrange: 1~100m
-    #     plotfile: primary.short.raw.ampfreq.png
-    #     showgui: false
-    #     # overwrite: True
+    plotprimshirt:
+      cab: casa.plotms
+      params:
+        vis: '{recipe.ms_primary}'
+        xaxis: frequency
+        yaxis: amp
+        correlation: XY,YX
+        ydatacolumn: data
+        coloraxis: corr
+        avgbaseline: false
+        uvrange: 1~100m
+        plotfile: primary.short.raw.ampfreq.png
+        showgui: false
+        # overwrite: True
     flagprim0:
       cab: casa.flagdata
       params:
@@ -125,7 +125,7 @@ gotriA:
       cab: casa.bandpass
       params:
         vis: '{recipe.ms_primary}'
-        field: J1939-6342
+        field: '{recipe.field_primary}' #J1939-6342
         caltable: prim.B0
         refant: m000
         interp: [nearest, linear]
