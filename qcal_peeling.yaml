@@ -1,0 +1,59 @@
+_include:
+  - lb-cabs.yaml
+  - (quartical)stimela_cabs.yaml
+  - casacabs.yaml
+
+opts:
+  log:
+    dir: logs
+    nest: 2
+
+gopeel:
+  name: gopeel
+  info: Example of peeling using QuartiCal and wsclean
+
+  inputs:
+    ms:
+      dtype: MS
+      required: true
+    source_list:
+      dtype: str
+      required: true
+    region1:
+      dtype: str
+      required: true
+    region2:
+      dtype: str
+      required: true
+    region3:
+      dtype: str
+      required: true
+
+  steps:
+    predict1:
+      cab: crystalball
+      params:
+        ms: '{recipe.ms_primary}'
+        sky_model: '{recipe.source_list}'
+        within: '{recipe.region1}'
+        output_column: DE_MODEL1
+        num_workers: 8
+        memory_fraction: 0.5
+    predict2:
+      cab: crystalball
+      params:
+        ms: '{recipe.ms_primary}'
+        sky_model: '{recipe.source_list}'
+        within: '{recipe.region2}'
+        output_column: DE_MODEL2
+        num_workers: 8
+        memory_fraction: 0.5
+    predict3:
+      cab: crystalball
+      params:
+        ms: '{recipe.ms_primary}'
+        sky_model: '{recipe.source_list}'
+        within: '{recipe.region3}'
+        output_column: DE_MODEL3
+        num_workers: 8
+        memory_fraction: 0.5
