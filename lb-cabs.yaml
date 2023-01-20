@@ -318,14 +318,21 @@ cabs:
       multiscale:
         dtype: bool
         default: false
-      multiscale-max-scales:
+      multiscale_max_scales:
         dtype: int
         default: 7
         info: Maximum number of scales to use during cleaning
-      multiscale-gain:
+      multiscale_gain:
         dtype: float
         default: 0.15
         info: Sub-minor loop gain
+      save_source_list:
+        dtype: bool
+        default: false
+        info:
+          Saves the found clean components as a BBS/NDPPP text sky model.
+          This parameter enables Gaussian shapes during multi-scale cleaning
+          i.e. sets -multiscale-shape gaussian.
 
 
 
