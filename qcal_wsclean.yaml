@@ -360,7 +360,7 @@ goqcal:
     mask0:
       cab: breizorro
       params:
-        restored_image: '{recipe.basedir}/target.1GC.masked-MFS-image.fits'
+        restored_image: '{recipe.basedir}/target.1GC-MFS-image.fits'
         outfile: '{recipe.basedir}/target.1GC-mask.fits'
         threshold: 10.5
 
@@ -449,6 +449,7 @@ goqcal:
         auto_threshold: 1.5
         fits_mask: '{recipe.basedir}/target.1GC-mask.fits'
         save_source_list: true
+        fit_spectral_pol: 2
 
     mask1:
       cab: breizorro

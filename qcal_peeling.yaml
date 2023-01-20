@@ -28,32 +28,35 @@ gopeel:
     region3:
       dtype: str
       required: true
+    basedir:
+      dtype: str
+      required: true
 
   steps:
     predict1:
       cab: crystalball
       params:
-        ms: '{recipe.ms_primary}'
-        sky_model: '{recipe.source_list}'
-        within: '{recipe.region1}'
+        ms: '{recipe.ms}'
+        sky_model: '{recipe.basedir}/{recipe.source_list}'
+        within: '{recipe.basedir}/{recipe.region1}'
         output_column: DE_MODEL1
         num_workers: 8
         memory_fraction: 0.5
     predict2:
       cab: crystalball
       params:
-        ms: '{recipe.ms_primary}'
-        sky_model: '{recipe.source_list}'
-        within: '{recipe.region2}'
+        ms: '{recipe.ms}'
+        sky_model: '{recipe.basedir}/{recipe.source_list}'
+        within: '{recipe.basedir}/{recipe.region2}'
         output_column: DE_MODEL2
         num_workers: 8
         memory_fraction: 0.5
     predict3:
       cab: crystalball
       params:
-        ms: '{recipe.ms_primary}'
-        sky_model: '{recipe.source_list}'
-        within: '{recipe.region3}'
+        ms: '{recipe.ms}'
+        sky_model: '{recipe.basedir}/{recipe.source_list}'
+        within: '{recipe.basedir}/{recipe.region3}'
         output_column: DE_MODEL3
         num_workers: 8
         memory_fraction: 0.5
