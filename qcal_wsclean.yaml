@@ -189,8 +189,8 @@ goqcal:
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_corr: [0, 3]
         input_model.apply_p_jones: false
-        solver.terms: [G,K,B,P,D]
-        solver.iter_recipe: [0,0,0,50,50,0,0,0,25,25,0,0,0,10,10]
+        solver.terms: [G,K,B,D]
+        solver.iter_recipe: [0,0,0,50,0,0,0,25,0,0,0,10]
         solver.propagate_flags: true
         solver.robust: true
         solver.reweighting_flag_threshold: 0
@@ -207,7 +207,7 @@ goqcal:
         dask.threads: 2
         dask.scheduler: threads
         G.type: complex
-        G.time_interval: 0
+        G.time_interval: 1
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/gkb.qc/G'
         G.interp_method: 2dlinear
@@ -276,8 +276,8 @@ goqcal:
         input_ms.select_corr: [0, 3]
         input_ms.sigma_column: SIGMA_SPECTRUM
         input_model.apply_p_jones: false
-        solver.terms: [G,K,B,D,P]
-        solver.iter_recipe: [0,0,0,0,0]
+        solver.terms: [G,K,B,D]
+        solver.iter_recipe: [0,0,0,0]
         solver.propagate_flags: false
         solver.robust: false
         solver.reweighting_flag_threshold: 0
@@ -290,7 +290,7 @@ goqcal:
         output.columns: [WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [G,K,B,P,D]
+        output.net_gains: [G,K,B,D]
         mad_flags.enable: false
         dask.threads: 8
         dask.scheduler: threads
@@ -313,12 +313,6 @@ goqcal:
         B.load_from: '{recipe.basedir}/gkb.qc/B'
         B.interp_method: 2dlinear
         B.interp_mode: ampphase
-        P.type: phase
-        P.time_interval: 1
-        P.freq_interval: 0
-        P.load_from: '{recipe.basedir}/dp.qc/P'
-        P.interp_method: 2dlinear
-        P.interp_mode: ampphase
         D.type: delay
         D.time_interval: 1
         D.freq_interval: 0
