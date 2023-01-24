@@ -16,18 +16,30 @@ gopeel:
     ms:
       dtype: MS
       required: true
+    model_column:
+      dtype: str
+      default: MODEL_DATA
     source_list:
       dtype: str
       required: true
     region1:
       dtype: str
       required: true
+    decol1:
+      dtype: str
+      default: DE_MODEL1
     region2:
       dtype: str
       required: true
+    decol2:
+      dtype: str
+      default: DE_MODEL2
     region3:
       dtype: str
       required: true
+    decol3:
+      dtype: str
+      default: DE_MODEL2
     basedir:
       dtype: str
       required: true
@@ -39,7 +51,7 @@ gopeel:
         ms: '{recipe.ms}'
         sky_model: '{recipe.basedir}/{recipe.source_list}'
         within: '{recipe.basedir}/{recipe.region1}'
-        output_column: DE_MODEL1
+        output_column: '{recipe.decol1}'
         num_workers: 8
         memory_fraction: 0.5
     predict2:
@@ -48,7 +60,7 @@ gopeel:
         ms: '{recipe.ms}'
         sky_model: '{recipe.basedir}/{recipe.source_list}'
         within: '{recipe.basedir}/{recipe.region2}'
-        output_column: DE_MODEL2
+        output_column: '{recipe.decol1}'
         num_workers: 8
         memory_fraction: 0.5
     predict3:
@@ -57,6 +69,53 @@ gopeel:
         ms: '{recipe.ms}'
         sky_model: '{recipe.basedir}/{recipe.source_list}'
         within: '{recipe.basedir}/{recipe.region3}'
-        output_column: DE_MODEL3
+        output_column: '{recipe.decol1}'
         num_workers: 8
         memory_fraction: 0.5
+
+    ddcal:
+      cab: quartical
+      params:
+        input_ms.path: '{recipe.ms}'
+        input_ms.time_chunk: '0'
+        input_ms.freq_chunk: '0'
+        input_ms.select_uv_range: [0,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+        input_ms.sigma_column: SIGMA_SPECTRUM
+        input_model.apply_p_jones: false
+        input_model.recipe: '{recipe.model_column}~{recipe.decol1}~{recipe.decol2}~{recipe.decol3}:{recipe.decol1}:{recipe.decol2}:{recipe.decol3}'
+        solver.terms: [N, G, DE]
+        solver.iter_recipe: [0, 25, 25, 0, 15, 15, 0, 5, 5]
+        solver.propagate_flags: false
+        solver.robust: true
+        solver.reweighting_flag_threshold: 0
+        solver.threads: 6
+        solver.reference_antenna: 57
+        output.gain_directory: '{recipe.basedir}/ddcal.qc'
+        output.log_directory: '{recipe.basedir}/'
+        output.overwrite: true
+        output.products: [corrected_residual]
+        output.columns: [CORRECTED_DATA]
+        output.flags: false
+        output.apply_p_jones_inv: false
+        output.net_gains: [N, G, DE]
+        output.subtract_directions: [1,2,3]
+        mad_flags.enable: false
+        dask.threads: 6
+        dask.scheduler: threads
+        N.type: complex
+        N.time_interval: 1
+        N.freq_interval: 1
+        N.load_from: '{recipe.basedir}/selfcal.qc/GN-net'
+        N.interp_method: 2dlinear
+        N.interp_mode: ampphase
+        N.initial_estimate: false
+        G.type: phase
+        G.time_interval: 8
+        G.freq_interval: 0
+        G.initial_estimate: false
+        DE.type: complex
+        DE.direction_dependent: true
+        DE.time_interval: 8
+        DE.freq_interval: 0
+        DE.initial_estimate: false
