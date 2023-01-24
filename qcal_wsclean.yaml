@@ -180,9 +180,7 @@ goqcal:
 
     secdp:
       cab: quartical
-      info: DP on the secondary where
-            P = time variable phase only gain,
-            D = per scan delay refinement
+      info: inactive GKB + D where D is a per scan delay + phase refinement
       params:
         input_ms.path: '{recipe.ms_secondary}'
         input_ms.time_chunk: '0'
