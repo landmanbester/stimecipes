@@ -354,7 +354,7 @@ goqcal:
     mask0:
       cab: breizorro
       params:
-        restored_image: '{recipe.basedir}/target.1GC-MFS-image.fits'
+        restored_image: '{recipe.basedir}/target.1GC-image.fits'
         outfile: '{recipe.basedir}/target.1GC-mask.fits'
         threshold: 10.5
 
@@ -387,7 +387,7 @@ goqcal:
         input_ms.path: '{recipe.ms_target}'
         input_ms.time_chunk: '0'
         input_ms.freq_chunk: '0'
-        input_ms.select_uv_range: [250,0]
+        input_ms.select_uv_range: [100,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_corr: [0, 3]
         input_ms.sigma_column: SIGMA_SPECTRUM
