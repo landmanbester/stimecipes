@@ -144,37 +144,37 @@ goqcal:
         B.time_interval: 0
         B.freq_interval: 1
 
-    plotprimpball:
-      cab: casa.plotms
-      params:
-        vis: '{recipe.ms_primary}'
-        xaxis: real
-        yaxis: imag
-        correlation: XX,YY
-        xdatacolumn: corrected
-        ydatacolumn: corrected
-        coloraxis: corr
-        avgbaseline: false
-        uvrange: '>250m'
-        plotfile: '{recipe.basedir}/primary.phase.ball.png'
-        showgui: false
-        overwrite: true
+    # plotprimpball:
+    #   cab: casa.plotms
+    #   params:
+    #     vis: '{recipe.ms_primary}'
+    #     xaxis: real
+    #     yaxis: imag
+    #     correlation: XX,YY
+    #     xdatacolumn: corrected
+    #     ydatacolumn: corrected
+    #     coloraxis: corr
+    #     avgbaseline: false
+    #     uvrange: '>250m'
+    #     plotfile: '{recipe.basedir}/primary.phase.ball.png'
+    #     showgui: false
+    #     overwrite: true
 
-    plotprimratio:
-      cab: casa.plotms
-      params:
-        vis: '{recipe.ms_primary}'
-        xaxis: time
-        yaxis: amp
-        correlation: XX,YY
-        xdatacolumn: model
-        ydatacolumn: corrected/model
-        coloraxis: corr
-        avgbaseline: false
-        uvrange: '>250m'
-        plotfile: '{recipe.basedir}/primary.abs.ratio.png'
-        showgui: false
-        overwrite: true
+    # plotprimratio:
+    #   cab: casa.plotms
+    #   params:
+    #     vis: '{recipe.ms_primary}'
+    #     xaxis: time
+    #     yaxis: amp
+    #     correlation: XX,YY
+    #     xdatacolumn: model
+    #     ydatacolumn: corrected/model
+    #     coloraxis: corr
+    #     avgbaseline: false
+    #     uvrange: '>250m'
+    #     plotfile: '{recipe.basedir}/primary.abs.ratio.png'
+    #     showgui: false
+    #     overwrite: true
 
     # flagsec0:
     #   cab: casa.flagdata
@@ -235,37 +235,37 @@ goqcal:
         D.initial_estimate: false
 
 
-    plotsecpball:
-      cab: casa.plotms
-      params:
-        vis: '{recipe.ms_secondary}'
-        xaxis: real
-        yaxis: imag
-        correlation: XX,YY
-        xdatacolumn: corrected
-        ydatacolumn: corrected
-        coloraxis: corr
-        avgbaseline: false
-        uvrange: '>250m'
-        plotfile: '{recipe.basedir}/secondary.phase.ball.png'
-        showgui: false
-        overwrite: true
+    # plotsecpball:
+    #   cab: casa.plotms
+    #   params:
+    #     vis: '{recipe.ms_secondary}'
+    #     xaxis: real
+    #     yaxis: imag
+    #     correlation: XX,YY
+    #     xdatacolumn: corrected
+    #     ydatacolumn: corrected
+    #     coloraxis: corr
+    #     avgbaseline: false
+    #     uvrange: '>250m'
+    #     plotfile: '{recipe.basedir}/secondary.phase.ball.png'
+    #     showgui: false
+    #     overwrite: true
 
-    plotsecratio:
-      cab: casa.plotms
-      params:
-        vis: '{recipe.ms_secondary}'
-        xaxis: time
-        yaxis: amp
-        correlation: XX,YY
-        xdatacolumn: model
-        ydatacolumn: corrected/model
-        coloraxis: corr
-        avgbaseline: false
-        uvrange: '>250m'
-        plotfile: '{recipe.basedir}/secondary.abs.ratio.png'
-        showgui: false
-        overwrite: true
+    # plotsecratio:
+    #   cab: casa.plotms
+    #   params:
+    #     vis: '{recipe.ms_secondary}'
+    #     xaxis: time
+    #     yaxis: amp
+    #     correlation: XX,YY
+    #     xdatacolumn: model
+    #     ydatacolumn: corrected/model
+    #     coloraxis: corr
+    #     avgbaseline: false
+    #     uvrange: '>250m'
+    #     plotfile: '{recipe.basedir}/secondary.abs.ratio.png'
+    #     showgui: false
+    #     overwrite: true
 
 
     transfertarget:
