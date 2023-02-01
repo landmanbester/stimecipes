@@ -319,7 +319,7 @@ goqcal:
         B.interp_mode: ampphase
         D.type: delay
         D.time_interval: 1
-        D.freq_interval: 1
+        D.freq_interval: 0
         D.initial_estimate: false
         D.load_from: '{recipe.basedir}/dp.qc/D'
         D.interp_method: 2dlinear
@@ -394,7 +394,7 @@ goqcal:
         input_model.apply_p_jones: false
         input_model.recipe: '{recipe.model_column}'
         solver.terms: [G, N]
-        solver.iter_recipe: [50, 0, 25,0,10,0,10,0,10,0]
+        solver.iter_recipe: [50,0,25,0,10,0,10,0,10,0]
         solver.propagate_flags: false
         solver.robust: true
         solver.reweighting_flag_threshold: 0
