@@ -180,9 +180,7 @@ goqcal:
 
     secdp:
       cab: quartical
-      info: DP on the secondary where
-            P = time variable phase only gain,
-            D = per scan delay refinement
+      info: inactive GKB + D where D is a per scan delay + phase refinement
       params:
         input_ms.path: '{recipe.ms_secondary}'
         input_ms.time_chunk: '0'
@@ -209,7 +207,7 @@ goqcal:
         dask.threads: 2
         dask.scheduler: threads
         G.type: complex
-        G.time_interval: 0
+        G.time_interval: 1
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/gkb.qc/G'
         G.interp_method: 2dlinear
@@ -292,7 +290,7 @@ goqcal:
         output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [G,K,B,P,D]
+        output.net_gains: [G,K,B,D]
         mad_flags.enable: false
         dask.threads: 8
         dask.scheduler: threads
@@ -352,7 +350,7 @@ goqcal:
     mask0:
       cab: breizorro
       params:
-        restored_image: '{recipe.basedir}/target.1GC.masked-MFS-image.fits'
+        restored_image: '{recipe.basedir}/target.1GC-MFS-image.fits'
         outfile: '{recipe.basedir}/target.1GC-mask.fits'
         threshold: 10.5
 
@@ -392,9 +390,9 @@ goqcal:
         input_model.apply_p_jones: false
         input_model.recipe: '{recipe.model_column}'
         solver.terms: [G, N]
-        solver.iter_recipe: [50, 0]  #25,0,10,0,10,0,10,0]
+        solver.iter_recipe: [50, 0, 25,0,10,0,10,0,10,0]
         solver.propagate_flags: false
-        solver.robust: false
+        solver.robust: true
         solver.reweighting_flag_threshold: 0
         solver.threads: 4
         solver.reference_antenna: 57
@@ -441,4 +439,5 @@ goqcal:
         auto_threshold: 1.5
         fits_mask: '{recipe.basedir}/target.1GC-mask.fits'
         save_source_list: true
+        fit_spectral_pol: 2
 
