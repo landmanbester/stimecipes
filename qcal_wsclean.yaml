@@ -418,7 +418,7 @@ goqcal:
         N.type: complex
         N.time_interval: 1
         N.freq_interval: 1
-        N.load_from: '{recipe.basedir}/target.qc/GKBPD-net'
+        N.load_from: '{recipe.basedir}/target.qc/GKBD-net'
         N.interp_method: 2dlinear
         N.interp_mode: ampphase
         N.initial_estimate: false
