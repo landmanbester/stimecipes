@@ -132,7 +132,7 @@ goqcal:
         G.type: complex
         G.time_interval: 0
         G.freq_interval: 0
-        K.type: delay
+        K.type: pure_delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: true
@@ -191,8 +191,8 @@ goqcal:
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_corr: [0, 3]
         input_model.apply_p_jones: false
-        solver.terms: [G,K,B,P,D]
-        solver.iter_recipe: [0,0,0,50,50,0,0,0,25,25,0,0,0,10,10]
+        solver.terms: [G,K,B,D]
+        solver.iter_recipe: [0,0,0,50,0,0,0,25,0,0,0,10]
         solver.propagate_flags: true
         solver.robust: true
         solver.reweighting_flag_threshold: 0
@@ -213,8 +213,8 @@ goqcal:
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/gkb.qc/G'
         G.interp_method: 2dlinear
-        G.interp_mode: ampphase
-        K.type: delay
+        G.interp_mode: amp
+        K.type: pure_delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
@@ -227,9 +227,6 @@ goqcal:
         B.load_from: '{recipe.basedir}/gkb.qc/B'
         B.interp_method: 2dlinear
         B.interp_mode: ampphase
-        P.type: phase
-        P.time_interval: 0
-        P.freq_interval: 0
         D.type: delay
         D.time_interval: 0
         D.freq_interval: 0
@@ -281,8 +278,8 @@ goqcal:
         input_ms.select_corr: [0, 3]
         input_ms.sigma_column: SIGMA_SPECTRUM
         input_model.apply_p_jones: false
-        solver.terms: [G,K,B,D,P]
-        solver.iter_recipe: [0,0,0,0,0]
+        solver.terms: [G,K,B,D]
+        solver.iter_recipe: [0,0,0,0]
         solver.propagate_flags: false
         solver.robust: false
         solver.reweighting_flag_threshold: 0
@@ -291,8 +288,8 @@ goqcal:
         output.gain_directory: '{recipe.basedir}/target.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        output.products: [corrected_weight]
-        output.columns: [WEIGHT_SPECTRUM]
+        output.products: [corrected_data, corrected_weight]
+        output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [G,K,B,P,D]
@@ -304,8 +301,8 @@ goqcal:
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/gkb.qc/G'
         G.interp_method: 2dlinear
-        G.interp_mode: ampphase
-        K.type: delay
+        G.interp_mode: amp
+        K.type: pure_delay
         K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
@@ -318,15 +315,9 @@ goqcal:
         B.load_from: '{recipe.basedir}/gkb.qc/B'
         B.interp_method: 2dlinear
         B.interp_mode: ampphase
-        P.type: phase
-        P.time_interval: 1
-        P.freq_interval: 0
-        P.load_from: '{recipe.basedir}/dp.qc/P'
-        P.interp_method: 2dlinear
-        P.interp_mode: ampphase
         D.type: delay
         D.time_interval: 1
-        D.freq_interval: 0
+        D.freq_interval: 1
         D.initial_estimate: false
         D.load_from: '{recipe.basedir}/dp.qc/D'
         D.interp_method: 2dlinear
@@ -345,7 +336,7 @@ goqcal:
         ms: '{recipe.ms_target}'
         name: '{recipe.basedir}/target.1GC'
         data_column: CORRECTED_DATA
-        channels_out: 2
+        channels_out: 1
         size: 8192
         scale: 1.5asec
         join_channels: true
@@ -356,6 +347,7 @@ goqcal:
         gain: 0.1
         niter: 100000
         auto_threshold: 5
+        nmiter: 10
 
     mask0:
       cab: breizorro
@@ -370,7 +362,7 @@ goqcal:
         ms: '{recipe.ms_target}'
         name: '{recipe.basedir}/target.1GC.masked'
         data_column: CORRECTED_DATA
-        channels_out: 2
+        channels_out: 1
         size: 8192
         scale: 1.5asec
         join_channels: true
@@ -449,11 +441,4 @@ goqcal:
         auto_threshold: 1.5
         fits_mask: '{recipe.basedir}/target.1GC-mask.fits'
         save_source_list: true
-
-    mask1:
-      cab: breizorro
-      params:
-        restored_image: '{recipe.basedir}/target.selfcal0-MFS-image.fits'
-        outfile: '{recipe.basedir}/target.selfcal0-mask.fits'
-        threshold: 10.5
 
