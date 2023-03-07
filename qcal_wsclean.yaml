@@ -229,7 +229,7 @@ goqcal:
         B.load_from: '{recipe.basedir}/gkb.qc/B'
         B.interp_method: 2dlinear
         B.interp_mode: ampphase
-        D.type: delay
+        D.type: delay  # exp(1.0j(delay * nu + phi))
         D.time_interval: 0
         D.freq_interval: 0
         D.initial_estimate: false

@@ -106,6 +106,7 @@ gotriA:
       cab: casa.gaincal
       params:
         vis: '{recipe.ms_primary}'
+        # vis: =recipe.ms_primary
         field: J1939-6342
         caltable: prim.K0
         gaintype: K
