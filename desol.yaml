@@ -1,6 +1,6 @@
-include:
+_include:
   - (pfb)stimela_cabs.yaml
-  # - (quartical)stimela_cabs.yaml
+  - (quartical)stimela_cabs.yaml
 
 
 opts:
