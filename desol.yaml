@@ -64,6 +64,7 @@ desol:
         data_column: '{recipe.data_column}'
         weight_column: '{recipe.weight_column}'
         output_filename: '{recipe.pfb_output_dir}/full'
+        nband: 1
 
     grid_full:
       cab: pfb_grid
@@ -164,6 +165,7 @@ desol:
         data_column: DESOL_DATA
         weight_column: '{recipe.weight_column}'
         output_filename: '{recipe.pfb_output_dir}/resid'
+        nband: 1
 
     grid_desol:
       cab: pfb_grid
