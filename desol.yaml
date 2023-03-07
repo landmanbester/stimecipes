@@ -1,6 +1,6 @@
 include:
   - (pfb)stimela_cabs.yaml
-  - (quartical)stimela_cabs.yaml
+  # - (quartical)stimela_cabs.yaml
 
 
 opts:
@@ -105,49 +105,49 @@ desol:
         postfix: sun
         nband_out: "{recipe.nband_out}"
 
-    subtract_sol:
-      cab: quartical
-      info:
-        Subtract sun model column
-      params:
-        input_ms.path: '{recipe.ms}'
-        input_ms.weight_column: WEIGHT_SPECTRUM
-        input_ms.time_chunk: '0'
-        input_ms.freq_chunk: '128'
-        input_ms.select_uv_range: [0,0]
-        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
-        input_ms.select_corr: [0, 3]
-        input_model.recipe: '{recipe.sol_column}'
-        input_model.apply_p_jones: false
-        solver.terms: [G]
-        solver.iter_recipe: [0]
-        solver.propagate_flags: false
-        solver.robust: false
-        solver.reweighting_flag_threshold: 0
-        solver.threads: 1
-        solver.reference_antenna: 0
-        output.gain_directory: '{recipe.qcal_output_filename}/unity.qc'
-        output.log_directory: '{recipe.qcal_output_filename}/'
-        output.overwrite: false
-        output.products: [residual]
-        output.columns: [DESOL_DATA]
-        output.flags: false
-        output.apply_p_jones_inv: false
-        output.net_gains: []
-        mad_flags.enable: false
-        dask.threads: 8
-        dask.scheduler: threads
-        G.type: complex
-        G.time_interval: 1
-        G.freq_interval: 1
+    # subtract_sol:
+    #   cab: quartical
+    #   info:
+    #     Subtract sun model column
+    #   params:
+    #     input_ms.path: '{recipe.ms}'
+    #     input_ms.weight_column: WEIGHT_SPECTRUM
+    #     input_ms.time_chunk: '0'
+    #     input_ms.freq_chunk: '128'
+    #     input_ms.select_uv_range: [0,0]
+    #     input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+    #     input_ms.select_corr: [0, 3]
+    #     input_model.recipe: '{recipe.sol_column}'
+    #     input_model.apply_p_jones: false
+    #     solver.terms: [G]
+    #     solver.iter_recipe: [0]
+    #     solver.propagate_flags: false
+    #     solver.robust: false
+    #     solver.reweighting_flag_threshold: 0
+    #     solver.threads: 1
+    #     solver.reference_antenna: 0
+    #     output.gain_directory: '{recipe.qcal_output_filename}/unity.qc'
+    #     output.log_directory: '{recipe.qcal_output_filename}/'
+    #     output.overwrite: false
+    #     output.products: [residual]
+    #     output.columns: [DESOL_DATA]
+    #     output.flags: false
+    #     output.apply_p_jones_inv: false
+    #     output.net_gains: []
+    #     mad_flags.enable: false
+    #     dask.threads: 8
+    #     dask.scheduler: threads
+    #     G.type: complex
+    #     G.time_interval: 1
+    #     G.freq_interval: 1
 
-    grid_desol:
-      cab: pfb_grid
-      info:
-        Create dirty image after subtracting the sun
-      params:
-        field_of_view: 22
-        super_resolution_factor: 1.15
-        psf: false
-        weight: false
-        nband: 1
+    # grid_desol:
+    #   cab: pfb_grid
+    #   info:
+    #     Create dirty image after subtracting the sun
+    #   params:
+    #     field_of_view: 22
+    #     super_resolution_factor: 1.15
+    #     psf: false
+    #     weight: false
+    #     nband: 1
