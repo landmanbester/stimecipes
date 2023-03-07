@@ -63,7 +63,7 @@ desol:
         ms: '{recipe.ms}'
         data_column: '{recipe.data_column}'
         weight_column: '{recipe.weight_column}'
-        output_filename: '{recipe.pfb_out}/full'
+        output_filename: '{recipe.pfb_output_dir}/full'
 
     grid_full:
       cab: pfb_grid
@@ -75,7 +75,7 @@ desol:
         psf: false
         weight: false
         nband: 1
-        output_filename: '{recipe.pfb_out}/full'
+        output_filename: '{recipe.pfb_output_dir}/full'
 
     init:
       cab: pfb_init
@@ -85,7 +85,7 @@ desol:
         ms: '{recipe.ms}'
         data_column: '{recipe.data_column}'
         weight_column: '{recipe.weight_column}'
-        output_filename: '{recipe.pfb_out}/test'
+        output_filename: '{recipe.pfb_output_dir}/test'
 
     grid_sol:
       cab: pfb_grid
@@ -96,7 +96,7 @@ desol:
         super_resolution_factor: 2.0
         target: Sun
         postfix: sun
-        output_filename: '{recipe.pfb_out}/test'
+        output_filename: '{recipe.pfb_output_dir}/test'
 
     clean_sol:
       cab: pfb_clean
@@ -107,7 +107,7 @@ desol:
         nmiter: 10
         sigmathreshold: 2.0
         mop_gamma: 0.8
-        output_filename: '{recipe.pfb_out}/test'
+        output_filename: '{recipe.pfb_output_dir}/test'
 
     degrid_sol:
       cab: pfb_degrid
@@ -117,7 +117,7 @@ desol:
         model_column: "{recipe.sol_column}"
         postfix: sun
         nband_out: "{recipe.nband_out}"
-        output_filename: '{recipe.pfb_out}/test'
+        output_filename: '{recipe.pfb_output_dir}/test'
 
     subtract_sol:
       cab: quartical
@@ -140,8 +140,8 @@ desol:
         solver.reweighting_flag_threshold: 0
         solver.threads: 1
         solver.reference_antenna: 0
-        output.gain_directory: '{recipe.qcal_output_filename}/unity.qc'
-        output.log_directory: '{recipe.qcal_output_filename}/'
+        output.gain_directory: '{recipe.qcal_output_dir}/unity.qc'
+        output.log_directory: '{recipe.qcal_output_dir}/'
         output.overwrite: false
         output.products: [residual]
         output.columns: [DESOL_DATA]
@@ -163,7 +163,7 @@ desol:
         ms: '{recipe.ms}'
         data_column: DESOL_DATA
         weight_column: '{recipe.weight_column}'
-        output_filename: '{recipe.pfb_out}/resid'
+        output_filename: '{recipe.pfb_output_dir}/resid'
 
     grid_desol:
       cab: pfb_grid
@@ -175,4 +175,4 @@ desol:
         psf: false
         weight: false
         nband: 1
-        output_filename: '{recipe.pfb_out}/resid'
+        output_filename: '{recipe.pfb_output_dir}/resid'
