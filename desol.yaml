@@ -178,3 +178,75 @@ desol:
         weight: false
         nband: 1
         output_filename: '{recipe.pfb_output_dir}/resid'
+
+    grid_main:
+      cab: pfb_grid
+      info:
+        Create dirty image and PSF for main field
+      params:
+        field_of_view: 3.0
+        super_resolution_factor: 2.0
+        output_filename: '{recipe.pfb_output_dir}/test'
+
+    clean_main:
+      cab: pfb_clean
+      info:
+        Run CLEAN separately on main field
+      params:
+        postfix: sun
+        nmiter: 10
+        sigmathreshold: 2.0
+        mop_gamma: 0.8
+        output_filename: '{recipe.pfb_output_dir}/test'
+
+    degrid_main:
+      cab: pfb_degrid
+      info:
+        Predict sun model to separate column
+      params:
+        model_column: "{recipe.model_column}"
+        nband_out: "{recipe.nband_out}"
+        output_filename: '{recipe.pfb_output_dir}/test'
+
+    peel_sol:
+      cab: quartical
+      info:
+        Selfcal + peel sun
+      params:
+        input_ms.path: '{recipe.ms}'
+        input_ms.weight_column: WEIGHT_SPECTRUM
+        input_ms.time_chunk: '14'
+        input_ms.freq_chunk: '0'
+        input_ms.select_uv_range: [150,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+        input_ms.select_corr:
+        input_model.recipe: '{recipe.model_column}:{recipe.sol_column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G,dE]
+        solver.iter_recipe: [50,50,25,25,10,10,5,5]
+        solver.propagate_flags: false
+        solver.robust: true
+        solver.reweighting_flag_threshold: 0
+        solver.threads: 4
+        solver.reference_antenna: 0
+        output.gain_directory: '{recipe.qcal_output_dir}/peeled.qc'
+        output.log_directory: '{recipe.qcal_output_dir}/'
+        output.overwrite: false
+        output.products: [corrected_residual]
+        output.columns: [CORRECTED_DATA]
+        output.subtract_directions: [1]
+        output.flags: false
+        output.apply_p_jones_inv: false
+        output.net_gains: []
+        mad_flags.enable: false
+        dask.threads: 8
+        dask.scheduler: threads
+        G.type: delay
+        G.time_interval: 7
+        G.freq_interval: 0
+        G.initial_estimate: false
+        dE.type: complex
+        dE.time_interval: 14
+        dE.freq_interval: 256
+        dE.directon_dependent: true
+

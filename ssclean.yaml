@@ -14,6 +14,7 @@ ssclean:
     ms:
       dtype: MS
       required: true
+      aliases: ['*.ms']
     nband:
       required: True
       aliases: ['*.nband']
@@ -40,6 +41,7 @@ ssclean:
         Path to mask.fits
     field_of_view:
       dtype: float
+      default: 2.5
       info:
         Field of view in degrees
     super_resolution_factor:
@@ -54,7 +56,7 @@ ssclean:
         Number of major iterations
     sigmathreshold:
       dtype: float
-      default: 2.0
+      default: 3.0
       info:
         Multiple of the rms at which to terminate the minor cycle
     gamma:
@@ -94,6 +96,7 @@ ssclean:
         Robustness factor for Briggs weighting. None means natural.
         A value of less than -2 implies uniform
     nthreads:
+      default: 8
       aliases: ['*.nthreads']
       info:
         Total number of threads to use between all processes.
@@ -103,6 +106,11 @@ ssclean:
       aliases: ["*.scheduler"]
       info:
         Which dask scheduler to use.
+    overwrite:
+      default: false
+      aliases: ["*.overwrite"]
+      info:
+        Allow overwriting of existing input
 
   steps:
     init:
@@ -111,7 +119,6 @@ ssclean:
         Precompute visibilities for output products.
         In this case simply the Stokes I visibilities.
       params:
-        ms: '{recipe.ms}'
         data_column: '{recipe.data_column}'
         weight_column: '{recipe.weight_column}'
         max_field_of_view: '{recipe.field_of_view}'
@@ -121,7 +128,6 @@ ssclean:
       info:
         Flip visibilties into image space data products
       params:
-        residual: false
         field_of_view: '{recipe.field_of_view}'
         super_resolution_factor: '{recipe.super_resolution_factor}'
 
@@ -130,8 +136,16 @@ ssclean:
       info:
         Deconvolve with single scale modified Clark clean algorithm
       params:
-        do_residual: true
         nmiter: '{recipe.nmiter}'
         sigmathreshold: '{recipe.sigmathreshold}'
         gamma: '{recipe.gamma}'
         peak_factor: '{recipe.peak_factor}'
+
+    degrid:
+      cab: pfb_degrid
+      info:
+        Turn model image into visibilities
+      params:
+        model_column: "{recipe.model_column}"
+
+
