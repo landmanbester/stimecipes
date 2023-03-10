@@ -32,6 +32,8 @@ desol:
       default: MODEL_DATA
     sol_column:
       default: SOL_DATA
+    sgr_column:
+      default: SGRA_DATA
     nthreads:
       dtype: int
       aliases: ['*.nthreads']
@@ -55,7 +57,7 @@ desol:
       aliases: ["*.robustness"]
 
   steps:
-    init_full:
+    init:
       cab: pfb_init
       info:
         Precompute Stokes I visibilities.
@@ -63,8 +65,7 @@ desol:
         ms: '{recipe.ms}'
         data_column: '{recipe.data_column}'
         weight_column: '{recipe.weight_column}'
-        output_filename: '{recipe.pfb_output_dir}/full'
-        nband: 1
+        output_filename: '{recipe.pfb_output_dir}/orig'
 
     grid_full:
       cab: pfb_grid
@@ -75,18 +76,9 @@ desol:
         super_resolution_factor: 1.15
         psf: false
         weight: false
-        nband: 1
-        output_filename: '{recipe.pfb_output_dir}/full'
-
-    init:
-      cab: pfb_init
-      info:
-        Precompute Stokes I visibilities.
-      params:
-        ms: '{recipe.ms}'
-        data_column: '{recipe.data_column}'
-        weight_column: '{recipe.weight_column}'
-        output_filename: '{recipe.pfb_output_dir}/test'
+        concat_chan: true
+        output_filename: '{recipe.pfb_output_dir}/orig'
+        postfix: 'full'
 
     grid_sol:
       cab: pfb_grid
@@ -97,7 +89,7 @@ desol:
         super_resolution_factor: 2.0
         target: Sun
         postfix: sun
-        output_filename: '{recipe.pfb_output_dir}/test'
+        output_filename: '{recipe.pfb_output_dir}/orig'
 
     clean_sol:
       cab: pfb_clean
@@ -106,9 +98,9 @@ desol:
       params:
         postfix: sun
         nmiter: 10
-        sigmathreshold: 2.0
+        sigmathreshold: 1.5
         mop_gamma: 0.8
-        output_filename: '{recipe.pfb_output_dir}/test'
+        output_filename: '{recipe.pfb_output_dir}/orig'
 
     degrid_sol:
       cab: pfb_degrid
@@ -118,7 +110,7 @@ desol:
         model_column: "{recipe.sol_column}"
         postfix: sun
         nband_out: "{recipe.nband_out}"
-        output_filename: '{recipe.pfb_output_dir}/test'
+        output_filename: '{recipe.pfb_output_dir}/orig'
 
     subtract_sol:
       cab: quartical
@@ -164,51 +156,86 @@ desol:
         ms: '{recipe.ms}'
         data_column: DESOL_DATA
         weight_column: '{recipe.weight_column}'
-        output_filename: '{recipe.pfb_output_dir}/resid'
-        nband: 1
+        output_filename: '{recipe.pfb_output_dir}/desol'
 
-    grid_desol:
+    grid_desol_full:
       cab: pfb_grid
       info:
-        Create dirty image containing both objects
+        Create residual image after subtracting the sun
       params:
         field_of_view: 22
         super_resolution_factor: 1.15
         psf: false
         weight: false
-        nband: 1
-        output_filename: '{recipe.pfb_output_dir}/resid'
+        concat_chan: true
+        output_filename: '{recipe.pfb_output_dir}/desol'
+        postfix: 'full'
 
     grid_main:
       cab: pfb_grid
       info:
-        Create dirty image and PSF for main field
+        Create dirty image and PSF for main field.
+        We move it slightly to minimize mage size while getting
+        most of the sources in the field
       params:
-        field_of_view: 3.0
-        super_resolution_factor: 2.0
-        output_filename: '{recipe.pfb_output_dir}/test'
+        nx: 10000
+        ny: 8000
+        cell_size: 1.30613
+        output_filename: '{recipe.pfb_output_dir}/desol'
+        target: '17:48:00,-31:19:00'
 
     clean_main:
       cab: pfb_clean
       info:
         Run CLEAN separately on main field
       params:
-        postfix: sun
         nmiter: 10
         sigmathreshold: 2.0
         mop_gamma: 0.8
-        output_filename: '{recipe.pfb_output_dir}/test'
+        output_filename: '{recipe.pfb_output_dir}/desol'
 
     degrid_main:
       cab: pfb_degrid
       info:
-        Predict sun model to separate column
+        Predict main field model to it's own column
       params:
         model_column: "{recipe.model_column}"
         nband_out: "{recipe.nband_out}"
-        output_filename: '{recipe.pfb_output_dir}/test'
+        output_filename: '{recipe.pfb_output_dir}/desol'
 
-    peel_sol:
+    grid_SgrA:
+      cab: pfb_grid
+      info:
+        Create dirty image and PSF for Sgr A*
+      params:
+        field_of_view: 0.25
+        super_resolution_factor: 2.0
+        output_filename: '{recipe.pfb_output_dir}/desol'
+        target: '17:45:40.04,-29:0:28.12'
+        postfix: SgrA
+
+    clean_SgrA:
+      cab: pfb_clean
+      info:
+        Run CLEAN separately on Sgr A* field
+      params:
+        postfix: SgrA
+        nmiter: 10
+        sigmathreshold: 2.0
+        mop_gamma: 0.8
+        output_filename: '{recipe.pfb_output_dir}/desol'
+
+    degrid_SgrA:
+      cab: pfb_degrid
+      info:
+        Predict Sgr A* model to separate column
+      params:
+        postfix: SgrA
+        model_column: "{recipe.sgr_column}"
+        nband_out: "{recipe.nband_out}"
+        output_filename: '{recipe.pfb_output_dir}/desol'
+
+    cal_and_peel_sol:
       cab: quartical
       info:
         Selfcal + peel sun
@@ -220,10 +247,10 @@ desol:
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_corr:
-        input_model.recipe: '{recipe.model_column}:{recipe.sol_column}'
+        input_model.recipe: '{recipe.model_column}:{recipe.sol_column}:{recipe.sgr_column}'
         input_model.apply_p_jones: false
-        solver.terms: [G,dE]
-        solver.iter_recipe: [50,50,25,25,10,10,5,5]
+        solver.terms: [G,dE,J]
+        solver.iter_recipe: [50,50,50,25,25,25,10,10,10,5,5,5]
         solver.propagate_flags: false
         solver.robust: true
         solver.reweighting_flag_threshold: 0
@@ -234,7 +261,7 @@ desol:
         output.overwrite: false
         output.products: [corrected_residual]
         output.columns: [CORRECTED_DATA]
-        output.subtract_directions: [1]
+        output.subtract_directions: [1,2]
         output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains: []
@@ -244,9 +271,63 @@ desol:
         G.type: delay
         G.time_interval: 7
         G.freq_interval: 0
-        G.initial_estimate: false
+        G.initial_estimate: true
         dE.type: complex
         dE.time_interval: 14
         dE.freq_interval: 256
         dE.directon_dependent: true
+        J.type: complex
+        J.time_interval: 14
+        J.freq_interval: 256
+        J.directon_dependent: true
+
+    init_peeled:
+      cab: pfb_init
+      info:
+        Precompute Stokes I visibilities.
+      params:
+        ms: '{recipe.ms}'
+        data_column: CORRECTED_DATA
+        weight_column: '{recipe.weight_column}'
+        output_filename: '{recipe.pfb_output_dir}/peeled'
+
+    grid_peeled_full:
+      cab: pfb_grid
+      info:
+        Create residual image after subtracting the sun
+      params:
+        field_of_view: 22
+        super_resolution_factor: 1.15
+        psf: false
+        weight: false
+        concat_chan: true
+        output_filename: '{recipe.pfb_output_dir}/peeled'
+        postfix: 'full'
+
+    grid_peeled_main:
+      cab: pfb_grid
+      info:
+        Create dirty image and PSF for main field
+      params:
+        field_of_view: 3.0
+        super_resolution_factor: 2.0
+        output_filename: '{recipe.pfb_output_dir}/peeled'
+
+    clean_peeled_main:
+      cab: pfb_clean
+      info:
+        Run CLEAN separately on main field
+      params:
+        nmiter: 10
+        sigmathreshold: 1.5
+        mop_gamma: 0.8
+        output_filename: '{recipe.pfb_output_dir}/peeled'
+
+    restore:
+      cab: pfb_restore
+      info:
+        Restore main field
+      params:
+        output_filename: '{recipe.pfb_output_dir}/peeled'
+
 
