@@ -275,11 +275,11 @@ desol:
         dE.type: complex
         dE.time_interval: 14
         dE.freq_interval: 256
-        dE.directon_dependent: true
+        dE.direction_dependent: true
         J.type: complex
         J.time_interval: 14
         J.freq_interval: 256
-        J.directon_dependent: true
+        J.direction_dependent: true
 
     init_peeled:
       cab: pfb_init
