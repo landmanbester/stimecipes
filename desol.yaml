@@ -72,13 +72,15 @@ desol:
       info:
         Create dirty image containing both objects
       params:
-        field_of_view: 22
-        super_resolution_factor: 1.15
+        nx: 8000
+        ny: 20000
+        cell_size: 2.0
         psf: false
         weight: false
         concat_chan: true
         output_filename: '{recipe.pfb_output_dir}/orig'
         postfix: 'full'
+        target: '17:48:00,-27:00:00'
 
     grid_sol:
       cab: pfb_grid
@@ -163,13 +165,15 @@ desol:
       info:
         Create residual image after subtracting the sun
       params:
-        field_of_view: 22
-        super_resolution_factor: 1.15
+        nx: 8000
+        ny: 20000
+        cell_size: 2.0
         psf: false
         weight: false
         concat_chan: true
         output_filename: '{recipe.pfb_output_dir}/desol'
         postfix: 'full'
+        target: '17:48:00,-27:00:00'
 
     grid_main:
       cab: pfb_grid
@@ -296,22 +300,26 @@ desol:
       info:
         Create residual image after subtracting the sun
       params:
-        field_of_view: 22
-        super_resolution_factor: 1.15
+        nx: 8000
+        ny: 20000
+        cell_size: 2.0
         psf: false
         weight: false
         concat_chan: true
         output_filename: '{recipe.pfb_output_dir}/peeled'
         postfix: 'full'
+        target: '17:48:00,-27:00:00'
 
     grid_peeled_main:
       cab: pfb_grid
       info:
         Create dirty image and PSF for main field
       params:
-        field_of_view: 3.0
-        super_resolution_factor: 2.0
+        nx: 10000
+        ny: 8000
+        cell_size: 1.30613
         output_filename: '{recipe.pfb_output_dir}/peeled'
+        target: '17:48:00,-31:19:00'
 
     clean_peeled_main:
       cab: pfb_clean
