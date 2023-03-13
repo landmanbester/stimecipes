@@ -43,6 +43,9 @@ esoimage:
     field_of_view:
       default: 2.5
       aliases: ['*.field_of_view']
+    overwrite:
+      default: true
+      aliases: ['*.overwrite']
 
   steps:
     init:
