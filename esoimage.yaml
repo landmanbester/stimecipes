@@ -31,11 +31,6 @@ esoimage:
       default: 8
       aliases: ['*.nband']
       info: Number of imaging bands
-    scheduler:
-      dtype: str
-      default: threads
-      aliases: ['*.scheduler']
-      info: Dask scheduler to use
     nthreads:
       dtype: int
       default: 64
@@ -54,6 +49,7 @@ esoimage:
       params:
         ms: '{recipe.ms}'
         output_filename: '{recipe.basedir}/clean'
+        scheduler: distributed
 
     grid:
       cab: pfb_grid
@@ -63,6 +59,7 @@ esoimage:
         robustness: 0
         fits_cubes: true
         residual: false
+        scheduler: distributed
 
     clean:
       cab: pfb_clean
@@ -70,6 +67,7 @@ esoimage:
       params:
         output_filename: '{recipe.basedir}/clean'
         nmiter: 1
+        scheduler: threads
 
     degrid:
       cab: pfb_degrid
@@ -78,10 +76,12 @@ esoimage:
         output_filename: '{recipe.basedir}/clean'
         nband_out: 32
         spectral_poly_order: 4
+        scheduler: distributed
 
     restore:
       cab: pfb_restore
       info: Render model image to restored
       params:
         output_filename: '{recipe.basedir}/clean'
+        scheduler: threads
 
