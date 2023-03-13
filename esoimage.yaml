@@ -15,6 +15,7 @@ esoimage:
     ms:
       dtype: str
       required: true
+      aliases: ['*.ms']
     basedir:
       default: 'out'
     data_column:
