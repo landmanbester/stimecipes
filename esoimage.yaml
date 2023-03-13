@@ -1,0 +1,83 @@
+_include:
+  - (pfb)stimela_cabs.yaml
+
+opts:
+  log:
+    dir: logs
+    nest: 2
+
+
+esoimage:
+  name: esoimage
+  info: Imaging ESO137 with spotless recipe
+
+  inputs:
+    ms:
+      dtype: str
+      required: true
+    basedir:
+      default: 'out'
+    data_column:
+      default: DATA
+      aliases: ['*.data_column']
+    weight_column:
+      default: WEIGHT_SPECTRUM
+      aliases: ['*.weight_column']
+    model_column:
+      default: MODEL_DATA
+      aliases: ['*.model_column']
+    nband:
+      default: 8
+      aliases: ['*.nband']
+      info: Number of imaging bands
+    scheduler:
+      dtype: str
+      default: threads
+      aliases: ['*.scheduler']
+      info: Dask scheduler to use
+    nthreads:
+      dtype: int
+      default: 64
+      aliases: ['*.nthreads']
+    field_of_view:
+      default: 2.5
+      aliases: ['*.field_of_view']
+
+  steps:
+    init:
+      cab: pfb_init
+      info: 'Initialise imaging data products'
+      params:
+        ms: '{recipe.ms}'
+        output_filename: '{recipe.basedir}/clean'
+
+    grid:
+      cab: pfb_grid
+      info: 'Setup grid for imaging'
+      params:
+        output_filename: '{recipe.basedir}/clean'
+        robustness: 0
+        fits_cubes: true
+        residual: false
+
+    clean:
+      cab: pfb_clean
+      info: Cleaning step
+      params:
+        output_filename: '{recipe.basedir}/clean'
+        nmiter: 1
+
+    degrid:
+      cab: pfb_degrid
+      info: Populate MODEL_DATA with model visibilities
+      params:
+        output_filename: '{recipe.basedir}/clean'
+        nband_out: 32
+        spectral_poly_order: 4
+
+    restore:
+      cab: pfb_restore
+      info: Render model image to restored
+      params:
+        output_filename: '{recipe.basedir}/clean'
+
