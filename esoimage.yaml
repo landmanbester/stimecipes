@@ -16,8 +16,8 @@ esoimage:
       dtype: str
       required: true
       aliases: ['*.ms']
-    basedir:
-      default: 'out'
+    basedir:  # point to some fast file storage
+      default: '/scratch/bester/'
     data_column:
       default: DATA
       aliases: ['*.data_column']
@@ -50,6 +50,7 @@ esoimage:
         ms: '{recipe.ms}'
         output_filename: '{recipe.basedir}/clean'
         scheduler: distributed
+        nthreads_per_worker: 8
 
     grid:
       cab: pfb_grid
@@ -66,8 +67,9 @@ esoimage:
       info: Cleaning step
       params:
         output_filename: '{recipe.basedir}/clean'
-        nmiter: 1
+        nmiter: 5
         scheduler: threads
+        memory_greedy: true
 
     degrid:
       cab: pfb_degrid
