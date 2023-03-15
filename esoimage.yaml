@@ -17,7 +17,7 @@ esoimage:
       required: true
       aliases: ['*.ms']
     basedir:  # point to some fast file storage
-      default: '/scratch/bester/'
+      default: ''
     data_column:
       default: DATA
       aliases: ['*.data_column']
