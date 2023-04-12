@@ -87,16 +87,20 @@ gpr_dspec:
   info: Loop over sources/observations
   for_loop:
     var: obs
-    over:
-      - DynSpecs_1622491578/Analyse/1622491578_20:09:36.800_-20:26:46.600.fits
-      - DynSpecs_1624216341/Analyse/1624216341_20:09:36.800_-20:26:46.600.fits
-      - DynSpecs_1625623568/Analyse/1625623568_20:09:36.800_-20:26:46.600.fits
-      - DynSpecs_1627405233/Analyse/1627405233_20:09:36.800_-20:26:46.600.fits
-      - DynSpecs_1627405250/Analyse/1627405250_20:09:36.800_-20:26:46.600.fits
-      - DynSpecs_1628439081/Analyse/1628439081_20:09:36.800_-20:26:46.600.fits
-      - DynSpecs_1643947704/Analyse/1643947704_20:09:36.800_-20:26:46.600.fits
-      - DynSpecs_1643969937/Analyse/1643969937_20:09:36.800_-20:26:46.600.fits
-      - Jupiter_DynSpecs_1608538564/Analyse/1608538564_20:09:36.800_-20:26:46.600.fits
+    over: obs_list
+  inputs:
+    obs_list:
+      dtype: List[str]
+      default:
+        - DynSpecs_1622491578/Analyse/1622491578_20:09:36.800_-20:26:46.600.fits
+        - DynSpecs_1624216341/Analyse/1624216341_20:09:36.800_-20:26:46.600.fits
+        - DynSpecs_1625623568/Analyse/1625623568_20:09:36.800_-20:26:46.600.fits
+        - DynSpecs_1627405233/Analyse/1627405233_20:09:36.800_-20:26:46.600.fits
+        - DynSpecs_1627405250/Analyse/1627405250_20:09:36.800_-20:26:46.600.fits
+        # - DynSpecs_1628439081/Analyse/1628439081_20:09:36.800_-20:26:46.600.fits
+        - DynSpecs_1643947704/Analyse/1643947704_20:09:36.800_-20:26:46.600.fits
+        - DynSpecs_1643969937/Analyse/1643969937_20:09:36.800_-20:26:46.600.fits
+        - Jupiter_DynSpecs_1608538564/Analyse/1608538564_20:09:36.800_-20:26:46.600.fits
   steps:
     smooth:
       recipe: gpr_single_dspec
