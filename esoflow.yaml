@@ -7,6 +7,56 @@ opts:
     nest: 2
 
 
+split:
+  info: Split and convert the original data into separate measurement sets
+
+  # LB - Oleg to help do this in a neater way
+  # for_loop:
+  #   var: ms
+  #   over: ms_list
+
+  inputs:
+    # ms_list:
+    # dtype: List[str]
+    # default:
+    #   - /net/sinatra/vault-ike/oms/MeerKAT-data/ESO137/1557347448_sdp_l0.ms  # ms1
+    #   - /net/sinatra/vault-ike/oms/MeerKAT-data/ESO137/1557433849_sdp_l0.ms  # ms2
+
+    ms1:
+      default: /net/sinatra/vault-ike/oms/MeerKAT-data/ESO137/1557347448_sdp_l0.ms
+    ms2:
+      default: /net/sinatra/vault-ike/oms/MeerKAT-data/ESO137/1557433849_sdp_l0.ms
+
+  steps:
+    convertprim1:
+      cab: convert
+      params:
+        output: ms1_primary.zarr
+        taql_where: "FIELD_ID==0"
+        input: '{recipe.ms1}'
+
+    convertprim2:
+      cab: convert
+      params:
+        output: ms2_primary.zarr
+        taql_where: "FIELD_ID==0"
+        input: '{recipe.ms2}'
+
+    converttar1:
+      cab: convert
+      params:
+        output: ms1_target.zarr
+        taql_where: "FIELD_ID==1"
+        input: '{recipe.ms1}'
+
+    converttar2:
+      cab: convert
+      params:
+        output: ms2_target.zarr
+        taql_where: "FIELD_ID==1"
+        input: '{recipe.ms2}'
+
+
 crosscal:
   name: CROSSCAL
   info: The ESO137 cross calibration and diagnostics recipe
@@ -48,6 +98,8 @@ crosscal:
       info: Channel ranges to flag
 
   steps:
+
+
     init_primary_model:
       cab: crystalball
       info: 'Populate MODEL_DATA column'

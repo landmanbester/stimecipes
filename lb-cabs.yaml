@@ -335,4 +335,70 @@ cabs:
           i.e. sets -multiscale-shape gaussian.
 
 
+  convert:
+    command: dask-ms convert
+    policies:
+      prefix: '--'
+      replace: {'_': '-'}
+    inputs:
+      input:
+        dtype: MS
+        policies:
+          positional: true
+        required: true
+      output:
+        dtype: str
+        required: true
+      exclude:
+        dtype: str
+      group_columns:
+        dtype: str
+        default: "FIELD_ID,DATA_DESC_ID,SCAN_NUMBER"
+      index_columns:
+        dtype: str
+      taql_where:
+        dtype: str
+      format:
+        dtype: str
+        default: zarr
+      force:
+        dtype: bool
+        default: true
+      chunks:
+        dtype: str
+        default: '{{row:50000,chan:256}}'
 
+  or_flags:
+    flavour: python-code
+    command: |
+      from daskms import xds_from_storage_ms as xds_from_ms
+      from daskms.experimental.zarr import xds_from_zarr, xds_to_zarr
+      import dask
+
+      xds = xds_from_ms(ms)
+      fds = xds_from_zarr(fcol)
+      frds = xds_from_zarr(frcol)
+
+      xdso = []
+      for i, (frs, fs, ds) in enumerate(zip(frds, fds, xds)):
+          f1 = fs.FLAG.data
+          f2 = ds.FLAG.data
+          f = f1 | f2
+          fr1 = frs.FLAG_ROW.data
+          fr2 = ds.FLAG_ROW.data
+          fr = fr1 | fr2
+          dso = ds.assign(**{'FLAG': (('row', 'chan', 'corr'), f), 'FLAG_ROW': (('row',), fr)})
+          xdso.append(dso.unify_chunks())
+
+      writes = xds_to_zarr(xdso, ms, columns=('FLAG','FLAG_ROW'), rechunk=True)
+      dask.compute(writes)
+    inputs:
+      ms:
+        dtype: str
+        required: true
+      fcol:
+        dtype: str
+        required: true
+      frcol:
+        dtype: str
+        required: true
