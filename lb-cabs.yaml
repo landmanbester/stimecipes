@@ -368,6 +368,66 @@ cabs:
         dtype: str
         default: '{{row:50000,chan:256}}'
 
+  simplyflag:
+    command: simplyflag
+    policies:
+      prefix: '--'
+      replace: {'_': '-'}
+    inputs:
+      path:
+        dtype: str
+        policies:
+          positional: true
+        reuired: true
+      column:
+        dtype: str
+        default: DATA
+        required: true
+      use_sigma_spectrum:
+        dtype: bool
+        default: true
+      demean_mode:
+        dtype: str
+        default: exact
+      component:
+        dtype: str
+        default: amp
+      mode:
+        dtype: str
+        default: replace
+      field:
+        dtype: int
+        default: 0
+      spw:
+        dtype: int
+        default: 0
+      corrs:
+        dtype: List
+        default: [0,1,2,3]
+      dilation_factor:
+        dtype: int
+        default: 1
+      closing_factor:
+        dtype: int
+        default: 5
+      max_deviation:
+        dtype: float
+        default: 2.5
+      axis:
+        dtype: str
+        default: chan
+      respect_scan_boundaries:
+        dtype: bool
+        default: true
+      flag_edges:
+        dtype: List
+        default: [128,256]
+      threads:
+        dtype: int
+        default: 8
+
+
+
   or_flags:
     flavour: python-code
     command: |
