@@ -359,7 +359,7 @@ crosscal:
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/G'
+        K.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/K'
         B.type: complex
         B.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/B'
         B.interp_method: 2dlinear
