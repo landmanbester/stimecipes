@@ -230,7 +230,6 @@ crosscal:
       params:
         gain_dir: '{recipe.basedir}/gkb1.qc/'  # smoothed bandpass will be in smoothed.qc next to this folder
         gain_term: B
-        postfix: ''
         reject_amp_thresh: 5.5
         reject_phase_thresh: 25.5
         do_plots: true
@@ -384,7 +383,6 @@ crosscal:
       params:
         gain_dir: '{recipe.basedir}/gkb3.qc/'  # smoothed bandpass will be in smoothed.qc next to this folder
         gain_term: B
-        postfix: ''
         reject_amp_thresh: 5.5
         reject_phase_thresh: 25.5
         do_plots: true
