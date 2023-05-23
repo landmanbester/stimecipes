@@ -214,12 +214,12 @@ crosscal:
         B.time_interval: 0
         B.freq_interval: 8
 
-    chi2plots_presmooth:
+    chi2plots_preflagsmooth:
       cab: surfchi2
       info: Plot mean chisq per scan and baseline before flagging
       params:
-        dataout: '{recipe.basedir}/svis_preflag'
-        imagesout: '{recipe.basedir}/svis_preflag'
+        dataout: '{recipe.basedir}/svis_preflagsmooth'
+        imagesout: '{recipe.basedir}/svis_preflagsmooth'
         wcol: SIGMA_SPECTRUM
         nthreads: '{recipe.nthreads}'
         ms: '{recipe.ms_primary}'
@@ -231,7 +231,7 @@ crosscal:
         gain_dir: '{recipe.basedir}/gkb1.qc/'  # smoothed bandpass will be in smoothed.qc next to this folder
         gain_term: B
         reject_amp_thresh: 5.5
-        reject_phase_thresh: 25.5
+        reject_phase_thresh: 55.5
         do_plots: true
         nthreads: =recipe.nthreads
         ref_ant: 43
@@ -260,7 +260,7 @@ crosscal:
         input_model.recipe: '{recipe.model_column}'
         input_model.apply_p_jones: false
         solver.terms: [G,K,B]
-        solver.iter_recipe: [0,20,0,0,10,0,0,5,0]
+        solver.iter_recipe: [0,20,20,0,10,10,0,5,5]
         solver.propagate_flags: false
         solver.robust: true
         solver.threads: 8
@@ -277,10 +277,10 @@ crosscal:
         dask.threads: 8
         dask.scheduler: distributed
         G.type: complex
-        G.time_interval: 1
+        G.time_interval: 18
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/G'
-        K.type: delay
+        K.type: pure_delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
