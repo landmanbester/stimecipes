@@ -187,8 +187,8 @@ crosscal:
         input_model.recipe: '{recipe.model_column}'
         input_model.apply_p_jones: false
         solver.terms: [G,K,B]
-        solver.iter_recipe: [50,50,50,30,30,30,10,10,10]
-        solver.propagate_flags: false
+        solver.iter_recipe: [100,100,100,50,50,50,30,30,30,10,10,10]
+        solver.propagate_flags: true
         solver.robust: true
         solver.threads: 8
         solver.reference_antenna: 43
@@ -202,7 +202,7 @@ crosscal:
         output.net_gains: []
         mad_flags.enable: false
         dask.threads: 8
-        dask.scheduler: distributed
+        dask.scheduler: threads
         G.type: complex
         G.time_interval: 18
         G.freq_interval: 0
@@ -236,7 +236,6 @@ crosscal:
         nthreads: =recipe.nthreads
         ref_ant: 43
 
-    # add G smoothing here
     gsmooth:
       cab: pfbmisc_gsmooth
       info: Transfer K offset to G and optionally smooth
@@ -309,7 +308,7 @@ crosscal:
         wcol: SIGMA_SPECTRUM
         nthreads: '{recipe.nthreads}'
         ms: '{recipe.ms_primary}'
-        flag_above: 3.0
+        flag_above: 5.0
         unflag_below: 0.0
 
     chi2plots_postflag:
