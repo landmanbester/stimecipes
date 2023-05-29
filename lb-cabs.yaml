@@ -432,7 +432,7 @@ cabs:
     flavour: python-code
     command: |
       from daskms import xds_from_storage_ms as xds_from_ms
-      from daskms import xds_from_storage_table as xds_to_table
+      from daskms import xds_to_storage_table as xds_to_table
       from daskms.experimental.zarr import xds_from_zarr, xds_to_zarr
       import dask
 
