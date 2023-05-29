@@ -83,51 +83,51 @@ cabs:
       subtract_model_column:
         dtype: str
 
-  ragavi:
-    command: ragavi-gains-quartical
-    virtual_env: ~/.venv/rgvi
-    policies:
-      prefix: '--'
-      replace: {'_': '-'}
-    inputs:
-      table:
-        dtype: str
-        required: true
-        info: Path to Quartical gain table
-      gtype:
-        dtype: str
-        required: true
-        info: Which gain term to plot
-      out_dir:
-        dtype: str
-        info: Output directory
-      ant:
-        dtype: str
-        info: Antennas to plot
-      chan:
-        dtype: str
-        info: Channel range to plot
-      ddid:
-        dtype: str
-        info: DDID's to plot
-      field:
-        dtype: str
-        info: Field ID's to plot
-      corr:
-        dtype: str
-        info: Correlations to plot
-      htmlname:
-        dtype: str
-        info: Name of output HTML file
-      yaxis:
-        dtype: str
-        info: What to plot on the y axis (amp/phase/real/imag)
-      xaxis:
-        choices: ['time','antenna','channel']
-        info: What to plot on the x axis
-      plotname:
-        dtype: str
-        info: Output name + extention type
+  # ragavi:
+  #   command: ragavi-gains-quartical
+  #   virtual_env: ~/.venv/rgvi
+  #   policies:
+  #     prefix: '--'
+  #     replace: {'_': '-'}
+  #   inputs:
+  #     table:
+  #       dtype: str
+  #       required: true
+  #       info: Path to Quartical gain table
+  #     gtype:
+  #       dtype: str
+  #       required: true
+  #       info: Which gain term to plot
+  #     out_dir:
+  #       dtype: str
+  #       info: Output directory
+  #     ant:
+  #       dtype: str
+  #       info: Antennas to plot
+  #     chan:
+  #       dtype: str
+  #       info: Channel range to plot
+  #     ddid:
+  #       dtype: str
+  #       info: DDID's to plot
+  #     field:
+  #       dtype: str
+  #       info: Field ID's to plot
+  #     corr:
+  #       dtype: str
+  #       info: Correlations to plot
+  #     htmlname:
+  #       dtype: str
+  #       info: Name of output HTML file
+  #     yaxis:
+  #       dtype: str
+  #       info: What to plot on the y axis (amp/phase/real/imag)
+  #     xaxis:
+  #       choices: ['time','antenna','channel']
+  #       info: What to plot on the x axis
+  #     plotname:
+  #       dtype: str
+  #       info: Output name + extention type
 
   surfchi2:
     command: surfchi2

@@ -10,12 +10,10 @@ opts:
     nest: 2
 
 
-# Steps summary
-# 1) Back up raw flags and run simplyflag (needs MS format)
-# 2) Initialise primary model (needs MS format?)
-# 3) split and convert to zarr
-# 4) GKB x 3 + transfer (crosscal)
-# 5) selfcal
+# Missing features
+# 1) both simplyflag and crystallbal relies on MS format
+# 2) QuartiCal apps need to have FIELD, DDID and SPW selection logic
+# 3) can't convert over NFS
 
 init:
   name: INIT
@@ -79,7 +77,7 @@ init:
         field: 1
         max_deviation: 3.5
 
-    flag_edges:
+    flag_edges:  # mapped over field?
       cab: fledges
       info: Apply fixed frequency flag mask
       params:
@@ -111,7 +109,7 @@ init:
         fcol: 'FLAG'  # need to use outputs for these
         frcol: 'FLAG_ROW'
 
-    init_model:
+    init_model:  # we should do this after convert but crystalball needs MS format
       cab: crystalball
       info: 'Populate MODEL_DATA column'
       params:
@@ -132,7 +130,7 @@ init:
     converttar:
       cab: convert
       params:
-        output: ms1_target.zarr
+        output: 'msdir/ms1_target.zarr'
         taql_where: "FIELD_ID==1"
         input: '{recipe.ms}'
 
@@ -283,17 +281,16 @@ crosscal:
         G.type: complex
         G.time_interval: 18
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/G'
+        G.load_from: '{recipe.basedir}/gkb1.qc/G'
         K.type: pure_delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/K'
+        K.load_from: '{recipe.basedir}/gkb1.qc/K'
         B.type: complex
-        B.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/B'
+        B.load_from: '{recipe.basedir}/gkb1.qc/B'
         B.time_interval: 0
         B.freq_interval: 8
-        B.respect_scan_boundaries: false
 
     chi2plots_preflag:
       cab: surfchi2
