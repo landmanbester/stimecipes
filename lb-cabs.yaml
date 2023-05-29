@@ -435,7 +435,8 @@ cabs:
       from daskms.experimental.zarr import xds_from_zarr, xds_to_zarr
       import dask
 
-      xds = xds_from_ms(ms)
+      xds = xds_from_ms(ms,
+                        group_cols=['FIELD_ID', 'DATA_DESC_ID', 'SCAN_NUMBER'])
       fds = xds_from_zarr(fcol)
       frds = xds_from_zarr(frcol)
 
