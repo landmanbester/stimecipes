@@ -432,6 +432,7 @@ cabs:
     flavour: python-code
     command: |
       from daskms import xds_from_storage_ms as xds_from_ms
+      from daskms import xds_from_storage_table as xds_to_table
       from daskms.experimental.zarr import xds_from_zarr, xds_to_zarr
       import dask
 
@@ -451,7 +452,7 @@ cabs:
           dso = ds.assign(**{'FLAG': (('row', 'chan', 'corr'), f), 'FLAG_ROW': (('row',), fr)})
           xdso.append(dso.unify_chunks())
 
-      writes = xds_to_zarr(xdso, ms, columns=('FLAG','FLAG_ROW'), rechunk=True)
+      writes = xds_to_table(xdso, ms, columns=('FLAG','FLAG_ROW'), rechunk=True)
       dask.compute(writes)
     inputs:
       ms:
