@@ -223,20 +223,20 @@ crosscal:
         nthreads: '{recipe.nthreads}'
         ms: '{recipe.ms_primary}'
 
-    # bsmooth:
-    #   cab: bsmooth
-    #   info: Smooth weighted average bandpass solutions
-    #   params:
-    #     gain_dir: '{recipe.basedir}/gkb1.qc/'  # result placed in smoothed.qc inside this folder
-    #     gain_term: B
-    #     reject_amp_thresh: 5.5
-    #     reject_phase_thresh: 55.5
-    #     do_plots: true
-    #     nthreads: =recipe.nthreads
-    #     ref_ant: 43
-    #     dof0: 2.0
-    #     nreweight: 10
-    #     sigman_min: 0.005
+    bsmooth:
+      cab: bsmooth
+      info: Smooth weighted average bandpass solutions
+      params:
+        gain_dir: '{recipe.basedir}/gkb1.qc/'  # result placed in smoothed.qc inside this folder
+        gain_term: B
+        reject_amp_thresh: 5.5
+        reject_phase_thresh: 55.5
+        do_plots: true
+        nthreads: =recipe.nthreads
+        ref_ant: 43
+        dof0: 2.0
+        nreweight: 10
+        sigman_min: 0.005
 
     # gsmooth:
     #   cab: gsmooth
@@ -288,7 +288,7 @@ crosscal:
         K.initial_estimate: false
         K.load_from: '{recipe.basedir}/gkb1.qc/K'
         B.type: diag_complex
-        B.load_from: '{recipe.basedir}/gkb1.qc/B'
+        B.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/B'
         B.time_interval: 0
         B.freq_interval: 8
 
