@@ -51,7 +51,7 @@ init:
       cab: qcalbackup
       info: 'Back up original MS flags'
       params:
-        ms_path: '{recipe.ms}'
+        ms_path: =recipe.ms1
         zarr_dir: '{recipe.basedir}/initial_flags/'
         column: FLAG
 
@@ -173,9 +173,9 @@ crosscal:
     gkb1:
       cab: quartical
       info: GKB on the primary where
-            G = time variable complex gain,
-            K = per scan delay refinement
-            B = frequency variable complex gain (bandpass)
+            G = time variable complex gain,  G(t)
+            K = per scan delay refinement  exp(i delta(t) nu)
+            B = frequency variable complex gain (bandpass)  B(nu)
       params:
         input_ms.path: '{recipe.ms_primary}'
         input_ms.time_chunk: '0'
@@ -223,31 +223,31 @@ crosscal:
         nthreads: '{recipe.nthreads}'
         ms: '{recipe.ms_primary}'
 
-    # bsmooth:
-    #   cab: bsmooth
-    #   info: Smooth weighted average bandpass solutions
-    #   params:
-    #     gain_dir: '{recipe.basedir}/gkb1.qc/'  # smoothed bandpass will be in smoothed.qc next to this folder
-    #     gain_term: B
-    #     reject_amp_thresh: 5.5
-    #     reject_phase_thresh: 55.5
-    #     do_plots: true
-    #     nthreads: =recipe.nthreads
-    #     ref_ant: 43
-    #     dof0: 2.0
-    #     nreweight: 10
-    #     sigman_min: 0.005
+    bsmooth:
+      cab: bsmooth
+      info: Smooth weighted average bandpass solutions
+      params:
+        gain_dir: '{recipe.basedir}/gkb1.qc/'  # result placed in smoothed.qc inside this folder
+        gain_term: B
+        reject_amp_thresh: 5.5
+        reject_phase_thresh: 55.5
+        do_plots: true
+        nthreads: =recipe.nthreads
+        ref_ant: 43
+        dof0: 2.0
+        nreweight: 10
+        sigman_min: 0.005
 
-    # gsmooth:
-    #   cab: gsmooth
-    #   info: Transfer K offset to G and optionally smooth
-    #   params:
-    #     gain_dir: '{recipe.basedir}/gkb1.qc/'  # smoothed bandpass will be in smoothed.qc next to this folder
-    #     gain_term: G
-    #     do_plots: true
-    #     nthreads: =recipe.nthreads
-    #     do_smooth: False
-    #     ref_ant: 43
+    gsmooth:
+      cab: gsmooth
+      info: Transfer K offset to G and optionally smooth
+      params:
+        gain_dir: '{recipe.basedir}/gkb1.qc/'  # result placed in smoothed.qc inside this folder
+        gain_term: G
+        do_plots: true
+        nthreads: =recipe.nthreads
+        do_smooth: False
+        ref_ant: 43
 
     gkb2:
       cab: quartical
@@ -281,14 +281,14 @@ crosscal:
         G.type: complex
         G.time_interval: 18
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb1.qc/G'
-        K.type: delay
+        G.load_from: '{recipe.basedir}/gkb1.qc/smoothed/qc/G'
+        K.type: pure_delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb1.qc/K'
+        K.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/K'
         B.type: complex
-        B.load_from: '{recipe.basedir}/gkb1.qc/B'
+        B.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/B'
         B.time_interval: 0
         B.freq_interval: 8
 
@@ -389,7 +389,7 @@ crosscal:
         ref_ant: 43
         detrend: false
         dof0: 4.0
-        nreweight: 5
+        nreweight: 10
         sigman_min: 0.0001
 
 
@@ -435,103 +435,105 @@ crosscal:
         B.freq_interval: 1
         B.load_from: '{recipe.basedir}/gkb3.qc/smoothed.qc/B'
 
-# image:
-#   name: ESOIMAGE
-#   info: An imaging step of the ESO137 self-calibration recipe
+# c t c t c t c t c
 
-#   inputs:
-#     ms:
-#       dtype: MS
-#       required: true
-#     basedir:
-#       default: 'output'
-#     data_column:
-#       default: DATA
-#       aliases: ['*.input_ms.data_column']
-#     sigma_column:
-#       default: SIGMA_SPECTRUM
-#       aliases: ['*.input_ms.sigma_column']
-#       info: Original std of noise used to construct weights
-#     weight_column:
-#       default: WEIGHT_SPECTRUM
-#       info: Modified weights to be writtent to this column
-#     model_column:
-#       dtype: str
-#       default: MODEL_DATA
-#     nband:
-#       default: 8
-#       aliases: ['*.nband']
-#       info: Number of imaging bands
-#     scheduler:
-#       dtype: str
-#       default: threads
-#       aliases: ['*.scheduler']
-#       info: Dask scheduler to use
-#     nthreads:
-#       dtype: int
-#       default: 64
+image:
+  name: ESOIMAGE
+  info: An imaging step of the ESO137 self-calibration recipe
 
-#   steps:
-#     init1:
-#       cab: pfb_init
-#       info: 'Initialise imaging data products'
-#       params:
-#         ms: '{recipe.ms}'
-#         output_filename: '{recipe.basedir}/stage1'
-#         data_column: DATA
-#         sigma_column: SIGMA_SPECTRUM
-#         gain_table: '{recipe.basedir}/target_gains_init.qc/'
-#         gain_term: 'GKB-net'
-#         integrations_per_image: -1
-#         channels_per_image: 256
-#         nthreads: '{recipe.nthreads}'
-#         nworkers: 8
-#         nthreads_per_worker: 8
-#         scheduler: threads
+  inputs:
+    ms:
+      dtype: MS
+      required: true
+    basedir:
+      default: 'output'
+    data_column:
+      default: DATA
+      aliases: ['*.input_ms.data_column']
+    sigma_column:
+      default: SIGMA_SPECTRUM
+      aliases: ['*.input_ms.sigma_column']
+      info: Original std of noise used to construct weights
+    weight_column:
+      default: WEIGHT_SPECTRUM
+      info: Modified weights to be writtent to this column
+    model_column:
+      dtype: str
+      default: MODEL_DATA
+    nband:
+      default: 8
+      aliases: ['*.nband']
+      info: Number of imaging bands
+    scheduler:
+      dtype: str
+      default: threads
+      aliases: ['*.scheduler']
+      info: Dask scheduler to use
+    nthreads:
+      dtype: int
+      default: 64
 
-#     grid1:
-#       cab: pfb_grid
-#       info: 'Grid data for initial imaging'
-#       params:
-#         output_filename: '{recipe.basedir}/stage1'
-#         robustness: -1
-#         fits_cubes: true
-#         field_of_view: 2.5
-#         super_resolution_factor: 1.5
-#         nthreads: '{recipe.nthreads}'
-#         nworkers: 8
+  steps:
+    init1:
+      cab: pfb_init
+      info: 'Initialise imaging data products'
+      params:
+        ms: '{recipe.ms}'
+        output_filename: '{recipe.basedir}/stage1'
+        data_column: DATA
+        sigma_column: SIGMA_SPECTRUM
+        gain_table: '{recipe.basedir}/target_gains_init.qc/'
+        gain_term: 'GKB-net'
+        integrations_per_image: -1
+        channels_per_image: 256
+        nthreads: '{recipe.nthreads}'
+        nworkers: 8
+        nthreads_per_worker: 8
+        scheduler: threads
 
-#     spotless1:
-#       cab: pfb_spotless
-#       params:
-#         output_filename: '{recipe.basedir}/stage1'
-#         fits_cubes: true
-#         niter: 10
-#         nthreads: '{recipe.nthreads}'
-#         bases: 'self,db1,db2,db3,db4,db5'
-#         nlevels: 3
-#         l1reweight_from: 5
-#         pd_tol: 1e-4
-#         pd_maxit: 500
-#         pd_verbose: 2
-#         pd_report_freq: 50
-#         tol: 0.001
-#         rmsfactor: 5
-#         pm_tol: 1e-4
+    grid1:
+      cab: pfb_grid
+      info: 'Grid data for initial imaging'
+      params:
+        output_filename: '{recipe.basedir}/stage1'
+        robustness: -1
+        fits_cubes: true
+        field_of_view: 2.5
+        super_resolution_factor: 1.5
+        nthreads: '{recipe.nthreads}'
+        nworkers: 8
 
-#     # forward
-#     # grid with reweight
-#     # spotless
-#     # forward
+    spotless1:
+      cab: pfb_spotless
+      params:
+        output_filename: '{recipe.basedir}/stage1'
+        fits_cubes: true
+        niter: 10
+        nthreads: '{recipe.nthreads}'
+        bases: 'self,db1,db2,db3,db4,db5'
+        nlevels: 3
+        l1reweight_from: 5
+        pd_tol: 1e-4
+        pd_maxit: 500
+        pd_verbose: 2
+        pd_report_freq: 50
+        tol: 0.001
+        rmsfactor: 5
+        pm_tol: 1e-4
 
-#     degrid1:
-#       cab: pfb_degrid
-#       info: Populate MODEL_DATA with model visibilities
-#       params:
-#         ms: '{recipe.ms}'
-#         output_filename: '{recipe.basedir}/stage1'
-#         nband_out: 32
-#         spectral_poly_order: 4
+    # forward
+    # grid with reweight
+    # spotless
+    # forward
+
+    degrid1:
+      cab: pfb_degrid
+      info: Populate MODEL_DATA with model visibilities
+      params:
+        ms: '{recipe.ms}'
+        output_filename: '{recipe.basedir}/stage1'
+        nband_out: 32
+        spectral_poly_order: 4
 
 
 # selfcal:
