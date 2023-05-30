@@ -421,16 +421,16 @@ crosscal:
         mad_flags.enable: false
         dask.threads: 8
         dask.scheduler: threads
-        G.type: complex
+        G.type: diag_complex
         G.time_interval: 1
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/gkb2.qc/G'
-        K.type: pure_delay
+        K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
         K.load_from: '{recipe.basedir}/gkb2.qc/K'
-        B.type: complex
+        B.type: diag_complex
         B.time_interval: 0
         B.freq_interval: 1
         B.load_from: '{recipe.basedir}/gkb3.qc/smoothed.qc/B'
