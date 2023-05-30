@@ -202,14 +202,14 @@ crosscal:
         mad_flags.enable: false
         dask.threads: 8
         dask.scheduler: threads
-        G.type: complex
+        G.type: diag_complex
         G.time_interval: 18
         G.freq_interval: 0
         K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
-        K.initial_estimate: true
-        B.type: complex
+        K.initial_estimate: false
+        B.type: diag_complex
         B.time_interval: 0
         B.freq_interval: 8
 
@@ -223,31 +223,31 @@ crosscal:
         nthreads: '{recipe.nthreads}'
         ms: '{recipe.ms_primary}'
 
-    bsmooth:
-      cab: bsmooth
-      info: Smooth weighted average bandpass solutions
-      params:
-        gain_dir: '{recipe.basedir}/gkb1.qc/'  # result placed in smoothed.qc inside this folder
-        gain_term: B
-        reject_amp_thresh: 5.5
-        reject_phase_thresh: 55.5
-        do_plots: true
-        nthreads: =recipe.nthreads
-        ref_ant: 43
-        dof0: 2.0
-        nreweight: 10
-        sigman_min: 0.005
+    # bsmooth:
+    #   cab: bsmooth
+    #   info: Smooth weighted average bandpass solutions
+    #   params:
+    #     gain_dir: '{recipe.basedir}/gkb1.qc/'  # result placed in smoothed.qc inside this folder
+    #     gain_term: B
+    #     reject_amp_thresh: 5.5
+    #     reject_phase_thresh: 55.5
+    #     do_plots: true
+    #     nthreads: =recipe.nthreads
+    #     ref_ant: 43
+    #     dof0: 2.0
+    #     nreweight: 10
+    #     sigman_min: 0.005
 
-    gsmooth:
-      cab: gsmooth
-      info: Transfer K offset to G and optionally smooth
-      params:
-        gain_dir: '{recipe.basedir}/gkb1.qc/'  # result placed in smoothed.qc inside this folder
-        gain_term: G
-        do_plots: true
-        nthreads: =recipe.nthreads
-        do_smooth: False
-        ref_ant: 43
+    # gsmooth:
+    #   cab: gsmooth
+    #   info: Transfer K offset to G and optionally smooth
+    #   params:
+    #     gain_dir: '{recipe.basedir}/gkb1.qc/'  # result placed in smoothed.qc inside this folder
+    #     gain_term: G
+    #     do_plots: true
+    #     nthreads: =recipe.nthreads
+    #     do_smooth: False
+    #     ref_ant: 43
 
     gkb2:
       cab: quartical
@@ -278,17 +278,17 @@ crosscal:
         mad_flags.enable: false
         dask.threads: 8
         dask.scheduler: distributed
-        G.type: complex
+        G.type: diag_complex
         G.time_interval: 18
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/G'
-        K.type: pure_delay
+        G.load_from: '{recipe.basedir}/gkb1.qc/G'
+        K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/K'
-        B.type: complex
-        B.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/B'
+        K.load_from: '{recipe.basedir}/gkb1.qc/K'
+        B.type: diag_complex
+        B.load_from: '{recipe.basedir}/gkb1.qc/B'
         B.time_interval: 0
         B.freq_interval: 8
 
@@ -351,16 +351,16 @@ crosscal:
         mad_flags.enable: false
         dask.threads: 8
         dask.scheduler: distributed
-        G.type: complex
+        G.type: diag_complex
         G.time_interval: 18
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/gkb2.qc/G'
-        K.type: pure_delay
+        K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
         K.load_from: '{recipe.basedir}/gkb2.qc/K'
-        B.type: complex
+        B.type: diag_complex
         B.load_from: '{recipe.basedir}/gkb2.qc/B'
         B.time_interval: 0
         B.freq_interval: 2
