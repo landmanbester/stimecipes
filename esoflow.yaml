@@ -281,7 +281,7 @@ crosscal:
         G.type: complex
         G.time_interval: 18
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb1.qc/smoothed/qc/G'
+        G.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/G'
         K.type: pure_delay
         K.time_interval: 0
         K.freq_interval: 0
