@@ -16,7 +16,7 @@ opts:
 # 3) can't convert over NFS
 
 init:
-  name: INIT
+  name: ESOINIT
   info: Back up initial flags, do initial flagging, predict primary model and split data
 
   # LB - Oleg to help do this in a neater way
@@ -136,7 +136,7 @@ init:
 
 
 crosscal:
-  name: CROSSCAL
+  name: ESOCROSSCAL
   info: The ESO137 cross calibration and diagnostics recipe
 
   inputs:
@@ -186,7 +186,7 @@ crosscal:
         input_model.recipe: '{recipe.model_column}'
         input_model.apply_p_jones: false
         solver.terms: [G,K,B]
-        solver.iter_recipe: [100,100,100,50,50,50,30,30,30,10,10,10]
+        solver.iter_recipe: [100,100,250,50,50,50,30,30,30,10,10,10]
         solver.propagate_flags: false
         solver.robust: true
         solver.threads: 8
@@ -335,7 +335,7 @@ crosscal:
         input_model.recipe: '{recipe.model_column}'
         input_model.apply_p_jones: false
         solver.terms: [G,K,B]
-        solver.iter_recipe: [20,20,20,10,10,10,5,5,5]
+        solver.iter_recipe: [0,0,0]  #[20,20,20,10,10,10,5,5,5]
         solver.propagate_flags: false
         solver.robust: true
         solver.threads: 8
@@ -343,16 +343,16 @@ crosscal:
         output.gain_directory: '{recipe.basedir}/gkb3.qc/'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: false
-        output.products: [residual]
-        output.columns: [RESIDUAL]
+        output.products: [residual, corrected_data, corrected_weight]
+        output.columns: [RESIDUAL, CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: false
         output.apply_p_jones_inv: false
-        output.net_gains:
+        output.net_gains: [G, K, B]
         mad_flags.enable: false
         dask.threads: 8
         dask.scheduler: distributed
         G.type: diag_complex
-        G.time_interval: 18
+        G.time_interval: 1
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/gkb2.qc/G'
         K.type: delay
@@ -363,7 +363,7 @@ crosscal:
         B.type: diag_complex
         B.load_from: '{recipe.basedir}/gkb2.qc/B'
         B.time_interval: 0
-        B.freq_interval: 2
+        B.freq_interval: 1
 
     chi2plots_final:
       cab: surfchi2
@@ -398,7 +398,7 @@ crosscal:
       info: "Transfer gains to the targer"
       params:
         input_ms.path: '{recipe.ms_target}'
-        input_ms.time_chunk: 0
+        input_ms.time_chunk: 50
         input_ms.freq_chunk: 256
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
@@ -408,7 +408,7 @@ crosscal:
         solver.iter_recipe: [0,0,0]
         solver.propagate_flags: false
         solver.robust: false
-        solver.threads: 8
+        solver.threads: 1
         solver.reference_antenna: 43
         output.gain_directory: '{recipe.basedir}/target_gains_init.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
@@ -419,7 +419,7 @@ crosscal:
         output.apply_p_jones_inv: false
         output.net_gains: [G, K, B]
         mad_flags.enable: false
-        dask.threads: 8
+        dask.threads: =recipe.nthreads
         dask.scheduler: threads
         G.type: diag_complex
         G.time_interval: 1
@@ -435,7 +435,7 @@ crosscal:
         B.freq_interval: 1
         B.load_from: '{recipe.basedir}/gkb3.qc/smoothed.qc/B'
 
-# c t c t c t c t c
+
 
 image:
   name: ESOIMAGE
@@ -449,14 +449,12 @@ image:
       default: 'output'
     data_column:
       default: DATA
-      aliases: ['*.input_ms.data_column']
     sigma_column:
       default: SIGMA_SPECTRUM
-      aliases: ['*.input_ms.sigma_column']
       info: Original std of noise used to construct weights
     weight_column:
       default: WEIGHT_SPECTRUM
-      info: Modified weights to be writtent to this column
+      info: Modified weights to be written to this column
     model_column:
       dtype: str
       default: MODEL_DATA
@@ -480,13 +478,13 @@ image:
       params:
         ms: '{recipe.ms}'
         output_filename: '{recipe.basedir}/stage1'
-        data_column: DATA
-        sigma_column: SIGMA_SPECTRUM
+        data_column: =recipe.data_column
+        sigma_column: =recipe.sigma_column
         gain_table: '{recipe.basedir}/target_gains_init.qc/'
         gain_term: 'GKB-net'
         integrations_per_image: -1
         channels_per_image: 256
-        nthreads: '{recipe.nthreads}'
+        nthreads: =recipe.nthreads
         nworkers: 8
         nthreads_per_worker: 8
         scheduler: threads
