@@ -6,9 +6,9 @@ opts:
     dir: logs
     nest: 2
 
-ssclean:
-  name: SSCLEAN
-  info: Recipe to perform single scale clean with pfb-clean
+spotless:
+  name: SPOTLESS
+  info: Recipe to perform spotless deconsolutin with pfb-clean
 
   inputs:
     ms:
