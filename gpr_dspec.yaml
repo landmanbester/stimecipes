@@ -22,7 +22,7 @@ gpr_single_dspec:
         pass in ABC123.fits
     mad_threshold:
       dtype: float
-      default: 2.5
+      default: 10.0
       aliases: ["*.mad_threshold"]
       info:
         Multiple of the MAD value to flag eg. anything outside of
@@ -77,7 +77,7 @@ gpr_single_dspec:
     smooth1:
       cab: gpr_smooth
       params:
-        basename: '{recipe.basename}.{recipe.stokes}.norm.fits'
+        basename: '{recipe.basename}.{recipe.stokes}'
         lnu: '{recipe.lnu}'
         lt: '{recipe.lt}'
         mad_threshold: '{recipe.mad_threshold}'
@@ -101,11 +101,13 @@ gpr_dspec:
         # - DynSpecs_1643947704/Analyse/1643947704_20:09:36.800_-20:26:46.600.fits
         # - DynSpecs_1643969937/Analyse/1643969937_20:09:36.800_-20:26:46.600.fits
         - Jupiter_DynSpecs_1608538564/Analyse/1608538564_20:09:36.800_-20:26:46.600.fits
+
   steps:
     smooth:
       recipe: gpr_single_dspec
       params:
         basename: =recipe.obs
+
 
 
 
