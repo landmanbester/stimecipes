@@ -8,7 +8,7 @@ opts:
 
 spotless:
   name: SPOTLESS
-  info: Recipe to perform spotless deconsolutin with pfb-clean
+  info: Recipe to perform spotless deconvolution with pfb-clean
 
   inputs:
     ms:
@@ -44,6 +44,7 @@ spotless:
     field_of_view:
       dtype: float
       default: 2.5
+      abbreviation: fov
       info:
         Field of view in degrees
     super_resolution_factor:
@@ -56,6 +57,11 @@ spotless:
       default: 10
       info:
         Number of major iterations
+    l1reweight_from:
+      dtype: int
+      default: 5
+      info:
+        Start l21 reweighting from this iteration
     gamma:
       dtype: float
       default: 1.0
@@ -67,6 +73,7 @@ spotless:
       info:
         Output products. (m)odel, (r)esidual, (i)mage, (c)lean beam.
         Captitals for cubes, lower case for MFS images.
+        Only used by restore worker.
     precision:
       default: double
       aliases: ["*.precision"]
@@ -82,23 +89,29 @@ spotless:
         Perform w-correction via improved w-stacking
     robustness:
       default: 0
-      aliases: ["*.robustness"]
       info:
         Robustness factor for Briggs weighting. None means natural.
         A value of less than -2 implies uniform
-    nthreads:
+    nvthreads:
       default: 8
-      aliases: ['*.nthreads']
       info:
         Total number of threads to use between all processes.
         Will use all available resources by default
+    nthreads_dask:
+      default: 8
+      info:
+        Number of dask threads per worker
+    nworkers:
+      default: 1
+      info:
+        Number of dask workers (use with distributed scheduler)
     scheduler:
       default: threads
       aliases: ["*.scheduler"]
       info:
         Which dask scheduler to use.
     overwrite:
-      default: false
+      default: true
       aliases: ["*.overwrite"]
       info:
         Allow overwriting of existing input
@@ -129,12 +142,16 @@ spotless:
     pm_tol:
       dtype: float
       default: 0.001
-
-
-
-# xp = x_k - (R.H W R + I/sigma**2)^{1} nabla_x f(x)
-# f(x) = x.H ( Ipsf * x - ID) + x.H I/sigma**2 x
-
+    hessnorm:
+      dtype: float
+      info:
+        Norm of Hessian approximation.
+        Use to avoid recomputing unnecessarily.
+    memory_greedy:
+      dtype: bool
+      default: false
+      info:
+        Loads all dat into memroy if set
 
   steps:
     init:
@@ -143,26 +160,35 @@ spotless:
         Precompute visibilities for output products.
         In this case simply the Stokes I visibilities.
       params:
-        data_column: '{recipe.data_column}'
-        weight_column: '{recipe.weight_column}'
-        max_field_of_view: '{recipe.field_of_view}'
+        data_column: =recipe.data_column
+        weight_column: =recipe.weight_column
+        max_field_of_view: =recipe.field_of_view
+        channels_per_image: =recipe.cpi
+        integrations_per_image: =recipe.ipi
+        overwrite: =recipe.overwrite
+        nthreads_dask: =recipe.nthreads_dask
+
 
     grid:
       cab: pfb_grid
       info:
         Flip visibilties into image space data products
       params:
-        field_of_view: '{recipe.field_of_view}'
-        super_resolution_factor: '{recipe.super_resolution_factor}'
+        field_of_view: =recipe.field_of_view
+        super_resolution_factor: =recipe.super_resolution_factor
+        robustness: =recipe.robustness
+        overwrite: =recipe.overwrite
+        nvthreads: 2
+        nthreads_dask: 4
 
     deconv:
       cab: pfb_spotless
       info:
         Deconvolve with spotless worker
       params:
-        niter: '{recipe.niter}'
-        rmsfactor: '{recipe.rmsfactor}'
-        gamma: '{recipe.gamma}'
+        niter: =recipe.niter
+        rmsfactor: =recipe.rmsfactor
+        gamma: =recipe.gamma
         positivity: =recipe.positivity
         pd_maxit: =recipe.pd_maxit
         pd_tol: =recipe.pd_tol
@@ -171,12 +197,16 @@ spotless:
         tol: =recipe.tol
         pm_maxit: =recipe.pm_maxit
         pm_tol: =recipe.pm_tol
+        nthreads_dask: 1
+        nvthreads: =recipe.nvthreads
 
     degrid:
       cab: pfb_degrid
       info:
         Turn model image into visibilities
       params:
-        model_column: "{recipe.model_column}"
-
+        model_column: =recipe.model_column
+        channels_per_image: =recipe.cpi
+        integrations_per_image: =recipe.ipi
+        nthreads_dask: =recipe.nthreads_dask
 

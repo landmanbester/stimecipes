@@ -15,124 +15,130 @@ opts:
 # 2) QuartiCal apps need to have FIELD, DDID and SPW selection logic
 # 3) can't convert over NFS
 
-init:
-  name: ESOINIT
-  info: Back up initial flags, do initial flagging, predict primary model and split data
+# init:
+#   name: ESOINIT
+#   info: Back up initial flags, do initial flagging, predict primary model and split data
 
-  # LB - Oleg to help do this in a neater way
-  # for_loop:
-  #   var: ms
-  #   over: ms_list
+#   # LB - Oleg to help do this in a neater way
+#   for_loop:
+#     var: ms
+#     over: ms_list
 
-  inputs:
-    # ms_list:
-    # dtype: List[str]
-    # default:
-    #   - /net/sinatra/vault-ike/oms/MeerKAT-data/ESO137/1557347448_sdp_l0.ms  # ms1
-    #   - /net/sinatra/vault-ike/oms/MeerKAT-data/ESO137/1557433849_sdp_l0.ms  # ms2
+#   inputs:
+#     ms_list:
+#       dtype: List[MS]
+#       default:
+#         - /net/sinatra/vault-ike/oms/MeerKAT-data/ESO137/1557347448_sdp_l0.ms  # ms1
+#         - /net/sinatra/vault-ike/oms/MeerKAT-data/ESO137/1557433849_sdp_l0.ms  # ms2
 
-    ms1:
-      default: /net/sinatra/vault-ike/oms/MeerKAT-data/ESO137/1557347448_sdp_l0.ms
-    ms2:
-      default: /net/sinatra/vault-ike/oms/MeerKAT-data/ESO137/1557433849_sdp_l0.ms
-    basedir:
-      default: 'output'
-    cball_model:
-      default: 'input/fitted.PKS1934.UBand.wsclean.cat.txt'
-    nthreads:
-      default: 32
-    fmask:
-      dtype: str
-      default: ':128,2697:2705,-256:'
-      info: Channel ranges to flag
+#     # ms1:
+#     #   default: /net/sinatra/vault-ike/oms/MeerKAT-data/ESO137/1557347448_sdp_l0.ms
+#     # ms2:
+#     #   default: /net/sinatra/vault-ike/oms/MeerKAT-data/ESO137/1557433849_sdp_l0.ms
+#     basedir:
+#       default: 'output'
+#     cball_model:
+#       default: 'input/fitted.PKS1934.UBand.wsclean.cat.txt'
+#     nthreads:
+#       default: 32
+#     fmask:
+#       dtype: str
+#       default: ':128,2697:2705,-256:'
+#       info: Channel ranges to flag
 
-  steps:
-    backup_flag_raw:
-      cab: qcalbackup
-      info: 'Back up original MS flags'
-      params:
-        ms_path: =recipe.ms1
-        zarr_dir: '{recipe.basedir}/initial_flags/'
-        column: FLAG
+#   outputs:
+#     obs_flags:
+#       aliases: [backup_flag_raw.backup_dir]
 
-    backup_flagrow_raw:
-      cab: qcalbackup
-      info: 'Back up original MS flags'
-      params:
-        ms_path: '{recipe.ms}'
-        zarr_dir: '{recipe.basedir}/initial_flags'
-        column: FLAG_ROW
 
-    flagprim:
-      cab: simplyflag
-      params:
-        path: '{recipe.ms}'
-        field: 0
-        max_deviation: 2.5
+#   steps:
+#     backup_flag_raw:
+#       cab: qcalbackup
+#       info: 'Back up original MS flags'
+#       params:
+#         ms_path: =recipe.ms
+#         zarr_dir: '{recipe.basedir}/initial_flags/'
+#         column: FLAG
+#         # we need a way to give explicit names to outputs here
 
-    flagtar:
-      cab: simplyflag
-      params:
-        path: '{recipe.ms}'
-        field: 1
-        max_deviation: 3.5
+#     backup_flagrow_raw:
+#       cab: qcalbackup
+#       info: 'Back up original MS flags'
+#       params:
+#         ms_path: '{recipe.ms}'
+#         zarr_dir: '{recipe.basedir}/initial_flags'
+#         column: FLAG_ROW
 
-    flag_edges:  # mapped over field?
-      cab: fledges
-      info: Apply fixed frequency flag mask
-      params:
-        ms: "{recipe.ms}"
-        row_chunk: -1
-        franges: '{recipe.fmask}'
-        nthreads: '{recipe.nthreads}'
+#     flagprim:
+#       cab: simplyflag
+#       params:
+#         path: '{recipe.ms}'
+#         field: 0
+#         max_deviation: 2.5
 
-    backup_flag:
-      cab: qcalbackup
-      info: 'Back up original MS flags'
-      params:
-        ms_path: '{recipe.ms}'
-        zarr_dir: '{recipe.basedir}/initial_flags/'
-        column: FLAG
+#     flagtar:
+#       cab: simplyflag
+#       params:
+#         path: '{recipe.ms}'
+#         field: 1
+#         max_deviation: 3.5
 
-    backup_flagrow:
-      cab: qcalbackup
-      info: 'Back up original MS flags'
-      params:
-        ms_path: '{recipe.ms}'
-        zarr_dir: '{recipe.basedir}/initial_flags'
-        column: FLAG_ROW
+#     flag_edges:  # mapped over field?
+#       cab: fledges
+#       info: Apply fixed frequency flag mask
+#       params:
+#         ms: "{recipe.ms}"
+#         row_chunk: -1
+#         franges: '{recipe.fmask}'
+#         nthreads: '{recipe.nthreads}'
 
-    combine_flags:
-      cab: or_flags
-      params:
-        ms: =recipe.ms
-        fcol: 'FLAG'  # need to use outputs for these
-        frcol: 'FLAG_ROW'
+#     backup_flag:
+#       cab: qcalbackup
+#       info: 'Back up original MS flags'
+#       params:
+#         ms_path: '{recipe.ms}'
+#         zarr_dir: '{recipe.basedir}/initial_flags/'
+#         column: FLAG
 
-    init_model:  # we should do this after convert but crystalball needs MS format
-      cab: crystalball
-      info: 'Populate MODEL_DATA column'
-      params:
-        ms: '{recipe.ms}'
-        sky_model: '{recipe.cball_model}'
-        num_sources: 1000
-        output_column: MODEL_DATA
-        num_workers: '{recipe.nthreads}'
-        memory_fraction: 0.5
+#     backup_flagrow:
+#       cab: qcalbackup
+#       info: 'Back up original MS flags'
+#       params:
+#         ms_path: '{recipe.ms}'
+#         zarr_dir: '{recipe.basedir}/initial_flags'
+#         column: FLAG_ROW
 
-    convertprim:
-      cab: convert
-      params:
-        output: 'msdir/ms1_primary.zarr'
-        taql_where: "FIELD_ID==0"
-        input: '{recipe.ms}'
+#     combine_flags:
+#       cab: or_flags
+#       params:
+#         ms: =recipe.ms
+#         fcol: =steps.backup_flag.output_name  #ed to use outputs for these
+#         frcol: 'FLAG_ROW'
 
-    converttar:
-      cab: convert
-      params:
-        output: 'msdir/ms1_target.zarr'
-        taql_where: "FIELD_ID==1"
-        input: '{recipe.ms}'
+#     init_model:  # we should do this after convert but crystalball needs MS format
+#       cab: crystalball
+#       info: 'Populate MODEL_DATA column'
+#       params:
+#         ms: '{recipe.ms}'
+#         sky_model: '{recipe.cball_model}'
+#         num_sources: 1000
+#         output_column: MODEL_DATA
+#         num_workers: '{recipe.nthreads}'
+#         memory_fraction: 0.5
+
+#     convertprim:
+#       cab: convert
+#       params:
+#         output: 'msdir/ms1_primary.zarr'
+#         taql_where: "FIELD_ID==0"
+#         input: '{recipe.ms}'
+
+#     converttar:
+#       cab: convert
+#       params:
+#         output: 'msdir/ms1_target.zarr'
+#         taql_where: "FIELD_ID==1"
+#         input: '{recipe.ms}'
 
 
 crosscal:
@@ -208,7 +214,7 @@ crosscal:
         K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
-        K.initial_estimate: false
+        K.initial_estimate: true
         B.type: diag_complex
         B.time_interval: 0
         B.freq_interval: 8
@@ -238,16 +244,16 @@ crosscal:
         nreweight: 10
         sigman_min: 0.005
 
-    # gsmooth:
-    #   cab: gsmooth
-    #   info: Transfer K offset to G and optionally smooth
-    #   params:
-    #     gain_dir: '{recipe.basedir}/gkb1.qc/'  # result placed in smoothed.qc inside this folder
-    #     gain_term: G
-    #     do_plots: true
-    #     nthreads: =recipe.nthreads
-    #     do_smooth: False
-    #     ref_ant: 43
+    gsmooth:
+      cab: gsmooth
+      info: Transfer K offset to G and optionally smooth
+      params:
+        gain_dir: '{recipe.basedir}/gkb1.qc/'  # result placed in smoothed.qc inside this folder
+        gain_term: G
+        do_plots: true
+        nthreads: =recipe.nthreads
+        do_smooth: False
+        ref_ant: 43
 
     gkb2:
       cab: quartical
