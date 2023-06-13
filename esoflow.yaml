@@ -298,6 +298,17 @@ crosscal:
         B.time_interval: 0
         B.freq_interval: 8
 
+    gsmooth2:
+      cab: gsmooth
+      info: Transfer K offset to G and optionally smooth
+      params:
+        gain_dir: '{recipe.basedir}/gkb2.qc/'  # result placed in smoothed.qc inside this folder
+        gain_term: G
+        do_plots: true
+        nthreads: =recipe.nthreads
+        do_smooth: False
+        ref_ant: 43
+
     chi2plots_preflag:
       cab: surfchi2
       info: Plot mean chisq per scan and baseline before flagging
