@@ -352,7 +352,7 @@ crosscal:
         input_model.recipe: '{recipe.model_column}'
         input_model.apply_p_jones: false
         solver.terms: [G,K,B]
-        solver.iter_recipe: [0,0,0]  #[20,20,20,10,10,10,5,5,5]
+        solver.iter_recipe: [30,30,30,20,20,20,10,10,10,5,5,5]
         solver.propagate_flags: false
         solver.robust: true
         solver.threads: 8
@@ -369,7 +369,7 @@ crosscal:
         dask.threads: 8
         dask.scheduler: distributed
         G.type: diag_complex
-        G.time_interval: 1
+        G.time_interval: 0
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/gkb2.qc/G'
         K.type: delay
@@ -380,7 +380,7 @@ crosscal:
         B.type: diag_complex
         B.load_from: '{recipe.basedir}/gkb2.qc/B'
         B.time_interval: 0
-        B.freq_interval: 1
+        B.freq_interval: 2
 
     chi2plots_final:
       cab: surfchi2
