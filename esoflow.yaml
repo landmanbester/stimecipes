@@ -209,7 +209,7 @@ crosscal:
         dask.threads: 8
         dask.scheduler: threads
         G.type: diag_complex
-        G.time_interval: 18
+        G.time_interval: 0
         G.freq_interval: 0
         K.type: delay
         K.time_interval: 0
