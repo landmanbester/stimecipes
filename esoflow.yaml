@@ -192,9 +192,9 @@ crosscal:
         input_model.recipe: '{recipe.model_column}'
         input_model.apply_p_jones: false
         solver.terms: [G,K,B]
-        solver.iter_recipe: [100,100,250,50,50,50,30,30,30,10,10,10]
+        solver.iter_recipe: [100,100,250]  #,50,50,50,30,30,30,10,10,10]
         solver.propagate_flags: false
-        solver.robust: true
+        solver.robust: false
         solver.threads: 8
         solver.reference_antenna: 43
         output.gain_directory: '{recipe.basedir}/gkb1.qc'
