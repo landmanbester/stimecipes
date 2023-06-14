@@ -453,12 +453,12 @@ crosscal:
         G.type: diag_complex
         G.time_interval: 0
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb1.qc/G'
+        G.load_from: '{recipe.basedir}/gkb3.qc/G'
         K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb1.qc/K'
+        K.load_from: '{recipe.basedir}/gkb3.qc/K'
         B.type: diag_complex
         B.load_from: '{recipe.basedir}/gkb3.qc/smoothed.qc/B'
         B.time_interval: 0
@@ -468,7 +468,7 @@ crosscal:
       cab: gsmooth
       info: Transfer K offset to G and optionally smooth
       params:
-        gain_dir: '{recipe.basedir}/gkb3.qc/'  # result placed in smoothed.qc inside this folder
+        gain_dir: '{recipe.basedir}/gkb4.qc/'  # result placed in smoothed.qc inside this folder
         gain_term: G
         do_plots: true
         nthreads: =recipe.nthreads
