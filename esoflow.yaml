@@ -547,6 +547,23 @@ crosscal:
         B.time_interval: 0
         B.freq_interval: 4
 
+    bsmooth3:
+      cab: bsmooth
+      info: Smooth weighted average bandpass solutions
+      params:
+        gain_dir: '{recipe.basedir}/gkb5.qc/'  # smoothed bandpass will be in smoothed.qc next to this folder
+        gain_term: B
+        reject_amp_thresh: 5.5
+        reject_phase_thresh: 55.5
+        do_plots: true
+        per_scan: false
+        nthreads: =recipe.nthreads
+        ref_ant: 43
+        detrend: true
+        dof0: 2.0
+        nreweight: 10
+        sigman_min: 0.001
+
     transfer:
       cab: quartical
       info: "Transfer gains to the targer"
