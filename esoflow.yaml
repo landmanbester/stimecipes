@@ -326,7 +326,7 @@ crosscal:
         wcol: SIGMA_SPECTRUM
         nthreads: '{recipe.nthreads}'
         ms: '{recipe.ms_primary}'
-        flag_above: 3.5
+        flag_above: 7.5
         unflag_below: 0.0
 
     chi2plots_postflag:
@@ -346,6 +346,7 @@ crosscal:
         input_ms.path: '{recipe.ms_primary}'
         input_ms.time_chunk: '0'
         input_ms.freq_chunk: '0'
+        input_ms.sigma_column: =recipe.sigma_column
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_corr: [0, 3]
@@ -380,7 +381,7 @@ crosscal:
         B.type: diag_complex
         B.load_from: '{recipe.basedir}/gkb2.qc/B'
         B.time_interval: 0
-        B.freq_interval: 2
+        B.freq_interval: 4
 
     chi2plots_final:
       cab: surfchi2
@@ -405,9 +406,9 @@ crosscal:
         nthreads: =recipe.nthreads
         ref_ant: 43
         detrend: false
-        dof0: 4.0
+        dof0: 2.0
         nreweight: 10
-        sigman_min: 0.0001
+        sigman_min: 0.001
 
     gsmooth3:
       cab: gsmooth
