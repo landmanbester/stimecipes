@@ -421,6 +421,90 @@ crosscal:
         do_smooth: False
         ref_ant: 43
 
+    gkb4:
+      cab: quartical
+      info: Continue solve for K after smoothing bandpass and compute residual for flagging
+      params:
+        input_ms.path: '{recipe.ms_primary}'
+        input_ms.time_chunk: '0'
+        input_ms.freq_chunk: '0'
+        input_ms.select_uv_range: [150,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe: '{recipe.model_column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G,K,B]
+        solver.iter_recipe: [30,30,0,20,20,0,10,10,0,5,5,0]  # both G and K can change after detrending B
+        solver.propagate_flags: false
+        solver.robust: true
+        solver.threads: 8
+        solver.reference_antenna: 43
+        output.gain_directory: '{recipe.basedir}/gkb4.qc/'
+        output.log_directory: '{recipe.basedir}/logs.qc'
+        output.overwrite: false
+        output.products: [residual]
+        output.columns: [RESIDUAL]
+        output.flags: false
+        output.apply_p_jones_inv: false
+        output.net_gains:
+        mad_flags.enable: false
+        dask.threads: 8
+        dask.scheduler: distributed
+        G.type: diag_complex
+        G.time_interval: 0
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/gkb1.qc/G'
+        K.type: delay
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/gkb1.qc/K'
+        B.type: diag_complex
+        B.load_from: '{recipe.basedir}/gkb3.qc/smoothed.qc/B'
+        B.time_interval: 0
+        B.freq_interval: 4
+
+    gsmooth4:
+      cab: gsmooth
+      info: Transfer K offset to G and optionally smooth
+      params:
+        gain_dir: '{recipe.basedir}/gkb3.qc/'  # result placed in smoothed.qc inside this folder
+        gain_term: G
+        do_plots: true
+        nthreads: =recipe.nthreads
+        do_smooth: False
+        ref_ant: 43
+
+    chi2plots_preflag2:
+      cab: surfchi2
+      info: Plot mean chisq per scan and baseline before flagging
+      params:
+        dataout: '{recipe.basedir}/svis_preflag2'
+        imagesout: '{recipe.basedir}/svis_preflag2'
+        wcol: SIGMA_SPECTRUM
+        nthreads: '{recipe.nthreads}'
+        ms: '{recipe.ms_primary}'
+
+    chi2flag2:
+      cab: flagchi2
+      info: Flag individual data points based on their chi2 values
+      params:
+        wcol: SIGMA_SPECTRUM
+        nthreads: '{recipe.nthreads}'
+        ms: '{recipe.ms_primary}'
+        flag_above: 3.5
+        unflag_below: 0.0
+
+    chi2plots_postflag2:
+      cab: surfchi2
+      info: Plot mean chisq per scan and baseline after flagging
+      params:
+        dataout: '{recipe.basedir}/svis_postflag2'
+        imagesout: '{recipe.basedir}/svis_postflag2'
+        wcol: SIGMA_SPECTRUM
+        nthreads: '{recipe.nthreads}'
+        ms: '{recipe.ms_primary}'
+
     transfer:
       cab: quartical
       info: "Transfer gains to the targer"
