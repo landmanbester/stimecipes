@@ -644,21 +644,21 @@ crosscal:
         output.apply_p_jones_inv: false
         output.net_gains: [G, K, B]
         mad_flags.enable: false
-        dask.threads: =recipe.nthreads
+        dask.threads: 64
         dask.scheduler: threads
         G.type: diag_complex
         G.time_interval: 1
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb2.qc/G'
+        G.load_from: '{recipe.basedir}/gkbf.qc/G'
         K.type: delay
-        K.time_interval: 0
+        K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb2.qc/K'
+        K.load_from: '{recipe.basedir}/gkbf.qc/K'
         B.type: diag_complex
         B.time_interval: 0
         B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/gkb3.qc/smoothed.qc/B'
+        B.load_from: '{recipe.basedir}/gkbf.qc/B'
 
 
 
