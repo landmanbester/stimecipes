@@ -402,10 +402,10 @@ crosscal:
         reject_amp_thresh: 5.5
         reject_phase_thresh: 55.5
         do_plots: true
-        per_scan: true
+        per_scan: false
         nthreads: =recipe.nthreads
         ref_ant: 43
-        detrend: false
+        detrend: true
         dof0: 2.0
         nreweight: 10
         sigman_min: 0.001
