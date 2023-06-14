@@ -504,6 +504,49 @@ crosscal:
         nthreads: '{recipe.nthreads}'
         ms: '{recipe.ms_primary}'
 
+    gkb5:
+      cab: quartical
+      info: Final solve to refine B solution intervals
+      params:
+        input_ms.path: '{recipe.ms_primary}'
+        input_ms.time_chunk: '0'
+        input_ms.freq_chunk: '0'
+        input_ms.select_uv_range: [150,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe: '{recipe.model_column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G,K,B]
+        solver.iter_recipe: [30,30,30,20,20,20,10,10,10,5,5,5]
+        solver.propagate_flags: false
+        solver.robust: true
+        solver.threads: 8
+        solver.reference_antenna: 43
+        output.gain_directory: '{recipe.basedir}/gkb5.qc/'
+        output.log_directory: '{recipe.basedir}/logs.qc'
+        output.overwrite: false
+        output.products: [residual, corrected_data, corrected_weight]
+        output.columns: [RESIDUAL, CORRECTED_DATA, WEIGHT_SPECTRUM]
+        output.flags: false
+        output.apply_p_jones_inv: false
+        output.net_gains: [G, K, B]
+        mad_flags.enable: false
+        dask.threads: 8
+        dask.scheduler: distributed
+        G.type: diag_complex
+        G.time_interval: 27
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/gkb4.qc/G'
+        K.type: delay
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/gkb4.qc/K'
+        B.type: diag_complex
+        B.load_from: '{recipe.basedir}/gkb4.qc/B'
+        B.time_interval: 0
+        B.freq_interval: 4
+
     transfer:
       cab: quartical
       info: "Transfer gains to the targer"
