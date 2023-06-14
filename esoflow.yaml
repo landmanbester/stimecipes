@@ -409,6 +409,16 @@ crosscal:
         nreweight: 10
         sigman_min: 0.0001
 
+    gsmooth3:
+      cab: gsmooth
+      info: Transfer K offset to G and optionally smooth
+      params:
+        gain_dir: '{recipe.basedir}/gkb3.qc/'  # result placed in smoothed.qc inside this folder
+        gain_term: G
+        do_plots: true
+        nthreads: =recipe.nthreads
+        do_smooth: False
+        ref_ant: 43
 
     transfer:
       cab: quartical
