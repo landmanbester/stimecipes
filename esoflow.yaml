@@ -564,6 +564,17 @@ crosscal:
         nreweight: 10
         sigman_min: 0.001
 
+    gsmooth5:
+      cab: gsmooth
+      info: Transfer K offset to G and optionally smooth
+      params:
+        gain_dir: '{recipe.basedir}/gkb5.qc/'  # result placed in smoothed.qc inside this folder
+        gain_term: G
+        do_plots: true
+        nthreads: =recipe.nthreads
+        do_smooth: False
+        ref_ant: 43
+
     transfer:
       cab: quartical
       info: "Transfer gains to the targer"
