@@ -624,7 +624,7 @@ crosscal:
       params:
         input_ms.path: '{recipe.ms_target}'
         input_ms.time_chunk: 50
-        input_ms.freq_chunk: 256
+        input_ms.freq_chunk: 128
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
         input_model.recipe:

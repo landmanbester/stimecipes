@@ -17,7 +17,7 @@ spotless:
       aliases: ['*.ms']
     cpi:
       dtype: int
-      default: 16
+      default: 256
     ipi:
       dtype: int
       default: -1
@@ -44,12 +44,13 @@ spotless:
     field_of_view:
       dtype: float
       default: 2.5
-      abbreviation: fov
+      aliases: ["*.field_of_view"]
       info:
         Field of view in degrees
     super_resolution_factor:
       dtype: float
       default: 2
+      aliases: ["*.super_resolution_factor"]
       info:
         Will over-sample Nyquist by this factor at max frequency
     niter:
@@ -57,11 +58,6 @@ spotless:
       default: 10
       info:
         Number of major iterations
-    l1reweight_from:
-      dtype: int
-      default: 5
-      info:
-        Start l21 reweighting from this iteration
     gamma:
       dtype: float
       default: 1.0
@@ -94,27 +90,24 @@ spotless:
         A value of less than -2 implies uniform
     nvthreads:
       default: 8
+      aliases: ["*.nvthreads"]
       info:
         Total number of threads to use between all processes.
         Will use all available resources by default
     nthreads_dask:
       default: 8
+      aliases: ["*.nthreads_dask"]
       info:
         Number of dask threads per worker
     nworkers:
       default: 1
       info:
-        Number of dask workers (use with distributed scheduler)
+        Number of dask workers (use with distributed scheduler).
     scheduler:
       default: threads
       aliases: ["*.scheduler"]
       info:
         Which dask scheduler to use.
-    overwrite:
-      default: true
-      aliases: ["*.overwrite"]
-      info:
-        Allow overwriting of existing input
     rmsfactor:
       dtype: float
       default: 3.0
@@ -123,16 +116,16 @@ spotless:
       default: true
     pd_maxit:
       dtype: int
-      default: 250
+      default: 500
     pd_tol:
       dtype: float
       default: 0.001
     pd_report_freq:
       dtype: int
-      default: 50
+      default: 100
     pd_verbose:
       dtype: int
-      default: 1
+      default: 2
     tol:
       dtype: float
       default: 0.005
@@ -158,35 +151,31 @@ spotless:
       cab: pfb_init
       info:
         Precompute visibilities for output products.
-        In this case simply the Stokes I visibilities.
+        In this case simply the Stokes I visibilities (default)
       params:
         data_column: =recipe.data_column
-        weight_column: =recipe.weight_column
+        # weight_column: =recipe.weight_column
         max_field_of_view: =recipe.field_of_view
         channels_per_image: =recipe.cpi
         integrations_per_image: =recipe.ipi
-        overwrite: =recipe.overwrite
-        nthreads_dask: =recipe.nthreads_dask
+        overwrite: true
+        nthreads_dask: =recipe.nthreads_dask*recipe.nvthreads
 
-
-    grid:
+    grid1:
       cab: pfb_grid
       info:
-        Flip visibilties into image space data products
+        Flip visibilties into image space data products.
       params:
-        field_of_view: =recipe.field_of_view
-        super_resolution_factor: =recipe.super_resolution_factor
-        robustness: =recipe.robustness
-        overwrite: =recipe.overwrite
-        nvthreads: 2
-        nthreads_dask: 4
+        robustness: -1.0
+        overwrite: true
 
-    deconv:
+    deconv1:
       cab: pfb_spotless
       info:
         Deconvolve with spotless worker
       params:
         niter: =recipe.niter
+        l1reweight_from: 5
         rmsfactor: =recipe.rmsfactor
         gamma: =recipe.gamma
         positivity: =recipe.positivity
@@ -197,16 +186,68 @@ spotless:
         tol: =recipe.tol
         pm_maxit: =recipe.pm_maxit
         pm_tol: =recipe.pm_tol
-        nthreads_dask: 1
-        nvthreads: =recipe.nvthreads
 
-    degrid:
-      cab: pfb_degrid
+    grid2:
+      cab: pfb_grid
       info:
-        Turn model image into visibilities
+        Flip visibilties into image space data products.
       params:
-        model_column: =recipe.model_column
-        channels_per_image: =recipe.cpi
-        integrations_per_image: =recipe.ipi
-        nthreads_dask: =recipe.nthreads_dask
+        robustness: 0.0
+        overwrite: false
+        l2reweight_dof: 3.0
+
+    deconv2:
+      cab: pfb_spotless
+      info:
+        Deconvolve with spotless worker
+      params:
+        niter: =recipe.niter
+        l1reweight_from: 3
+        rmsfactor: =recipe.rmsfactor
+        gamma: =recipe.gamma
+        positivity: =recipe.positivity
+        pd_maxit: =recipe.pd_maxit
+        pd_tol: =recipe.pd_tol
+        pd_report_freq: =recipe.pd_report_freq
+        pd_verbose: =recipe.pd_verbose
+        tol: =recipe.tol
+        pm_maxit: =recipe.pm_maxit
+        pm_tol: =recipe.pm_tol
+
+    grid3:
+      cab: pfb_grid
+      info:
+        Flip visibilties into image space data products.
+      params:
+        robustness: 1.0
+        overwrite: false
+        l2reweight_dof: 3.0
+
+    deconv3:
+      cab: pfb_spotless
+      info:
+        Deconvolve with spotless worker
+      params:
+        niter: =recipe.niter
+        l1reweight_from: 3
+        rmsfactor: =recipe.rmsfactor
+        gamma: =recipe.gamma
+        positivity: =recipe.positivity
+        pd_maxit: =recipe.pd_maxit
+        pd_tol: =recipe.pd_tol
+        pd_report_freq: =recipe.pd_report_freq
+        pd_verbose: =recipe.pd_verbose
+        tol: =recipe.tol
+        pm_maxit: =recipe.pm_maxit
+        pm_tol: =recipe.pm_tol
+
+    # degrid:
+    #   cab: pfb_degrid
+    #   info:
+    #     Turn model image into visibilities
+    #   params:
+    #     model_column: =recipe.model_column
+    #     channels_per_image: =recipe.cpi
+    #     integrations_per_image: =recipe.ipi
+    #     nthreads_dask: =recipe.nthreads_dask
 
