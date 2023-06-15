@@ -12,7 +12,7 @@ spotless:
 
   inputs:
     ms:
-      dtype: MS
+      dtype: str
       required: true
       aliases: ['*.ms']
     cpi:
@@ -159,7 +159,7 @@ spotless:
         channels_per_image: =recipe.cpi
         integrations_per_image: =recipe.ipi
         overwrite: true
-        nthreads_dask: =recipe.nthreads_dask*recipe.nvthreads
+        nthreads_dask: =recipe.nthreads_dask * recipe.nvthreads
 
     grid1:
       cab: pfb_grid
