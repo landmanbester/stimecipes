@@ -159,7 +159,7 @@ spotless:
         channels_per_image: =recipe.cpi
         integrations_per_image: =recipe.ipi
         overwrite: true
-        nthreads_dask: =recipe.nthreads_dask * recipe.nvthreads
+        nthreads_dask: =recipe.nthreads_dask
 
     grid1:
       cab: pfb_grid
