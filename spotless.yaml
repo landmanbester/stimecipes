@@ -83,11 +83,6 @@ spotless:
       aliases: ["*.wstack"]
       info:
         Perform w-correction via improved w-stacking
-    robustness:
-      default: 0
-      info:
-        Robustness factor for Briggs weighting. None means natural.
-        A value of less than -2 implies uniform
     nvthreads:
       default: 8
       aliases: ["*.nvthreads"]
@@ -104,10 +99,13 @@ spotless:
       info:
         Number of dask workers (use with distributed scheduler).
     scheduler:
-      default: threads
+      default: distributed
       aliases: ["*.scheduler"]
       info:
         Which dask scheduler to use.
+    bases:
+      dtype: str
+      default: self,db1,db2,db3,db4,db5,db6,db7
     rmsfactor:
       dtype: float
       default: 3.0
@@ -119,7 +117,7 @@ spotless:
       default: 500
     pd_tol:
       dtype: float
-      default: 0.001
+      default: 0.0001
     pd_report_freq:
       dtype: int
       default: 100
@@ -128,13 +126,13 @@ spotless:
       default: 2
     tol:
       dtype: float
-      default: 0.005
+      default: 0.0005
     pm_maxit:
       dtype: int
       default: 250
     pm_tol:
       dtype: float
-      default: 0.001
+      default: 0.0001
     hessnorm:
       dtype: float
       info:
@@ -160,6 +158,7 @@ spotless:
         integrations_per_image: =recipe.ipi
         overwrite: true
         nthreads_dask: =recipe.nthreads_dask
+        nvthreads: =recipe.nvthreads
 
     grid1:
       cab: pfb_grid
@@ -168,6 +167,8 @@ spotless:
       params:
         robustness: -1.0
         overwrite: true
+        nthreads_dask: =recipe.nthreads_dask
+        nvthreads: =recipe.nvthreads
 
     deconv1:
       cab: pfb_spotless
@@ -186,6 +187,9 @@ spotless:
         tol: =recipe.tol
         pm_maxit: =recipe.pm_maxit
         pm_tol: =recipe.pm_tol
+        nthreads_dask: =recipe.nthreads_dask
+        nvthreads: =recipe.nvthreads
+        bases: =recipe.bases
 
     grid2:
       cab: pfb_grid
@@ -195,6 +199,8 @@ spotless:
         robustness: 0.0
         overwrite: false
         l2reweight_dof: 3.0
+        nthreads_dask: =recipe.nthreads_dask
+        nvthreads: =recipe.nvthreads
 
     deconv2:
       cab: pfb_spotless
@@ -213,6 +219,9 @@ spotless:
         tol: =recipe.tol
         pm_maxit: =recipe.pm_maxit
         pm_tol: =recipe.pm_tol
+        nthreads_dask: =recipe.nthreads_dask
+        nvthreads: =recipe.nvthreads
+        bases: =recipe.bases
 
     grid3:
       cab: pfb_grid
@@ -222,6 +231,8 @@ spotless:
         robustness: 1.0
         overwrite: false
         l2reweight_dof: 3.0
+        nthreads_dask: =recipe.nthreads_dask
+        nvthreads: =recipe.nvthreads
 
     deconv3:
       cab: pfb_spotless
@@ -240,6 +251,9 @@ spotless:
         tol: =recipe.tol
         pm_maxit: =recipe.pm_maxit
         pm_tol: =recipe.pm_tol
+        nthreads_dask: =recipe.nthreads_dask
+        nvthreads: =recipe.nvthreads
+        bases: =recipe.bases
 
     # degrid:
     #   cab: pfb_degrid
