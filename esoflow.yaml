@@ -822,7 +822,7 @@ selfcal:
         dask.threads: '{recipe.nthreads}'
         dask.scheduler: threads
         G.type: complex
-        G.load_from: '{recipe.basedir}/target_gains_init.qc/gains.qc/GKB-NET'
+        G.load_from: '{recipe.basedir}/target_gains_init.qc/GKB-NET'
         G.interp_method: 2dlinear
         G.interp_mode: ampphase
         G.time_interval: 1
