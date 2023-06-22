@@ -627,7 +627,7 @@ crosscal:
         input_ms.freq_chunk: 128
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
-        input_model.recipe:
+        input_model.recipe: MODEL_DATA
         input_model.apply_p_jones: false
         solver.terms: [G,K,B]
         solver.iter_recipe: [0,0,0]
@@ -638,8 +638,8 @@ crosscal:
         output.gain_directory: '{recipe.basedir}/target_gains_init.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: false
-        # output.products: [corrected_data, corrected_weight]
-        # output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+        output.products: [residual]
+        output.columns: [RESIDUAL]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [G, K, B]
@@ -791,7 +791,7 @@ selfcal:
         input_ms.sigma_column: SIGMA_SPECTRUM
         input_ms.time_chunk: 25
         input_ms.freq_chunk: 0
-        input_ms.select_uv_range: [0, 150]
+        input_ms.select_uv_range: [150,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
         input_model.recipe: '{recipe.model_column}'
