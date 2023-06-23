@@ -8,6 +8,9 @@ opts:
 
 gpr_single_dspec:
   info: Smooth all four Stokes parameters for a single source using GPR
+  assign:
+    log:
+      name: log-{info.fqname}-{recipe.stokes}.txt
   for_loop:
     var: stokes
     over: ['I', 'Q', 'U', 'V']
@@ -72,6 +75,20 @@ gpr_single_dspec:
       aliases: ["*.nuf"]
       info:
         End freq
+    sigma_min:
+      dtype: float
+      default: 1e-6
+      aliases: ["*.sigma_min"]
+      info:
+        Lower cut off for smoothed variance
+    do_gpr:
+      dtype: bool
+      default: false
+      aliases: ["*.do_gpr"]
+      info:
+        Whether to perform GPR or not
+
+
 
   steps:
     smooth1:
@@ -81,10 +98,15 @@ gpr_single_dspec:
         lnu: '{recipe.lnu}'
         lt: '{recipe.lt}'
         mad_threshold: '{recipe.mad_threshold}'
+        sigma_min: =recipe.sigma_min
+        do_gpr: =recipe.do_gpr
 
 
 gpr_dspec:
   info: Loop over sources/observations
+  assign:
+    log:
+      dir: log-{recipe.obs@index}
   for_loop:
     var: obs
     over: obs_list
@@ -92,14 +114,14 @@ gpr_dspec:
     obs_list:
       dtype: List[str]
       default:
-        # - DynSpecs_1622491578/Analyse/1622491578_20:09:36.800_-20:26:46.600.fits
-        # - DynSpecs_1624216341/Analyse/1624216341_20:09:36.800_-20:26:46.600.fits
-        # - DynSpecs_1625623568/Analyse/1625623568_20:09:36.800_-20:26:46.600.fits
-        # - DynSpecs_1627405233/Analyse/1627405233_20:09:36.800_-20:26:46.600.fits
-        # - DynSpecs_1627405250/Analyse/1627405250_20:09:36.800_-20:26:46.600.fits
-        # - DynSpecs_1628439081/Analyse/1628439081_20:09:36.800_-20:26:46.600.fits
-        # - DynSpecs_1643947704/Analyse/1643947704_20:09:36.800_-20:26:46.600.fits
-        # - DynSpecs_1643969937/Analyse/1643969937_20:09:36.800_-20:26:46.600.fits
+        - DynSpecs_1622491578/Analyse/1622491578_20:09:36.800_-20:26:46.600.fits
+        - DynSpecs_1624216341/Analyse/1624216341_20:09:36.800_-20:26:46.600.fits
+        - DynSpecs_1625623568/Analyse/1625623568_20:09:36.800_-20:26:46.600.fits
+        - DynSpecs_1627405233/Analyse/1627405233_20:09:36.800_-20:26:46.600.fits
+        - DynSpecs_1627405250/Analyse/1627405250_20:09:36.800_-20:26:46.600.fits
+        - DynSpecs_1628439081/Analyse/1628439081_20:09:36.800_-20:26:46.600.fits
+        - DynSpecs_1643947704/Analyse/1643947704_20:09:36.800_-20:26:46.600.fits
+        - DynSpecs_1643969937/Analyse/1643969937_20:09:36.800_-20:26:46.600.fits
         - Jupiter_DynSpecs_1608538564/Analyse/1608538564_20:09:36.800_-20:26:46.600.fits
 
   steps:
