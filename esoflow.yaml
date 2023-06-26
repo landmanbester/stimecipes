@@ -894,7 +894,7 @@ selfcal:
         solver.iter_recipe: [0,50,0,30,0,20,0,10,0,5]
         solver.propagate_flags: true
         solver.robust: true
-        solver.threads: 4
+        solver.threads: 2
         solver.reference_antenna: 43
         output.gain_directory: '{recipe.basedir}/target_gains_stage2.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
@@ -965,4 +965,4 @@ selfcal:
         K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/target_gains_stage1_interp.qc/K'
+        K.load_from: '{recipe.basedir}/target_gains_stage2.qc/K'
