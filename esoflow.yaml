@@ -883,7 +883,7 @@ selfcal:
         input_ms.path: '{recipe.ms}'
         input_ms.data_column: DATA
         input_ms.sigma_column: SIGMA_SPECTRUM
-        input_ms.time_chunk: 25
+        input_ms.time_chunk: 30
         input_ms.freq_chunk: 0
         input_ms.select_uv_range: [50,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
@@ -925,7 +925,7 @@ selfcal:
         input_ms.path: '{recipe.ms}'
         input_ms.data_column: DATA
         input_ms.sigma_column: SIGMA_SPECTRUM
-        input_ms.time_chunk: 25
+        input_ms.time_chunk: 30
         input_ms.freq_chunk: 0
         input_ms.select_uv_range: [50,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
@@ -974,7 +974,7 @@ selfcal:
         input_ms.path: '{recipe.ms}'
         input_ms.data_column: DATA
         input_ms.sigma_column: SIGMA_SPECTRUM
-        input_ms.time_chunk: 25
+        input_ms.time_chunk: 30
         input_ms.freq_chunk: 0
         input_ms.select_uv_range: [50,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
@@ -1016,7 +1016,7 @@ selfcal:
         input_ms.path: '{recipe.ms}'
         input_ms.data_column: DATA
         input_ms.sigma_column: SIGMA_SPECTRUM
-        input_ms.time_chunk: 25
+        input_ms.time_chunk: 30
         input_ms.freq_chunk: 0
         input_ms.select_uv_range: [50,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
