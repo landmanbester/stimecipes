@@ -1077,10 +1077,34 @@ sanity:
     basedir:
       default: 'output_sanity'
     model:
-      default: '/scratch/bester/stage4_I_main_model.coeffs.zarr'
+      default: '/scratch/bester/stage3_I_main_model.coeffs.zarr'
 
   steps:
-    low_res:
+    predict_low_res:
+      cab: pfb_degrid
+      params:
+        ms: =recipe.ms
+        output_filename: '/scratch/bester/stage3'
+        channels_per_image: 512
+        integrations_per_image: -1
+        model_column: MODEL_DATA_LR
+        nthreads_dask: 4
+        nvthreads: 16
+        scheduler: threads
+
+    predict_high_res:
+      cab: pfb_degrid
+      params:
+        ms: =recipe.ms
+        output_filename: '/scratch/bester/stage3'
+        channels_per_image: 64
+        integrations_per_image: -1
+        model_column: MODEL_DATA
+        nthreads_dask: 8
+        nvthreads: 8
+        scheduler: threads
+
+    low_res_cal:
         cab: quartical
         info: Perform phase + delay selfcal with low res model
         params:
