@@ -1076,7 +1076,8 @@ sanity:
       required: true
     basedir:
       default: 'output_sanity'
-      model: '/scratch/bester/stage4_I_main_model.coeffs.zarr'
+    model:
+      default: '/scratch/bester/stage4_I_main_model.coeffs.zarr'
 
   steps:
     low_res:
