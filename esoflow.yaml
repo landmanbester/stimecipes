@@ -1139,7 +1139,6 @@ sanity:
         channels_per_image: 512
         nthreads_dask: 4
         nvthreads: 8
-        nthreads_per_worker: 8
         scheduler: threads
 
     grid_corrected:
@@ -1170,7 +1169,6 @@ sanity:
         channels_per_image: 512
         nthreads_dask: 4
         nvthreads: 8
-        nthreads_per_worker: 8
         scheduler: threads
 
     grid_forward:
