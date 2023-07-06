@@ -1145,6 +1145,7 @@ sanity:
       cab: pfb_grid
       params:
         output_filename: '{recipe.basedir}/low_res_corrected'
+        nband: 8
         robustness: 0.0
         fits_cubes: true
         field_of_view: 2.5
@@ -1175,6 +1176,7 @@ sanity:
       cab: pfb_grid
       params:
         output_filename: '{recipe.basedir}/low_res_forward'
+        nband: 8
         robustness: 0.0
         fits_cubes: true
         field_of_view: 2.5
