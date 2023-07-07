@@ -1234,7 +1234,7 @@ sanity:
           solver.robust: false
           solver.threads: 2
           solver.reference_antenna: 43
-          output.gain_directory: '{recipe.basedir}/high_res.qc'
+          output.gain_directory: '{recipe.basedir}/high_res_no_clunking.qc'
           output.log_directory: '{recipe.basedir}/logs.qc'
           output.overwrite: true
           output.flags: true
