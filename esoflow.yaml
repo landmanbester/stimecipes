@@ -617,7 +617,7 @@ crosscal:
         B.load_from: '{recipe.basedir}/gkb5.qc/smoothed.qc/B'
         # B.load_from: '{recipe.basedir}/gkb5.qc/B'
         B.time_interval: 0
-        B.freq_interval: 4
+        B.freq_interval: 1
 
     transfer:
       cab: quartical
