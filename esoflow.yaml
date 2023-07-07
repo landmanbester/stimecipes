@@ -614,8 +614,8 @@ crosscal:
         K.initial_estimate: false
         K.load_from: '{recipe.basedir}/gkb5.qc/K'
         B.type: diag_complex
-        # B.load_from: '{recipe.basedir}/gkb5.qc/smoothed.qc/B'
-        B.load_from: '{recipe.basedir}/gkb5.qc/B'
+        B.load_from: '{recipe.basedir}/gkb5.qc/smoothed.qc/B'
+        # B.load_from: '{recipe.basedir}/gkb5.qc/B'
         B.time_interval: 0
         B.freq_interval: 4
 
@@ -1077,7 +1077,7 @@ sanity:
       dtype: MS
       required: true
     basedir:
-      default: 'output_sanity_no_delay_clunking'
+      default: 'output_sanity_no_delay_clunking_smoothB'
     model:
       default: '/scratch/bester/stage3_I_main_model.coeffs.zarr'
     input_gains:
