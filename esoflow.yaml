@@ -1077,140 +1077,142 @@ sanity:
       dtype: MS
       required: true
     basedir:
-      default: 'output_sanity'
+      default: 'output_sanity_no_delay_clunking'
     model:
       default: '/scratch/bester/stage3_I_main_model.coeffs.zarr'
+    1gcgains:
+      default: 'output_infG/target_gains_init_nodelay_clunking.qc'
 
   steps:
-    predict_low_res:
-      cab: pfb_degrid
-      params:
-        ms: =recipe.ms
-        output_filename: '/scratch/bester/stage3'
-        channels_per_image: 512
-        integrations_per_image: -1
-        model_column: MODEL_DATA_LR
-        nthreads_dask: 4
-        nvthreads: 16
-        scheduler: threads
+    # predict_low_res:
+    #   cab: pfb_degrid
+    #   params:
+    #     ms: =recipe.ms
+    #     output_filename: '/scratch/bester/stage3'
+    #     channels_per_image: 512
+    #     integrations_per_image: -1
+    #     model_column: MODEL_DATA_LR
+    #     nthreads_dask: 4
+    #     nvthreads: 16
+    #     scheduler: threads
 
-    predict_high_res:
-      cab: pfb_degrid
-      params:
-        ms: =recipe.ms
-        output_filename: '/scratch/bester/stage3'
-        channels_per_image: 64
-        integrations_per_image: -1
-        model_column: MODEL_DATA
-        nthreads_dask: 8
-        nvthreads: 8
-        scheduler: threads
+    # predict_high_res:
+    #   cab: pfb_degrid
+    #   params:
+    #     ms: =recipe.ms
+    #     output_filename: '/scratch/bester/stage3'
+    #     channels_per_image: 64
+    #     integrations_per_image: -1
+    #     model_column: MODEL_DATA
+    #     nthreads_dask: 8
+    #     nvthreads: 8
+    #     scheduler: threads
 
-    low_res_cal:
-        cab: quartical
-        info: Perform phase + delay selfcal with low res model
-        params:
-          input_ms.path: '{recipe.ms}'
-          input_ms.data_column: DATA
-          input_ms.sigma_column: SIGMA_SPECTRUM
-          input_ms.time_chunk: 30
-          input_ms.freq_chunk: 0
-          input_ms.select_uv_range: [0,0]
-          input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
-          input_ms.select_corr: [0, 3]
-          input_model.recipe: MODEL_DATA_LR
-          input_model.apply_p_jones: false
-          solver.terms: [G,K]
-          solver.iter_recipe: [0,200]
-          solver.propagate_flags: true
-          solver.robust: false
-          solver.threads: 2
-          solver.reference_antenna: 43
-          output.gain_directory: '{recipe.basedir}/low_res.qc'
-          output.log_directory: '{recipe.basedir}/logs.qc'
-          output.overwrite: true
-          output.flags: true
-          output.apply_p_jones_inv: false
-          output.net_gains: [G, K]
-          output.products: [corrected_residual, corrected_weight]
-          output.columns: [RESIDUAL, WEIGHT_SPECTRUM]
-          mad_flags.enable: false
-          dask.threads: 32
-          dask.scheduler: threads
-          G.type: complex
-          G.load_from: 'output_infG/target_gains_init.qc/GKB-net'
-          G.interp_method: 2dlinear
-          G.interp_mode: ampphase
-          G.time_interval: 1
-          G.freq_interval: 1
-          K.type: delay_and_offset
-          K.interp_method: 2dlinear
-          K.interp_mode: ampphase
-          K.time_interval: 3
-          K.freq_interval: 0
-          K.initial_estimate: false
+    # low_res_cal:
+    #     cab: quartical
+    #     info: Perform phase + delay selfcal with low res model
+    #     params:
+    #       input_ms.path: '{recipe.ms}'
+    #       input_ms.data_column: DATA
+    #       input_ms.sigma_column: SIGMA_SPECTRUM
+    #       input_ms.time_chunk: 30
+    #       input_ms.freq_chunk: 0
+    #       input_ms.select_uv_range: [0,0]
+    #       input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
+    #       input_ms.select_corr: [0, 3]
+    #       input_model.recipe: MODEL_DATA_LR
+    #       input_model.apply_p_jones: false
+    #       solver.terms: [G,K]
+    #       solver.iter_recipe: [0,200]
+    #       solver.propagate_flags: true
+    #       solver.robust: false
+    #       solver.threads: 2
+    #       solver.reference_antenna: 43
+    #       output.gain_directory: '{recipe.basedir}/low_res.qc'
+    #       output.log_directory: '{recipe.basedir}/logs.qc'
+    #       output.overwrite: true
+    #       output.flags: true
+    #       output.apply_p_jones_inv: false
+    #       output.net_gains: [G, K]
+    #       output.products: [corrected_residual, corrected_weight]
+    #       output.columns: [RESIDUAL, WEIGHT_SPECTRUM]
+    #       mad_flags.enable: false
+    #       dask.threads: 32
+    #       dask.scheduler: threads
+    #       G.type: complex
+    #       G.load_from: 'output_infG/target_gains_init.qc/GKB-net'
+    #       G.interp_method: 2dlinear
+    #       G.interp_mode: ampphase
+    #       G.time_interval: 1
+    #       G.freq_interval: 1
+    #       K.type: delay_and_offset
+    #       K.interp_method: 2dlinear
+    #       K.interp_mode: ampphase
+    #       K.time_interval: 3
+    #       K.freq_interval: 0
+    #       K.initial_estimate: false
 
-    init_corrected:
-      cab: pfb_init
-      info:
-        Initialise imaging data products at low res
-      params:
-        ms: '{recipe.ms}'
-        output_filename: '{recipe.basedir}/low_res_corrected'
-        data_column: RESIDUAL
-        weight_column: WEIGHT_SPECTRUM
-        integrations_per_image: -1
-        channels_per_image: 512
-        nthreads_dask: 4
-        nvthreads: 8
-        scheduler: threads
+    # init_corrected:
+    #   cab: pfb_init
+    #   info:
+    #     Initialise imaging data products at low res
+    #   params:
+    #     ms: '{recipe.ms}'
+    #     output_filename: '{recipe.basedir}/low_res_corrected'
+    #     data_column: RESIDUAL
+    #     weight_column: WEIGHT_SPECTRUM
+    #     integrations_per_image: -1
+    #     channels_per_image: 512
+    #     nthreads_dask: 4
+    #     nvthreads: 8
+    #     scheduler: threads
 
-    grid_corrected:
-      cab: pfb_grid
-      params:
-        output_filename: '{recipe.basedir}/low_res_corrected'
-        nband: 8
-        robustness: 0.0
-        fits_cubes: true
-        field_of_view: 2.5
-        super_resolution_factor: 2.0
-        nvthreads: 8
-        nthreads_dask: 8
-        weight: false
-        psf: false
+    # grid_corrected:
+    #   cab: pfb_grid
+    #   params:
+    #     output_filename: '{recipe.basedir}/low_res_corrected'
+    #     nband: 8
+    #     robustness: 0.0
+    #     fits_cubes: true
+    #     field_of_view: 2.5
+    #     super_resolution_factor: 2.0
+    #     nvthreads: 8
+    #     nthreads_dask: 8
+    #     weight: false
+    #     psf: false
 
-    init_forward:
-      cab: pfb_init
-      info:
-        Initialise imaging data products at low res
-      params:
-        ms: '{recipe.ms}'
-        output_filename: '{recipe.basedir}/low_res_forward'
-        data_column: DATA
-        sigma_column: SIGMA_SPECTRUM
-        gain_table: '{recipe.basedir}/low_res.qc'
-        gain_term: 'GK-net'
-        integrations_per_image: -1
-        channels_per_image: 512
-        nthreads_dask: 4
-        nvthreads: 8
-        scheduler: threads
+    # init_forward:
+    #   cab: pfb_init
+    #   info:
+    #     Initialise imaging data products at low res
+    #   params:
+    #     ms: '{recipe.ms}'
+    #     output_filename: '{recipe.basedir}/low_res_forward'
+    #     data_column: DATA
+    #     sigma_column: SIGMA_SPECTRUM
+    #     gain_table: '{recipe.basedir}/low_res.qc'
+    #     gain_term: 'GK-net'
+    #     integrations_per_image: -1
+    #     channels_per_image: 512
+    #     nthreads_dask: 4
+    #     nvthreads: 8
+    #     scheduler: threads
 
-    grid_forward:
-      cab: pfb_grid
-      params:
-        output_filename: '{recipe.basedir}/low_res_forward'
-        nband: 8
-        robustness: 0.0
-        fits_cubes: true
-        field_of_view: 2.5
-        super_resolution_factor: 2.0
-        nvthreads: 8
-        nthreads_dask: 8
-        weight: false
-        psf: false
-        residual: true
-        transfer_model_from: '{recipe.model}'
+    # grid_forward:
+    #   cab: pfb_grid
+    #   params:
+    #     output_filename: '{recipe.basedir}/low_res_forward'
+    #     nband: 8
+    #     robustness: 0.0
+    #     fits_cubes: true
+    #     field_of_view: 2.5
+    #     super_resolution_factor: 2.0
+    #     nvthreads: 8
+    #     nthreads_dask: 8
+    #     weight: false
+    #     psf: false
+    #     residual: true
+    #     transfer_model_from: '{recipe.model}'
 
     high_res_cal:
         cab: quartical
@@ -1244,7 +1246,7 @@ sanity:
           dask.threads: 32
           dask.scheduler: threads
           G.type: complex
-          G.load_from: 'output_infG/target_gains_init.qc/GKB-net'
+          G.load_from: '{recipe.1gcgains}/GKB-net'
           G.interp_method: 2dlinear
           G.interp_mode: ampphase
           G.time_interval: 1
@@ -1285,38 +1287,38 @@ sanity:
         weight: false
         psf: false
 
-    init_forward_high_res:
-      cab: pfb_init
-      info:
-        Initialise imaging data products at low res
-      params:
-        ms: '{recipe.ms}'
-        output_filename: '{recipe.basedir}/high_res_forward'
-        data_column: DATA
-        sigma_column: SIGMA_SPECTRUM
-        gain_table: '{recipe.basedir}/high_res.qc'
-        gain_term: 'GK-net'
-        integrations_per_image: -1
-        channels_per_image: 512
-        nthreads_dask: 4
-        nvthreads: 8
-        scheduler: threads
+    # init_forward_high_res:
+    #   cab: pfb_init
+    #   info:
+    #     Initialise imaging data products at low res
+    #   params:
+    #     ms: '{recipe.ms}'
+    #     output_filename: '{recipe.basedir}/high_res_forward'
+    #     data_column: DATA
+    #     sigma_column: SIGMA_SPECTRUM
+    #     gain_table: '{recipe.basedir}/high_res.qc'
+    #     gain_term: 'GK-net'
+    #     integrations_per_image: -1
+    #     channels_per_image: 512
+    #     nthreads_dask: 4
+    #     nvthreads: 8
+    #     scheduler: threads
 
-    grid_forward_high_res:
-      cab: pfb_grid
-      params:
-        output_filename: '{recipe.basedir}/high_res_forward'
-        nband: 8
-        robustness: 0.0
-        fits_cubes: true
-        field_of_view: 2.5
-        super_resolution_factor: 2.0
-        nvthreads: 8
-        nthreads_dask: 8
-        weight: false
-        psf: false
-        residual: true
-        transfer_model_from: '{recipe.model}'
+    # grid_forward_high_res:
+    #   cab: pfb_grid
+    #   params:
+    #     output_filename: '{recipe.basedir}/high_res_forward'
+    #     nband: 8
+    #     robustness: 0.0
+    #     fits_cubes: true
+    #     field_of_view: 2.5
+    #     super_resolution_factor: 2.0
+    #     nvthreads: 8
+    #     nthreads_dask: 8
+    #     weight: false
+    #     psf: false
+    #     residual: true
+    #     transfer_model_from: '{recipe.model}'
 
 
 # IR = R.H G.H (V - G R2 H theta),    x2 = H theta
