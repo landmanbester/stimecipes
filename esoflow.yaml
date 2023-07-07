@@ -595,7 +595,7 @@ crosscal:
         solver.reference_antenna: 43
         output.gain_directory: '{recipe.basedir}/gkbf.qc/'
         output.log_directory: '{recipe.basedir}/logs.qc'
-        output.overwrite: false
+        output.overwrite: true
         output.products: [residual, corrected_data, corrected_weight]
         output.columns: [RESIDUAL, CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: false
