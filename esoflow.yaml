@@ -636,7 +636,7 @@ crosscal:
         solver.robust: false
         solver.threads: 1
         solver.reference_antenna: 43
-        output.gain_directory: '{recipe.basedir}/target_gains_init_nodelay_clunking.qc'
+        output.gain_directory: '{recipe.basedir}/target_gains_init_nodelay_clunking_smoothB.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: false
         # output.products: [residual]
