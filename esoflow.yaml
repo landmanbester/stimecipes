@@ -1080,7 +1080,7 @@ sanity:
       default: 'output_sanity_no_delay_clunking'
     model:
       default: '/scratch/bester/stage3_I_main_model.coeffs.zarr'
-    1gcgains:
+    input_gains:
       default: 'output_infG/target_gains_init_nodelay_clunking.qc'
 
   steps:
@@ -1246,7 +1246,7 @@ sanity:
           dask.threads: 32
           dask.scheduler: threads
           G.type: complex
-          G.load_from: '{recipe.1gcgains}/GKB-net'
+          G.load_from: '{recipe.input_gains}/GKB-net'
           G.interp_method: 2dlinear
           G.interp_mode: ampphase
           G.time_interval: 1
