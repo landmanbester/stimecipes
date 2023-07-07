@@ -614,7 +614,8 @@ crosscal:
         K.initial_estimate: false
         K.load_from: '{recipe.basedir}/gkb5.qc/K'
         B.type: diag_complex
-        B.load_from: '{recipe.basedir}/gkb5.qc/smoothed.qc/B'
+        # B.load_from: '{recipe.basedir}/gkb5.qc/smoothed.qc/B'
+        B.load_from: '{recipe.basedir}/gkb5.qc/B'
         B.time_interval: 0
         B.freq_interval: 4
 
@@ -623,8 +624,8 @@ crosscal:
       info: "Transfer gains to the targer"
       params:
         input_ms.path: '{recipe.ms_target}'
-        input_ms.time_chunk: 50
-        input_ms.freq_chunk: 128
+        input_ms.time_chunk: 10
+        input_ms.freq_chunk: 0
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
         input_model.recipe: MODEL_DATA
@@ -635,16 +636,16 @@ crosscal:
         solver.robust: false
         solver.threads: 1
         solver.reference_antenna: 43
-        output.gain_directory: '{recipe.basedir}/target_gains_init.qc'
+        output.gain_directory: '{recipe.basedir}/target_gains_init_nodelay_clunking.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: false
-        output.products: [residual]
-        output.columns: [RESIDUAL]
+        # output.products: [residual]
+        # output.columns: [RESIDUAL]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [G, K, B]
         mad_flags.enable: false
-        dask.threads: 64
+        dask.threads: 32
         dask.scheduler: threads
         G.type: diag_complex
         G.time_interval: 1
@@ -1283,3 +1284,40 @@ sanity:
         nthreads_dask: 8
         weight: false
         psf: false
+
+    init_forward_high_res:
+      cab: pfb_init
+      info:
+        Initialise imaging data products at low res
+      params:
+        ms: '{recipe.ms}'
+        output_filename: '{recipe.basedir}/high_res_forward'
+        data_column: DATA
+        sigma_column: SIGMA_SPECTRUM
+        gain_table: '{recipe.basedir}/high_res.qc'
+        gain_term: 'GK-net'
+        integrations_per_image: -1
+        channels_per_image: 512
+        nthreads_dask: 4
+        nvthreads: 8
+        scheduler: threads
+
+    grid_forward_high_res:
+      cab: pfb_grid
+      params:
+        output_filename: '{recipe.basedir}/high_res_forward'
+        nband: 8
+        robustness: 0.0
+        fits_cubes: true
+        field_of_view: 2.5
+        super_resolution_factor: 2.0
+        nvthreads: 8
+        nthreads_dask: 8
+        weight: false
+        psf: false
+        residual: true
+        transfer_model_from: '{recipe.model}'
+
+
+# IR = R.H G.H (V - G R2 H theta),    x2 = H theta
+# IR = ID - R.H G.H G R x,  s.t. x > 0
