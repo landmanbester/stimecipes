@@ -1081,7 +1081,7 @@ sanity:
     model:
       default: '/scratch/bester/stage3_I_main_model.coeffs.zarr'
     input_gains:
-      default: 'output_infG/target_gains_init_nodelay_clunking.qc'
+      default: 'output_infG/target_gains_init_nodelay_clunking_smoothB.qc'
 
   steps:
     # predict_low_res:
@@ -1234,7 +1234,7 @@ sanity:
           solver.robust: false
           solver.threads: 2
           solver.reference_antenna: 43
-          output.gain_directory: '{recipe.basedir}/high_res_no_clunking.qc'
+          output.gain_directory: '{recipe.basedir}/high_res_no_clunking_smoothB.qc'
           output.log_directory: '{recipe.basedir}/logs.qc'
           output.overwrite: true
           output.flags: true
@@ -1264,7 +1264,7 @@ sanity:
         Initialise imaging data products at low res
       params:
         ms: '{recipe.ms}'
-        output_filename: '{recipe.basedir}/high_res_corrected'
+        output_filename: '{recipe.basedir}/high_res_corrected_smoothB'
         data_column: RESIDUAL
         weight_column: WEIGHT_SPECTRUM
         integrations_per_image: -1
@@ -1276,7 +1276,7 @@ sanity:
     grid_corrected_high_res:
       cab: pfb_grid
       params:
-        output_filename: '{recipe.basedir}/high_res_corrected'
+        output_filename: '{recipe.basedir}/high_res_corrected_smoothB'
         nband: 8
         robustness: 0.0
         fits_cubes: true
