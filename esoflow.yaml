@@ -1077,7 +1077,7 @@ sanity:
       dtype: MS
       required: true
     basedir:
-      default: 'output_sanity_no_delay_clunking_smoothB'
+      default: 'output_sanity_no_delay_clunking_smoothB_postflag'
     model:
       default: '/scratch/bester/stage3_I_main_model.coeffs.zarr'
     input_gains:
@@ -1264,9 +1264,11 @@ sanity:
         Initialise imaging data products at low res
       params:
         ms: '{recipe.ms}'
-        output_filename: '{recipe.basedir}/high_res_corrected_smoothB'
+        output_filename: '{recipe.basedir}/high_res_corrected_smoothB_postflag'
         data_column: RESIDUAL
-        weight_column: WEIGHT_SPECTRUM
+        sigma_column: SIGMA_SPECTRUM
+        gain_table: '{recipe.basedir}/high_res_no_clunking_smoothB_postflag.qc'
+        gain_term: 'GK-net'
         integrations_per_image: -1
         channels_per_image: 512
         nthreads_dask: 4
@@ -1276,7 +1278,7 @@ sanity:
     grid_corrected_high_res:
       cab: pfb_grid
       params:
-        output_filename: '{recipe.basedir}/high_res_corrected_smoothB'
+        output_filename: '{recipe.basedir}/high_res_corrected_smoothB_postflag'
         nband: 8
         robustness: 0.0
         fits_cubes: true
