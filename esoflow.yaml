@@ -1229,19 +1229,19 @@ sanity:
           input_model.recipe: MODEL_DATA
           input_model.apply_p_jones: false
           solver.terms: [G,K]
-          solver.iter_recipe: [0,200]
+          solver.iter_recipe: [0,100,0,50,0,10,0,10,0,10]
           solver.propagate_flags: true
-          solver.robust: false
+          solver.robust: true
           solver.threads: 2
           solver.reference_antenna: 43
-          output.gain_directory: '{recipe.basedir}/high_res_no_clunking_smoothB.qc'
+          output.gain_directory: '{recipe.basedir}/high_res_no_clunking_smoothB_postflag.qc'
           output.log_directory: '{recipe.basedir}/logs.qc'
           output.overwrite: true
           output.flags: true
           output.apply_p_jones_inv: false
           output.net_gains: [G, K]
-          output.products: [corrected_residual, corrected_weight]
-          output.columns: [RESIDUAL, WEIGHT_SPECTRUM]
+          output.products: [residual]
+          output.columns: [RESIDUAL]
           mad_flags.enable: false
           dask.threads: 32
           dask.scheduler: threads
