@@ -1077,7 +1077,7 @@ sanity:
       dtype: MS
       required: true
     basedir:
-      default: 'output_sanity_no_delay_clunking_smoothB_postflag'
+      default: 'output_sanity_no_delay_clunking_smoothB_reflag'
     model:
       default: '/scratch/bester/stage3_I_main_model.coeffs.zarr'
     input_gains:
@@ -1229,12 +1229,12 @@ sanity:
           input_model.recipe: MODEL_DATA
           input_model.apply_p_jones: false
           solver.terms: [G,K]
-          solver.iter_recipe: [0,100,0,50,0,10,0,10,0,10]
+          solver.iter_recipe: [0,0]
           solver.propagate_flags: true
           solver.robust: true
           solver.threads: 2
           solver.reference_antenna: 43
-          output.gain_directory: '{recipe.basedir}/high_res_no_clunking_smoothB_postflag.qc'
+          output.gain_directory: '{recipe.basedir}/high_res_no_clunking_smoothB_reflag.qc'
           output.log_directory: '{recipe.basedir}/logs.qc'
           output.overwrite: true
           output.flags: true
@@ -1252,6 +1252,7 @@ sanity:
           G.time_interval: 1
           G.freq_interval: 1
           K.type: delay_and_offset
+          K.load_from: '/home/bester/projects/ESO137/output_sanity_no_delay_clunking_smoothB/high_res_no_clunking_smoothB.qc'
           K.interp_method: 2dlinear
           K.interp_mode: ampphase
           K.time_interval: 3
