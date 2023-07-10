@@ -1265,10 +1265,10 @@ sanity:
         Initialise imaging data products at low res
       params:
         ms: '{recipe.ms}'
-        output_filename: '{recipe.basedir}/high_res_corrected_smoothB_postflag'
+        output_filename: '{recipe.basedir}/high_res_corrected_smoothB_reflag'
         data_column: RESIDUAL
         sigma_column: SIGMA_SPECTRUM
-        gain_table: '{recipe.basedir}/high_res_no_clunking_smoothB_postflag.qc'
+        gain_table: '{recipe.basedir}/high_res_no_clunking_smoothB_reflag.qc'
         gain_term: 'GK-net'
         integrations_per_image: -1
         channels_per_image: 512
