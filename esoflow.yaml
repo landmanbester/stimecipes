@@ -1252,7 +1252,7 @@ sanity:
           G.time_interval: 1
           G.freq_interval: 1
           K.type: delay_and_offset
-          K.load_from: '/home/bester/projects/ESO137/output_sanity_no_delay_clunking_smoothB/high_res_no_clunking_smoothB.qc'
+          K.load_from: '/home/bester/projects/ESO137/output_sanity_no_delay_clunking_smoothB/high_res_no_clunking_smoothB.qc/K'
           K.interp_method: 2dlinear
           K.interp_mode: ampphase
           K.time_interval: 3
