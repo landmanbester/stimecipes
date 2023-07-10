@@ -1279,7 +1279,7 @@ sanity:
     grid_corrected_high_res:
       cab: pfb_grid
       params:
-        output_filename: '{recipe.basedir}/high_res_corrected_smoothB_postflag'
+        output_filename: '{recipe.basedir}/high_res_corrected_smoothB_reflag'
         nband: 8
         robustness: 0.0
         fits_cubes: true
