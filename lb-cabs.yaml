@@ -488,8 +488,8 @@ cabs:
         dtype: str
         info: Name of column to be backed up.
 
-    outputs:
-      backup_dir:
-        dtype: Directory
-        mkdir: true
-        must_exist: false
+    # outputs:
+    #   backup_dir:
+    #     dtype: Directory
+    #     mkdir: true
+    #     must_exist: false
