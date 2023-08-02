@@ -39,24 +39,28 @@ opts:
       default: 32
 
   steps:
-
     gkb1:
       cab: quartical
       backend:
-      kube:
-        pod_type: thin
-        memory: 3Gi
-        dask_cluster:
-          name: qc-test-cluster
-          num_workers: 4
-          cpu_limit: 4
-          memory_limit: "16Gi"
-          threads_per_worker: 4
-          extra_pod_config:
-            nodeSelector:
-              rarg/node-class: compute
-              rarg/instance-type: m5.large
-              rarg/capacity-type: SPOT
+        kube:
+          job_pod:  # This is where the main aplpication runs.
+            type: thin
+            memory:
+              limit: 3Gi
+            cpu:
+              limit: 1
+          dask_cluster:  # Set up the dask cluster.
+            name: qc-test-cluster
+            num_workers: 4  # Zero will disable cluster.
+            threads_per_worker: 4
+            worker_pod:
+              type: thin
+              cpu:
+                limit: 4
+              memory:
+                  limit: "16Gi"
+          always_pull_images: true
+            
       info: GKB on the primary where
             G = time variable complex gain,  G(t)
             K = per scan delay refinement  exp(i delta(t) nu)
@@ -70,10 +74,10 @@ opts:
         input_ms.select_corr: [0, 3]
         input_model.recipe: '{recipe.model_column}'
         input_model.apply_p_jones: false
-        solver.terms: [G,K,B]
-        solver.iter_recipe: [100,100,250,50,50,50,30,30,30,10,10,10,5,5,5]
+        solver.terms: [G]
+        solver.iter_recipe: [0]
         solver.propagate_flags: false
-        solver.robust: true
+        solver.robust: false
         solver.threads: 8
         solver.reference_antenna: 43
         output.gain_directory: '{recipe.basedir}/gkb1.qc'
@@ -87,17 +91,18 @@ opts:
         mad_flags.enable: false
         dask.threads: 8
         dask.workers: 8
+        dask.address: # For posterity: ${oc.env:DASK_SCHEDULER_ADDRESS}
         dask.scheduler: distributed
         G.type: diag_complex
         G.time_interval: 0
         G.freq_interval: 0
-        K.type: delay
-        K.time_interval: 0
-        K.freq_interval: 0
-        K.initial_estimate: true
-        B.type: diag_complex
-        B.time_interval: 0
-        B.freq_interval: 16
+        # K.type: delay
+        # K.time_interval: 0
+        # K.freq_interval: 0
+        # K.initial_estimate: true
+        # B.type: diag_complex
+        # B.time_interval: 0
+        # B.freq_interval: 16
 
     # bsmooth:
     #   cab: bsmooth
