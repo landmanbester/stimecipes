@@ -43,16 +43,20 @@ opts:
     gkb1:
       cab: quartical
       backend:
-        kube:
-          pod_type: fat
-          memory: 32Gi
-          dask_cluster:
-            name: qc-test-cluster
-            persist: false
-            num_workers: 8
-            cpu_limit: 4
-            memory_limit: "16Gi"
-            threads_per_worker: 4
+      kube:
+        pod_type: thin
+        memory: 3Gi
+        dask_cluster:
+          name: qc-test-cluster
+          num_workers: 4
+          cpu_limit: 4
+          memory_limit: "16Gi"
+          threads_per_worker: 4
+          extra_pod_config:
+            nodeSelector:
+              rarg/node-class: compute
+              rarg/instance-type: m5.large
+              rarg/capacity-type: SPOT
       info: GKB on the primary where
             G = time variable complex gain,  G(t)
             K = per scan delay refinement  exp(i delta(t) nu)
