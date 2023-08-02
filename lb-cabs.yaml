@@ -3,85 +3,89 @@
 #   - (quartical)stimela_cabs.yaml
 
 cabs:
-  # crystalball:
-  #   command: crystalball
-  #   virtual_env: /opt/btlworkshop/venvcrystalball
-  #   policies:
-  #     prefix: '--'
-  #     replace: {'_': '-'}
-  #   inputs:
-  #     ms:
-  #       dtype: MS
-  #       writable: true
-  #       required: true
-  #       policies:
-  #         positional: true
-  #     output_column:
-  #       dtype: str
-  #       required: true
-  #     sky_model:
-  #       dtype: File
-  #       required: true
-  #     within:
-  #       dtype: File
-  #     num_sources:
-  #       dtype: int
-  #     num_workers:
-  #       dtype: int
-  #     memory_fraction:
-  #       dtype: float
+  crystalball:
+    command: crystalball
+    backend:
+      native:
+        virtual_env: /opt/btlworkshop/venvcrystalball
+    policies:
+      prefix: '--'
+      replace: {'_': '-'}
+    inputs:
+      ms:
+        dtype: MS
+        writable: true
+        required: true
+        policies:
+          positional: true
+      output_column:
+        dtype: str
+        required: true
+      sky_model:
+        dtype: File
+        required: true
+      within:
+        dtype: File
+      num_sources:
+        dtype: int
+      num_workers:
+        dtype: int
+      memory_fraction:
+        dtype: float
 
-  # tricolour:
-  #   command: tricolour
-  #   virtual_env: ~/.venv/tclr
-  #   policies:
-  #     prefix: '--'
-  #     replace: {'_': '-'}
-  #   inputs:
-  #     ms:
-  #       dtype: MS
-  #       writable: true
-  #       required: true
-  #       policies:
-  #         positional: true
-  #     config:
-  #       dtype: str
-  #     ignore_flags:
-  #       dtype: bool
-  #       default: false
-  #     flagging_strategy:
-  #       choices: [standard,polarisation,total_power]
-  #       default: polarisation
-  #     row_chunks:
-  #       dtype: int
-  #       default: 10000
-  #     baseline_chunks:
-  #       dtype: int
-  #       default: 16
-  #     nworkers:
-  #       dtype: int
-  #       default: 64
-  #     dilate_mask:
-  #       dtype: int
-  #     data_column:
-  #       dtype: str
-  #       default: DATA
-  #     field_names:
-  #       dtype: List[str]
-  #       policies:
-  #         repeat: list
-  #     scan_numbers:
-  #       dtype: str
-  #     disable_post_mortem:
-  #       dtype: bool
-  #       default: false
-  #     window_backend:
-  #       choices: ['numpy','zarr-disk']
-  #       default: 'numpy'
-  #     temporary_directory:
-  #       dtype: str
-  #     subtract_model_column:
-  #       dtype: str
+  tricolour:
+    command: tricolour
+    backend:
+      native:
+        virtual_env: ~/.venv/tclr
+    policies:
+      prefix: '--'
+      replace: {'_': '-'}
+    inputs:
+      ms:
+        dtype: MS
+        writable: true
+        required: true
+        policies:
+          positional: true
+      config:
+        dtype: str
+      ignore_flags:
+        dtype: bool
+        default: false
+      flagging_strategy:
+        choices: [standard,polarisation,total_power]
+        default: polarisation
+      row_chunks:
+        dtype: int
+        default: 10000
+      baseline_chunks:
+        dtype: int
+        default: 16
+      nworkers:
+        dtype: int
+        default: 64
+      dilate_mask:
+        dtype: int
+      data_column:
+        dtype: str
+        default: DATA
+      field_names:
+        dtype: List[str]
+        policies:
+          repeat: list
+      scan_numbers:
+        dtype: str
+      disable_post_mortem:
+        dtype: bool
+        default: false
+      window_backend:
+        choices: ['numpy','zarr-disk']
+        default: 'numpy'
+      temporary_directory:
+        dtype: str
+      subtract_model_column:
+        dtype: str
 
   # ragavi:
   #   command: ragavi-gains-quartical
@@ -129,302 +133,308 @@ cabs:
   #       dtype: str
   #       info: Output name + extention type
 
-  # surfchi2:
-  #   command: surfchi2
-  #   virtual_env: ~/.venv/svis
-  #   policies:
-  #     prefix: '--'
-  #     replace: {'_': '-'}
-  #   inputs:
-  #     ms:
-  #       dtype: MS
-  #       writable: true
-  #       required: true
-  #       policies:
-  #         positional: true
-  #     rcol:
-  #       dtype: str
-  #       default: RESIDUAL
-  #     wcol:
-  #       dtype: str
-  #       default: SIGMA_SPECTRUM
-  #     fcol:
-  #       dtype: str
-  #       default: FLAG
-  #     dataout:
-  #       dtype: str
-  #       default: ''
-  #     imagesout:
-  #       dtype: str
-  #       default: ''
-  #     nthreads:
-  #       dtype: int
-  #       default: 32
-  #     ntimes:
-  #       dtype: int
-  #       default: -1
-  #     nfreq:
-  #       dtype: int
-  #       default: -1
-  #     use_corrs:
-  #       dtype: str
+  surfchi2:
+    command: surfchi2
+    backend:
+      native:
+        virtual_env: ~/.venv/svis
+    policies:
+      prefix: '--'
+      replace: {'_': '-'}
+    inputs:
+      ms:
+        dtype: MS
+        writable: true
+        required: true
+        policies:
+          positional: true
+      rcol:
+        dtype: str
+        default: RESIDUAL
+      wcol:
+        dtype: str
+        default: SIGMA_SPECTRUM
+      fcol:
+        dtype: str
+        default: FLAG
+      dataout:
+        dtype: str
+        default: ''
+      imagesout:
+        dtype: str
+        default: ''
+      nthreads:
+        dtype: int
+        default: 32
+      ntimes:
+        dtype: int
+        default: -1
+      nfreq:
+        dtype: int
+        default: -1
+      use_corrs:
+        dtype: str
 
-  # flagchi2:
-  #   command: flagchi2
-  #   virtual_env: ~/.venv/svis
-  #   policies:
-  #     prefix: '--'
-  #     replace: {'_': '-'}
-  #   inputs:
-  #     ms:
-  #       dtype: MS
-  #       writable: true
-  #       required: true
-  #       policies:
-  #         positional: true
-  #     rcol:
-  #       dtype: str
-  #       default: RESIDUAL
-  #     wcol:
-  #       dtype: str
-  #       default: SIGMA_SPECTRUM
-  #     fcol:
-  #       dtype: str
-  #       default: FLAG
-  #     nthreads:
-  #       dtype: int
-  #       default: 32
-  #     flag_above:
-  #       dtype: float
-  #       default: 5.0
-  #     unflag_below:
-  #       dtype: float
-  #       default: 1.5
-  #     nrows:
-  #       dtype: int
-  #       default: 100000
-  #     nfreqs:
-  #       dtype: int
-  #       default: 256
-  #     use_corrs:
-  #       dtype: str
+  flagchi2:
+    command: flagchi2
+    backend:
+      native:
+        virtual_env: ~/.venv/svis
+    policies:
+      prefix: '--'
+      replace: {'_': '-'}
+    inputs:
+      ms:
+        dtype: MS
+        writable: true
+        required: true
+        policies:
+          positional: true
+      rcol:
+        dtype: str
+        default: RESIDUAL
+      wcol:
+        dtype: str
+        default: SIGMA_SPECTRUM
+      fcol:
+        dtype: str
+        default: FLAG
+      nthreads:
+        dtype: int
+        default: 32
+      flag_above:
+        dtype: float
+        default: 5.0
+      unflag_below:
+        dtype: float
+        default: 1.5
+      nrows:
+        dtype: int
+        default: 100000
+      nfreqs:
+        dtype: int
+        default: 256
+      use_corrs:
+        dtype: str
 
-  # breizorro:
-  #   command: breizorro
-  #   virtual_env: /opt/btlworkshop/venvbreizorro
-  #   policies:
-  #     replace: {'_': '-'}
-  #   inputs:
-  #     restored_image:
-  #       dtype: File
-  #     mask_image:
-  #       dtype: File
-  #     merge:
-  #       dtype: Union[str, List[str]]
-  #     subtract:
-  #       dtype: Union[str, List[str]]
-  #     threshold:
-  #       dtype: float
-  #       default: 6.5
-  #     dilate:
-  #       dtype: int
-  #     number_islands:
-  #       dtype: bool
-  #     extract_islands:
-  #       dtype: List[str]
-  #       policies:
-  #         repeat: list
-  #     remove_islands:
-  #       dtype: List[str]
-  #       policies:
-  #         repeat: list
-  #     invert:
-  #       dtype: bool
-  #     make_binary:
-  #       dtype: bool
-  #     outfile:
-  #       dtype: File
-  #       required: true
-  #       must_exist: false
+  breizorro:
+    command: breizorro
+    backend:
+      native:
+        virtual_env: /opt/btlworkshop/venvbreizorro
+    policies:
+      replace: {'_': '-'}
+    inputs:
+      restored_image:
+        dtype: File
+      mask_image:
+        dtype: File
+      merge:
+        dtype: Union[str, List[str]]
+      subtract:
+        dtype: Union[str, List[str]]
+      threshold:
+        dtype: float
+        default: 6.5
+      dilate:
+        dtype: int
+      number_islands:
+        dtype: bool
+      extract_islands:
+        dtype: List[str]
+        policies:
+          repeat: list
+      remove_islands:
+        dtype: List[str]
+        policies:
+          repeat: list
+      invert:
+        dtype: bool
+      make_binary:
+        dtype: bool
+      outfile:
+        dtype: File
+        required: true
+        must_exist: false
 
-  # wsclean1:
-  #   command: wsclean
-  #   policies:
-  #     replace: {'_': '-'}
-  #   inputs:
-  #     ms:
-  #       info: Measurement set(s)
-  #       writable: true
-  #       dtype: MS
-  #       required: true
-  #       policies:
-  #         positional: true
-  #     name:
-  #       dtype: str
-  #       required: true
-  #       info: Output prefix
-  #     j:
-  #       info: Threads
-  #       dtype: int
-  #     weight:
-  #       info:
-  #         "Weightmode can be: natural, uniform, briggs. Default: uniform.
-  #          When using Briggs' weighting, add the robustness parameter, like: '-weight briggs 0.5'"
-  #       dtype: str
-  #       policies:
-  #         split: " "
-  #         repeat: list
-  #     data_column:
-  #       dtype: str
-  #     channels_out:
-  #       info: Number of output bands
-  #       dtype: int
-  #     size:
-  #       info: Image size in pixels
-  #       dtype: Union[int, Tuple[int, int]]
-  #       required: true
-  #       policies:
-  #         repeat: list
-  #         format_list: ["{0}", "{1}"]
-  #         format_list_scalar: ["{0}", "{0}"]
-  #     scale:
-  #       info: Angular pixel size
-  #       dtype: Union[str, float]
-  #       required: true
-  #     niter:
-  #       info: Number of minor clean iterations
-  #       dtype: int
-  #     nmiter:
-  #       info: Max number of major clean iterations
-  #       dtype: int
-  #     fits_mask:
-  #       dtype: File
-  #     threshold:
-  #       dtype: float
-  #     auto_threshold:
-  #       dtype: float
-  #       info: Estimate noise level using a robust estimator and stop at sigma x stddev
-  #     gain:
-  #       dtype: float
-  #     mgain:
-  #       dtype: float
-  #     join_channels:
-  #       dtype: bool
-  #     fit_spectral_pol:
-  #       dtype: int
-  #     use_wgridder:
-  #       dtype: bool
-  #       default: true
-  #     multiscale:
-  #       dtype: bool
-  #       default: false
-  #     multiscale_max_scales:
-  #       dtype: int
-  #       default: 7
-  #       info: Maximum number of scales to use during cleaning
-  #     multiscale_gain:
-  #       dtype: float
-  #       default: 0.15
-  #       info: Sub-minor loop gain
-  #     save_source_list:
-  #       dtype: bool
-  #       default: false
-  #       info:
-  #         Saves the found clean components as a BBS/NDPPP text sky model.
-  #         This parameter enables Gaussian shapes during multi-scale cleaning
-  #         i.e. sets -multiscale-shape gaussian.
+  wsclean1:
+    command: wsclean
+    policies:
+      replace: {'_': '-'}
+    inputs:
+      ms:
+        info: Measurement set(s)
+        writable: true
+        dtype: MS
+        required: true
+        policies:
+          positional: true
+      name:
+        dtype: str
+        required: true
+        info: Output prefix
+      j:
+        info: Threads
+        dtype: int
+      weight:
+        info:
+          "Weightmode can be: natural, uniform, briggs. Default: uniform.
+           When using Briggs' weighting, add the robustness parameter, like: '-weight briggs 0.5'"
+        dtype: str
+        policies:
+          split: " "
+          repeat: list
+      data_column:
+        dtype: str
+      channels_out:
+        info: Number of output bands
+        dtype: int
+      size:
+        info: Image size in pixels
+        dtype: Union[int, Tuple[int, int]]
+        required: true
+        policies:
+          repeat: list
+          format_list: ["{0}", "{1}"]
+          format_list_scalar: ["{0}", "{0}"]
+      scale:
+        info: Angular pixel size
+        dtype: Union[str, float]
+        required: true
+      niter:
+        info: Number of minor clean iterations
+        dtype: int
+      nmiter:
+        info: Max number of major clean iterations
+        dtype: int
+      fits_mask:
+        dtype: File
+      threshold:
+        dtype: float
+      auto_threshold:
+        dtype: float
+        info: Estimate noise level using a robust estimator and stop at sigma x stddev
+      gain:
+        dtype: float
+      mgain:
+        dtype: float
+      join_channels:
+        dtype: bool
+      fit_spectral_pol:
+        dtype: int
+      use_wgridder:
+        dtype: bool
+        default: true
+      multiscale:
+        dtype: bool
+        default: false
+      multiscale_max_scales:
+        dtype: int
+        default: 7
+        info: Maximum number of scales to use during cleaning
+      multiscale_gain:
+        dtype: float
+        default: 0.15
+        info: Sub-minor loop gain
+      save_source_list:
+        dtype: bool
+        default: false
+        info:
+          Saves the found clean components as a BBS/NDPPP text sky model.
+          This parameter enables Gaussian shapes during multi-scale cleaning
+          i.e. sets -multiscale-shape gaussian.
 
 
-  # convert:
-  #   command: dask-ms convert
-  #   policies:
-  #     prefix: '--'
-  #     replace: {'_': '-'}
-  #   inputs:
-  #     input:
-  #       dtype: MS
-  #       policies:
-  #         positional: true
-  #       required: true
-  #     output:
-  #       dtype: str
-  #       required: true
-  #     exclude:
-  #       dtype: str
-  #     group_columns:
-  #       dtype: str
-  #       default: "FIELD_ID,DATA_DESC_ID,SCAN_NUMBER"
-  #     index_columns:
-  #       dtype: str
-  #     taql_where:
-  #       dtype: str
-  #     format:
-  #       dtype: str
-  #       default: zarr
-  #     force:
-  #       dtype: bool
-  #       default: true
-  #     chunks:
-  #       dtype: str
-  #       default: '{{row:50000,chan:256}}'
+  convert:
+    command: dask-ms convert
+    policies:
+      prefix: '--'
+      replace: {'_': '-'}
+    inputs:
+      input:
+        dtype: MS
+        policies:
+          positional: true
+        required: true
+      output:
+        dtype: str
+        required: true
+      exclude:
+        dtype: str
+      group_columns:
+        dtype: str
+        default: "FIELD_ID,DATA_DESC_ID,SCAN_NUMBER"
+      index_columns:
+        dtype: str
+      taql_where:
+        dtype: str
+      format:
+        dtype: str
+        default: zarr
+      force:
+        dtype: bool
+        default: true
+      chunks:
+        dtype: str
+        default: '{{row:50000,chan:256}}'
 
-  # simplyflag:
-  #   command: simplyflag
-  #   policies:
-  #     prefix: '--'
-  #     replace: {'_': '-'}
-  #   inputs:
-  #     path:
-  #       dtype: str
-  #       policies:
-  #         positional: true
-  #       reuired: true
-  #     column:
-  #       dtype: str
-  #       default: DATA
-  #       required: true
-  #     use_sigma_spectrum:
-  #       dtype: bool
-  #       default: true
-  #     demean_mode:
-  #       dtype: str
-  #       default: exact
-  #     component:
-  #       dtype: str
-  #       default: amp
-  #     mode:
-  #       dtype: str
-  #       default: replace
-  #     field:
-  #       dtype: int
-  #       default: 0
-  #     spw:
-  #       dtype: int
-  #       default: 0
-  #     corrs:
-  #       dtype: List
-  #       default: [0,1,2,3]
-  #     dilation_factor:
-  #       dtype: int
-  #       default: 1
-  #     closing_factor:
-  #       dtype: int
-  #       default: 5
-  #     max_deviation:
-  #       dtype: float
-  #       default: 2.5
-  #     axis:
-  #       dtype: str
-  #       default: chan
-  #     respect_scan_boundaries:
-  #       dtype: bool
-  #       default: true
-  #     flag_edges:
-  #       dtype: List
-  #       default: [128,256]
-  #     threads:
-  #       dtype: int
-  #       default: 8
+  simplyflag:
+    command: simplyflag
+    policies:
+      prefix: '--'
+      replace: {'_': '-'}
+    inputs:
+      path:
+        dtype: str
+        policies:
+          positional: true
+        reuired: true
+      column:
+        dtype: str
+        default: DATA
+        required: true
+      use_sigma_spectrum:
+        dtype: bool
+        default: true
+      demean_mode:
+        dtype: str
+        default: exact
+      component:
+        dtype: str
+        default: amp
+      mode:
+        dtype: str
+        default: replace
+      field:
+        dtype: int
+        default: 0
+      spw:
+        dtype: int
+        default: 0
+      corrs:
+        dtype: List
+        default: [0,1,2,3]
+      dilation_factor:
+        dtype: int
+        default: 1
+      closing_factor:
+        dtype: int
+        default: 5
+      max_deviation:
+        dtype: float
+        default: 2.5
+      axis:
+        dtype: str
+        default: chan
+      respect_scan_boundaries:
+        dtype: bool
+        default: true
+      flag_edges:
+        dtype: List
+        default: [128,256]
+      threads:
+        dtype: int
+        default: 8
 
 
 
@@ -465,28 +475,36 @@ cabs:
         dtype: str
         required: true
 
-  # qcalbackup:
-  #   command: goquartical-backup
-  #   policies:
-  #     positional: true
-  #     # prefix: '--'
-  #     # replace:
-  #     #   '_': '-'
-  #   inputs:
-  #     ms_path:
-  #       dtype: Directory
-  #       must_exist: true
-  #       info: 'Path to input measurement set, e.g. path/to/dir/foo.MS.'
-  #     zarr_dir:
-  #       dtype: Directory
-  #       mkdir: true
-  #       must_exist: false
-  #       info: Path to desired backup location. Note that this only allows
-  #             the user to specify a directory and not the name of the backup
-  #             zarr that will be created, e.g. path/to/dir.
-  #     column:
-  #       dtype: str
-  #       info: Name of column to be backed up.
+  qcalbackup:
+    command: goquartical-backup
+    policies:
+      positional: true
+      prefix: '--'
+      replace:
+        '_': '-'
+    inputs:
+      ms_path:
+        dtype: Directory
+        must_exist: true
+        info:
+          Path to input measurement set, e.g. path/to/dir/foo.MS.
+      zarr_dir:
+        dtype: Directory
+        mkdir: true
+        must_exist: false
+        info:
+          Path to desired backup location. Note that this only allows
+          the user to specify a directory and not the name of the backup
+          zarr that will be created, e.g. path/to/dir.
+      column:
+        dtype: str
+        info:
+          Name of column to be backed up.
+      label:
+        dtype: str
+        info:
+          Descriptive name for backup
+
 
     # outputs:
     #   backup_dir:

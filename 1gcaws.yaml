@@ -1,0 +1,111 @@
+_include:
+  - kubeconfig.yaml
+  - (cultcargo)quartical.yml
+
+opts:
+  backend:
+    select: kube
+
+1gc:
+  name: CROSSCAL
+  info: Demo crosscal on AWS
+
+  inputs:
+    ms_primary:
+      dtype: MS
+      required: true
+      abbreviation: msp
+    ms_target:
+      dtype: MS
+      required: true
+      abbreviation: mst
+    basedir:
+      default: 'output'
+    data_column:
+      default: DATA
+      aliases: ['*.input_ms.data_column']
+    sigma_column:
+      default: SIGMA_SPECTRUM
+      aliases: ['*.input_ms.sigma_column']
+      info: Original std of noise used to construct weights
+    weight_column:
+      default: WEIGHT_SPECTRUM
+      info: Modified weights to be writtent to this column
+    model_column:
+      dtype: str
+      default: MODEL_DATA
+    nthreads:
+      dtype: int
+      default: 32
+
+  steps:
+
+    gkb1:
+      cab: quartical
+      backend:
+        kube:
+          pod_type: fat
+          memory: 32Gi
+          dask_cluster:
+            name: qc-test-cluster
+            persist: false
+            num_workers: 8
+            cpu_limit: 4
+            memory_limit: "16Gi"
+            threads_per_worker: 4
+      info: GKB on the primary where
+            G = time variable complex gain,  G(t)
+            K = per scan delay refinement  exp(i delta(t) nu)
+            B = frequency variable complex gain (bandpass)  B(nu)
+      params:
+        input_ms.path: '{recipe.ms_primary}'
+        input_ms.time_chunk: '0'
+        input_ms.freq_chunk: '0'
+        input_ms.select_uv_range: [150,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe: '{recipe.model_column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G,K,B]
+        solver.iter_recipe: [100,100,250,50,50,50,30,30,30,10,10,10,5,5,5]
+        solver.propagate_flags: false
+        solver.robust: true
+        solver.threads: 8
+        solver.reference_antenna: 43
+        output.gain_directory: '{recipe.basedir}/gkb1.qc'
+        output.log_directory: '{recipe.basedir}/logs.qc'
+        output.overwrite: false
+        output.products:
+        output.columns:
+        output.flags: false
+        output.apply_p_jones_inv: false
+        output.net_gains: []
+        mad_flags.enable: false
+        dask.threads: 8
+        dask.workers: 8
+        dask.scheduler: distributed
+        G.type: diag_complex
+        G.time_interval: 0
+        G.freq_interval: 0
+        K.type: delay
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: true
+        B.type: diag_complex
+        B.time_interval: 0
+        B.freq_interval: 16
+
+    # bsmooth:
+    #   cab: bsmooth
+    #   info: Smooth weighted average bandpass solutions
+    #   params:
+    #     gain_dir: '{recipe.basedir}/gkb1.qc/'  # result placed in smoothed.qc inside this folder
+    #     gain_term: B
+    #     reject_amp_thresh: 5.5
+    #     reject_phase_thresh: 55.5
+    #     do_plots: true
+    #     nthreads: =recipe.nthreads
+    #     ref_ant: 43
+    #     dof0: 2.0
+    #     nreweight: 10
+    #     sigman_min: 0.005
