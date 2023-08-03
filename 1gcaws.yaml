@@ -43,22 +43,22 @@ opts:
       cab: quartical
       backend:
         kube:
-          job_pod:  # This is where the main aplpication runs.
+          job_pod:  # This is where the main application runs.
             type: thin
             memory:
-              limit: 3Gi
+              limit: 6Gi
             cpu:
               limit: 1
           dask_cluster:  # Set up the dask cluster.
             name: qc-test-cluster
-            num_workers: 4  # Zero will disable cluster.
-            threads_per_worker: 4
+            num_workers: 8  # Zero will disable cluster.
+            threads_per_worker: 1
             worker_pod:
-              type: thin
+              type: fat
               cpu:
-                limit: 4
+                limit: 8
               memory:
-                  limit: "16Gi"
+                  limit: "55Gi"
           always_pull_images: true
             
       info: GKB on the primary where
@@ -75,21 +75,21 @@ opts:
         input_model.recipe: '{recipe.model_column}'
         input_model.apply_p_jones: false
         solver.terms: [G]
-        solver.iter_recipe: [0]
+        solver.iter_recipe: [25]
         solver.propagate_flags: false
         solver.robust: false
-        solver.threads: 8
+        solver.threads: 16
         solver.reference_antenna: 43
         output.gain_directory: '{recipe.basedir}/gkb1.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
-        output.overwrite: false
+        output.overwrite: true
         output.products:
         output.columns:
         output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains: []
         mad_flags.enable: false
-        dask.threads: 8
+        dask.threads: 1
         dask.workers: 8
         dask.address: # For posterity: ${oc.env:DASK_SCHEDULER_ADDRESS}
         dask.scheduler: distributed
