@@ -1,6 +1,7 @@
 _include:
   - kubeconfig.yaml
   - (cultcargo)quartical.yml
+  - (cultcargo)pfb-clean.yml
 
 opts:
   backend:
@@ -12,15 +13,19 @@ opts:
 
   inputs:
     ms_primary:
-      dtype: MS
+      dtype: str
       required: true
       abbreviation: msp
     ms_target:
-      dtype: MS
+      dtype: str
       required: true
       abbreviation: mst
     basedir:
-      default: 'output'
+      dtype: str
+      # default: s3://rarg-test-binface/pfb-test
+    gain_dir:
+      dtype: str
+      required: true
     data_column:
       default: DATA
       aliases: ['*.input_ms.data_column']
@@ -34,66 +39,177 @@ opts:
     model_column:
       dtype: str
       default: MODEL_DATA
-    nthreads:
+    nvthreads:
       dtype: int
-      default: 32
+      default: 16
+    nthreads_dask:
+      dtype: int
+      default: 1
+    nband:
+      dtype: int
+      default: 8
+      aliases: ['*.nband']
+      info: Number of imaging bands
+    channels_per_image:
+      default: 64
+    integrations_per_image:
+      default: -1
 
   steps:
-
-    gkb1:
-      cab: quartical
+    init:
+      cab: pfb_init
+      info: Initialise imaging data products
       backend:
         kube:
-          pod_type: fat
-          memory: 32Gi
-          dask_cluster:
-            name: qc-test-cluster
-            persist: false
-            num_workers: 8
-            cpu_limit: 4
-            memory_limit: "16Gi"
-            threads_per_worker: 4
-      info: GKB on the primary where
-            G = time variable complex gain,  G(t)
-            K = per scan delay refinement  exp(i delta(t) nu)
-            B = frequency variable complex gain (bandpass)  B(nu)
+          debug_mode: true
+          job_pod:  # This is where the main aplpication runs.
+            type: thin
+            memory:
+              limit: 6Gi
+            cpu:
+              limit: 1
+          dask_cluster:  # Set up the dask cluster.
+            name: pfb-test-cluster
+            num_workers: 2  # Zero will disable cluster.
+            threads_per_worker: 15
+            worker_pod:
+              type: medium
+              cpu:
+                limit: 15
+              memory:
+                  limit: "55Gi"
+          always_pull_images: true
       params:
-        input_ms.path: '{recipe.ms_primary}'
-        input_ms.time_chunk: '0'
-        input_ms.freq_chunk: '0'
-        input_ms.select_uv_range: [150,0]
-        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
-        input_ms.select_corr: [0, 3]
-        input_model.recipe: '{recipe.model_column}'
-        input_model.apply_p_jones: false
-        solver.terms: [G,K,B]
-        solver.iter_recipe: [100,100,250,50,50,50,30,30,30,10,10,10,5,5,5]
-        solver.propagate_flags: false
-        solver.robust: true
-        solver.threads: 8
-        solver.reference_antenna: 43
-        output.gain_directory: '{recipe.basedir}/gkb1.qc'
-        output.log_directory: '{recipe.basedir}/logs.qc'
-        output.overwrite: false
-        output.products:
-        output.columns:
-        output.flags: false
-        output.apply_p_jones_inv: false
-        output.net_gains: []
-        mad_flags.enable: false
-        dask.threads: 8
-        dask.workers: 8
-        dask.scheduler: distributed
-        G.type: diag_complex
-        G.time_interval: 0
-        G.freq_interval: 0
-        K.type: delay
-        K.time_interval: 0
-        K.freq_interval: 0
-        K.initial_estimate: true
-        B.type: diag_complex
-        B.time_interval: 0
-        B.freq_interval: 16
+        ms: '{recipe.ms_target}'
+        output_filename: '{recipe.basedir}/stage1'
+        data_column: =recipe.data_column
+        sigma_column: =recipe.sigma_column
+        gain_table: =recipe.gain_dir
+        gain_term: 'GK-net'
+        integrations_per_image: =recipe.integrations_per_image
+        channels_per_image: =recipe.channels_per_image
+        nvthreads: 1
+        nthreads_dask: 15
+        nworkers: =recipe.nband
+        scheduler: distributed
+        overwrite: true
+
+    # restore_flag:
+    #   cab: quartical-restore
+    #   backend:
+    #     kube:
+    #       job_pod:  # This is where the main aplpication runs.
+    #         type: thin
+    #         memory:
+    #           limit: 6Gi
+    #         cpu:
+    #           limit: 1
+    #       dask_cluster:  # Set up the dask cluster.
+    #         name: qc-test-cluster
+    #         num_workers: 0  # Zero will disable cluster.
+    #         threads_per_worker: 4
+    #         worker_pod:
+    #           type: thin
+    #           cpu:
+    #             limit: 4
+    #           memory:
+    #               limit: "16Gi"
+    #       always_pull_images: true
+    #   info: Restore flags from QuartiCal backup
+    #   params:
+    #     zarr_path: s3://ratt-public-data/ESO137/ms1_primary.bkp/flautos-ms1_primary.zarr-FLAG.bkp.qc
+    #     ms_path: s3://ratt-public-data/ESO137/ms1_primary.zarr
+    #     column_name: FLAG
+
+    # restore_flag_row:
+    #   cab: quartical-restore
+    #   backend:
+    #     kube:
+    #       job_pod:  # This is where the main aplpication runs.
+    #         type: thin
+    #         memory:
+    #           limit: 6Gi
+    #         cpu:
+    #           limit: 1
+    #       dask_cluster:  # Set up the dask cluster.
+    #         name: qc-test-cluster
+    #         num_workers: 0  # Zero will disable cluster.
+    #         threads_per_worker: 4
+    #         worker_pod:
+    #           type: thin
+    #           cpu:
+    #             limit: 4
+    #           memory:
+    #               limit: "16Gi"
+    #       always_pull_images: true
+    #   info: Restore flags from QuartiCal backup
+    #   params:
+    #     zarr_path: s3://ratt-public-data/ESO137/ms1_primary.bkp/flautos-ms1_primary.zarr-FLAG_ROW.bkp.qc
+    #     ms_path: s3://ratt-public-data/ESO137/ms1_primary.zarr
+    #     column_name: FLAG_ROW
+
+    # gkb1:
+    #   cab: quartical
+    #   backend:
+    #     kube:
+    #       job_pod:  # This is where the main aplpication runs.
+    #         type: thin
+    #         memory:
+    #           limit: 6Gi
+    #         cpu:
+    #           limit: 1
+    #       dask_cluster:  # Set up the dask cluster.
+    #         name: qc-test-cluster
+    #         num_workers: 4  # Zero will disable cluster.
+    #         threads_per_worker: 4
+    #         worker_pod:
+    #           type: thin
+    #           cpu:
+    #             limit: 4
+    #           memory:
+    #               limit: "16Gi"
+    #       always_pull_images: true
+    #   info: GKB on the primary where
+    #         G = time variable complex gain,  G(t)
+    #         K = per scan delay refinement  exp(i delta(t) nu)
+    #         B = frequency variable complex gain (bandpass)  B(nu)
+    #   params:
+    #     input_ms.path: '{recipe.ms_primary}'
+    #     input_ms.time_chunk: '0'
+    #     input_ms.freq_chunk: '0'
+    #     input_ms.select_uv_range: [150,0]
+    #     input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+    #     input_ms.select_corr: [0, 3]
+    #     input_model.recipe: '{recipe.model_column}'
+    #     input_model.apply_p_jones: false
+    #     solver.terms: [G,K,B]
+    #     solver.iter_recipe: [100,100,250,50,50,50,30,30,30,10,10,10,5,5,5]
+    #     solver.propagate_flags: false
+    #     solver.robust: true
+    #     solver.threads: 8
+    #     solver.reference_antenna: 43
+    #     output.gain_directory: '{recipe.basedir}/gkb1.qc'
+    #     output.log_directory: '{recipe.basedir}/logs.qc'
+    #     output.overwrite: false
+    #     output.products:
+    #     output.columns:
+    #     output.flags: false
+    #     output.apply_p_jones_inv: false
+    #     output.net_gains: []
+    #     mad_flags.enable: false
+    #     dask.threads: 8
+    #     dask.workers: 8
+    #     dask.scheduler: distributed
+    #     G.type: diag_complex
+    #     G.time_interval: 0
+    #     G.freq_interval: 0
+    #     K.type: delay
+    #     K.time_interval: 0
+    #     K.freq_interval: 0
+    #     K.initial_estimate: true
+    #     B.type: diag_complex
+    #     B.time_interval: 0
+    #     B.freq_interval: 16
 
     # bsmooth:
     #   cab: bsmooth
@@ -109,3 +225,8 @@ opts:
     #     dof0: 2.0
     #     nreweight: 10
     #     sigman_min: 0.005
+
+# command:
+# pfb init --ms s3://ratt-public-data/ESO137/ms2_target.zarr -o s3://rarg-test-binface/pfb-test/test --nthreads-dask 15 --nvthreads 1 --scheduler distributed --integrations-per-image 150 --channels-per-image 64 --nworkers 2 --overwrite --data-column DATA --sigma-column SIGMA_SPECTRUM
+# gain table not currently accessible
+# --gain-table s3://ratt-public-data/ESO137/ms2_gains.qc --gain-term GK-net
