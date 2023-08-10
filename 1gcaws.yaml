@@ -51,17 +51,17 @@ opts:
       aliases: ['*.nband']
       info: Number of imaging bands
     channels_per_image:
-      default: 64
+      default: 256
     integrations_per_image:
-      default: -1
+      default: 150
 
   steps:
     init:
       cab: pfb_init
-      info: Initialise imaging data products
+      info: Initialise Stokes data products
       backend:
         kube:
-          debug_mode: true
+          # debug_mode: true
           job_pod:  # This is where the main aplpication runs.
             type: thin
             memory:
@@ -70,8 +70,8 @@ opts:
               limit: 1
           dask_cluster:  # Set up the dask cluster.
             name: pfb-test-cluster
-            num_workers: 2  # Zero will disable cluster.
-            threads_per_worker: 15
+            num_workers: 16  # Zero will disable cluster.
+            threads_per_worker: 1
             worker_pod:
               type: medium
               cpu:
@@ -88,11 +88,50 @@ opts:
         gain_term: 'GK-net'
         integrations_per_image: =recipe.integrations_per_image
         channels_per_image: =recipe.channels_per_image
-        nvthreads: 1
-        nthreads_dask: 15
-        nworkers: =recipe.nband
+        nvthreads: 15
+        nthreads_dask: 1
+        nworkers: 16
         scheduler: distributed
         overwrite: true
+        log_directory: =recipe.basedir
+
+    grid:
+      cab: pfb_grid
+      info: Initialise image data products
+      backend:
+        kube:
+          # debug_mode: true
+          job_pod:  # This is where the main aplpication runs.
+            type: thin
+            memory:
+              limit: 6Gi
+            cpu:
+              limit: 1
+          dask_cluster:  # Set up the dask cluster.
+            name: pfb-test-cluster
+            num_workers: 16  # Zero will disable cluster.
+            threads_per_worker: 1
+            worker_pod:
+              type: medium
+              cpu:
+                limit: 15
+              memory:
+                  limit: "55Gi"
+          always_pull_images: true
+      params:
+        output_filename: '{recipe.basedir}/stage1'
+        nband: 16
+        nvthreads: 15
+        nthreads_dask: 1
+        nworkers: 16
+        scheduler: distributed
+        overwrite: true
+        concat_row: true
+        robustness: 0.0
+        field_of_view: 2.5
+        super_resolution_factor: 2.0
+        log_directory: =recipe.basedir
+
 
     # restore_flag:
     #   cab: quartical-restore
