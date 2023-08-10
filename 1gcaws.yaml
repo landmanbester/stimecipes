@@ -80,7 +80,7 @@ opts:
         solver.robust: false
         solver.threads: 16
         solver.reference_antenna: 43
-        output.gain_directory: '{recipe.basedir}/gkb1.qc'
+        output.gain_directory: 's3://rarg-test-binface/qc-test/target.qc'  #'{recipe.basedir}/gkb1.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: true
         output.products:
