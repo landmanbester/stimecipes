@@ -22,7 +22,7 @@ opts:
       abbreviation: mst
     basedir:
       dtype: str
-      # default: s3://rarg-test-binface/pfb-test
+      required: true
     gain_dir:
       dtype: str
       required: true
@@ -62,7 +62,7 @@ opts:
       backend:
         kube:
           # debug_mode: true
-          job_pod:  # This is where the main aplpication runs.
+          job_pod:  # This is where the main aplication runs.
             type: thin
             memory:
               limit: 6Gi
@@ -94,6 +94,7 @@ opts:
         scheduler: distributed
         overwrite: true
         log_directory: =recipe.basedir
+        chan_average: 4
 
     grid:
       cab: pfb_grid
@@ -131,6 +132,52 @@ opts:
         field_of_view: 2.5
         super_resolution_factor: 2.0
         log_directory: =recipe.basedir
+
+    deconv:
+      cab: pfb_spotless
+      info: Deconvolve image with spotless algorithm
+      backend:
+        kube:
+          # debug_mode: true
+          job_pod:  # This is where the main aplpication runs.
+            type: fat
+            # memory:
+            #   limit: "500Gi"
+            # cpu:
+            #   limit:
+          dask_cluster:  # Set up the dask cluster.
+            name: pfb-test-cluster
+            num_workers: 0  # Zero will disable cluster.
+            threads_per_worker: 1
+            worker_pod:
+              type: medium
+              cpu:
+                limit: 15
+              memory:
+                  limit: "55Gi"
+          always_pull_images: true
+      params:
+        output_filename: '{recipe.basedir}/stage1'
+        log_directory: =recipe.basedir
+        fits_cubes: true
+        niter: 10
+        bases: 'self,db1,db2,db3'
+        nlevels: 5
+        l1reweight_from: 5
+        pd_tol: 1e-3
+        pd_maxit: 500
+        pd_verbose: 2
+        pd_report_freq: 50
+        tol: 5e-3
+        pm_tol: 1e-3
+        scheduler: threads
+        nthreads_dask: 16
+        nvthreads: 4
+        nband: 16
+        memory_greedy: true
+        rmsfactor: 1.0
+        positivity: 2
+
 
 
     # restore_flag:

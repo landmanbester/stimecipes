@@ -1,0 +1,30 @@
+
+apiVersion: v1
+kind: Pod
+metadata:
+  # Rename so that there are no collisions with other debuggers
+  name: ubuntu-rarg-landman
+  namespace: rarg-test-compute
+  labels:
+    app: ubuntu
+spec:
+  nodeSelector:
+    rarg/node-class: admin
+#    rarg/instance-type: t3.micro
+#    rarg/capacity-type: SPOT
+  containers:
+  - image: ubuntu
+    command:
+      - "sleep"
+      - "604800"
+    imagePullPolicy: IfNotPresent
+    name: ubuntu
+    volumeMounts:
+    - mountPath: /mnt/data
+      name: pvc-claim-0
+  # Mounts the RARG EFS volume
+  volumes:
+  - name: pvc-claim-0
+    persistentVolumeClaim:
+      claimName: rarg-test-compute-efs-pvc
+  restartPolicy: Always
