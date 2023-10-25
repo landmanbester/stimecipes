@@ -13,7 +13,6 @@ opts:
 # Missing features
 # 1) both simplyflag and crystallbal relies on MS format
 # 2) QuartiCal apps need to have FIELD, DDID and SPW selection logic
-# 3) can't convert over NFS
 
 # init:
 #   name: ESOINIT
@@ -174,14 +173,13 @@ crosscal:
       default: 32
 
   steps:
-    # we need the restimator step here but how do we use the output??
+    # we need a restimator step here but how do we use the output??
 
-    gkb1:
+    gkcal1:
       cab: quartical
-      info: GKB on the primary where
-            G = time variable complex gain,  G(t)
-            K = per scan delay refinement  exp(i delta(t) nu)
-            B = frequency variable complex gain (bandpass)  B(nu)
+      info: GK on the primary where
+            G = per scan time variable complex gain G(t)
+            K = per scan delay exp(i delta(t) nu)
       params:
         input_ms.path: '{recipe.ms_primary}'
         input_ms.time_chunk: '0'
@@ -191,20 +189,20 @@ crosscal:
         input_ms.select_corr: [0, 3]
         input_model.recipe: '{recipe.model_column}'
         input_model.apply_p_jones: false
-        solver.terms: [G,K,B]
-        solver.iter_recipe: [100,100,250,50,50,50,30,30,30,10,10,10,5,5,5]
+        solver.terms: [G,K]
+        solver.iter_recipe: [100,100]
         solver.propagate_flags: false
-        solver.robust: true
+        solver.robust: false
         solver.threads: 8
-        solver.reference_antenna: 43
-        output.gain_directory: '{recipe.basedir}/gkb1.qc'
+        solver.reference_antenna: 45
+        output.gain_directory: '{recipe.basedir}/gk1.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: false
-        output.products: [residual]
-        output.columns: [RESIDUAL]
+        output.products:
+        output.columns:
         output.flags: false
         output.apply_p_jones_inv: false
-        output.net_gains: []
+        output.net_gains:
         mad_flags.enable: false
         dask.threads: 8
         dask.scheduler: threads
@@ -215,9 +213,56 @@ crosscal:
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: true
+
+    bcal1:
+      cab: quartical
+      info: B on the primary where
+            B = global freq variable complex gain,  G(t)
+      params:
+        input_ms.path: '{recipe.ms_primary}'
+        input_ms.time_chunk: '0'
+        input_ms.freq_chunk: '32'
+        input_ms.select_uv_range: [150,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe: '{recipe.model_column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G,K,B]
+        solver.iter_recipe: [0,0,250]
+        solver.propagate_flags: false
+        solver.robust: true
+        solver.threads: 2
+        solver.reference_antenna: 45
+        output.gain_directory: '{recipe.basedir}/b1.qc'
+        output.log_directory: '{recipe.basedir}/logs.qc'
+        output.overwrite: false
+        output.products: [residual]
+        output.columns: [RESIDUAL]
+        output.flags: false
+        output.apply_p_jones_inv: false
+        output.net_gains: []
+        mad_flags.enable: true
+        mad_flag.whitening: native
+        mad_flags.threshold_bl: 7
+        mad_flags.threshold_global: 0
+        mad_flags.max_deviation: 0
+        dask.threads: 32
+        dask.scheduler: threads
+        G.type: diag_complex
+        G.time_interval: 0
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/gk1.qc/G'
+        G.respect_scan_boundaries: true
+        K.type: delay
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/gk1.qc/K'
+        K.respect_scan_boundaries: true
         B.type: diag_complex
         B.time_interval: 0
-        B.freq_interval: 8
+        B.freq_interval: 4
+        B.respect_scan_boundaries: false
 
     chi2plots_preflagsmooth:
       cab: surfchi2
@@ -233,27 +278,16 @@ crosscal:
       cab: bsmooth
       info: Smooth weighted average bandpass solutions
       params:
-        gain_dir: '{recipe.basedir}/gkb1.qc/'  # result placed in smoothed.qc inside this folder
+        gain_dir: '{recipe.basedir}/b1.qc/'  # result placed in smoothed.qc inside this folder
         gain_term: B
         reject_amp_thresh: 5.5
         reject_phase_thresh: 55.5
         do_plots: true
         nthreads: =recipe.nthreads
-        ref_ant: 43
+        ref_ant: 45
         dof0: 2.0
         nreweight: 10
         sigman_min: 0.005
-
-    gsmooth:
-      cab: gsmooth
-      info: Transfer K offset to G and optionally smooth
-      params:
-        gain_dir: '{recipe.basedir}/gkb1.qc/'  # result placed in smoothed.qc inside this folder
-        gain_term: G
-        do_plots: true
-        nthreads: =recipe.nthreads
-        do_smooth: False
-        ref_ant: 43
 
     gkb2:
       cab: quartical
