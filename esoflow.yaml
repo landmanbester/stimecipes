@@ -241,8 +241,8 @@ crosscal:
         output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains: []
-        mad_flags.enable: true
-        mad_flag.whitening: native
+        mad_flags.enable: false
+        mad_flags.whitening: native
         mad_flags.threshold_bl: 7
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
