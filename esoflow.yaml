@@ -1,7 +1,7 @@
 _include:
   - lb-cabs.yaml
-  - (pfb)stimela_cabs.yaml
-  # - (lbscratch)stimela_cabs.yaml
+  - (pfb)stimela_cabs.yml
+  - (lbscratch)stimela_cabs.yaml
   - (quartical)stimela_cabs.yaml
 
 opts:
