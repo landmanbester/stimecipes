@@ -228,7 +228,7 @@ crosscal:
         input_model.recipe: '{recipe.model_column}'
         input_model.apply_p_jones: false
         solver.terms: [G,K,B]
-        solver.iter_recipe: [0,0,250]
+        solver.iter_recipe: [0,0,250,0,0,30,0,0,15,0,0,5]
         solver.propagate_flags: false
         solver.robust: true
         solver.threads: 2
@@ -287,7 +287,7 @@ crosscal:
         ref_ant: 45
         dof0: 2.0
         nreweight: 10
-        sigman_min: 0.005
+        sigman_min: 0.05
 
     gkb2:
       cab: quartical
