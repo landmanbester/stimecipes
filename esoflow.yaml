@@ -171,6 +171,9 @@ crosscal:
     nthreads:
       dtype: int
       default: 32
+    ref_ant:
+      dtype: int
+      default: 45
 
   steps:
     # we need a restimator step here but how do we use the output??
@@ -194,7 +197,7 @@ crosscal:
         solver.propagate_flags: false
         solver.robust: false
         solver.threads: 8
-        solver.reference_antenna: 45
+        solver.reference_antenna: =recipe.ref_ant
         output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/gk1.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: false
@@ -232,7 +235,7 @@ crosscal:
         solver.propagate_flags: false
         solver.robust: true
         solver.threads: 2
-        solver.reference_antenna: 45
+        solver.reference_antenna: =recipe.ref_ant
         output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/b1.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: false
@@ -253,18 +256,22 @@ crosscal:
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gk1.qc/G'
         G.respect_scan_boundaries: true
+        G.interp_mode: ampphase
+        G.interp_method: 2dlinear
         K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
         K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gk1.qc/K'
         K.respect_scan_boundaries: true
+        K.interp_mode: ampphase
+        K.interp_method: 2dlinear
         B.type: diag_complex
         B.time_interval: 0
         B.freq_interval: 4
         B.respect_scan_boundaries: false
 
-    chi2plots_preflagsmooth:
+    chi2plots_presmooth:
       cab: surfchi2
       info: Plot mean chisq per scan and baseline before flagging
       params:
@@ -274,24 +281,24 @@ crosscal:
         nthreads: '{recipe.nthreads}'
         ms: '{recipe.ms_primary}'
 
-    bsmooth:
-      cab: bsmooth
-      info: Smooth weighted average bandpass solutions
-      params:
-        gain_dir: '{recipe.basedir}/{recipe.ms_primary}/b1.qc/'  # result placed in smoothed.qc inside this folder
-        gain_term: B
-        reject_amp_thresh: 5.5
-        reject_phase_thresh: 55.5
-        do_plots: true
-        nthreads: =recipe.nthreads
-        ref_ant: 45
-        dof0: 2.0
-        nreweight: 10
-        sigman_min: 0.05
+    # bsmooth:
+    #   cab: bsmooth
+    #   info: Smooth weighted average bandpass solutions
+    #   params:
+    #     gain_dir: '{recipe.basedir}/{recipe.ms_primary}/b1.qc/'  # result placed in smoothed.qc inside this folder
+    #     gain_term: B
+    #     reject_amp_thresh: 5.5
+    #     reject_phase_thresh: 55.5
+    #     do_plots: true
+    #     nthreads: =recipe.nthreads
+    #     ref_ant: 45
+    #     dof0: 2.0
+    #     nreweight: 10
+    #     sigman_min: 0.05
 
-    gkb2:
+    gkbsmooth:
       cab: quartical
-      info: Continue solve for K after smoothing bandpass and compute residual for flagging
+      info: Continue solve for G and K after smoothing bandpass and madflag residuals
       params:
         input_ms.path: '{recipe.ms_primary}'
         input_ms.time_chunk: '0'
@@ -306,7 +313,7 @@ crosscal:
         solver.propagate_flags: false
         solver.robust: true
         solver.threads: 8
-        solver.reference_antenna: 43
+        solver.reference_antenna: =recipe.ref_ant
         output.gain_directory: '{recipe.basedir}/gkb2.qc/'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: false
@@ -321,29 +328,24 @@ crosscal:
         G.type: diag_complex
         G.time_interval: 0
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb1.qc/G'
+        G.load_from: '{recipe.basedir}/gk1.qc/G'
+        G.interp_mode: ampphase
+        G.interp_method: 2dlinear
         K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb1.qc/K'
+        K.load_from: '{recipe.basedir}/gk1.qc/K'
+        K.interp_mode: ampphase
+        K.interp_method: 2dlinear
         B.type: diag_complex
-        B.load_from: '{recipe.basedir}/gkb1.qc/smoothed.qc/B'
+        B.load_from: '{recipe.basedir}/b1.qc/B'
         B.time_interval: 0
-        B.freq_interval: 8
+        B.freq_interval: 1
+        B.interp_mode: ampphase
+        interp_method: 1dsmooth
 
-    gsmooth2:
-      cab: gsmooth
-      info: Transfer K offset to G and optionally smooth
-      params:
-        gain_dir: '{recipe.basedir}/gkb2.qc/'  # result placed in smoothed.qc inside this folder
-        gain_term: G
-        do_plots: true
-        nthreads: =recipe.nthreads
-        do_smooth: False
-        ref_ant: 43
-
-    chi2plots_preflag:
+    chi2plots_postsmooth:
       cab: surfchi2
       info: Plot mean chisq per scan and baseline before flagging
       params:
