@@ -245,10 +245,6 @@ crosscal:
         output.apply_p_jones_inv: false
         output.net_gains: []
         mad_flags.enable: false
-        mad_flags.whitening: native
-        mad_flags.threshold_bl: 7
-        mad_flags.threshold_global: 0
-        mad_flags.max_deviation: 0
         dask.threads: 32
         dask.scheduler: threads
         G.type: diag_complex
@@ -343,7 +339,7 @@ crosscal:
         B.time_interval: 0
         B.freq_interval: 1
         B.interp_mode: ampphase
-        interp_method: 1dsmooth
+        B.interp_method: 1dsmooth
 
     chi2plots_postsmooth:
       cab: surfchi2
