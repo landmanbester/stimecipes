@@ -310,8 +310,8 @@ crosscal:
         solver.robust: true
         solver.threads: 8
         solver.reference_antenna: =recipe.ref_ant
-        output.gain_directory: '{recipe.basedir}/gkb2.qc/'
-        output.log_directory: '{recipe.basedir}/logs.qc'
+        output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/gkb2.qc/'
+        output.log_directory: '{recipe.basedir}/{recipe.ms_primary}/logs.qc'
         output.overwrite: false
         output.products: [residual]
         output.columns: [RESIDUAL]
@@ -324,18 +324,18 @@ crosscal:
         G.type: diag_complex
         G.time_interval: 0
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gk1.qc/G'
+        G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gk1.qc/G'
         G.interp_mode: ampphase
         G.interp_method: 2dlinear
         K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gk1.qc/K'
+        K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gk1.qc/K'
         K.interp_mode: ampphase
         K.interp_method: 2dlinear
         B.type: diag_complex
-        B.load_from: '{recipe.basedir}/b1.qc/B'
+        B.load_from: '{recipe.basedir}/{recipe.ms_primary}/b1.qc/B'
         B.time_interval: 0
         B.freq_interval: 1
         B.interp_mode: ampphase
