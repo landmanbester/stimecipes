@@ -271,26 +271,11 @@ crosscal:
       cab: surfchi2
       info: Plot mean chisq per scan and baseline before flagging
       params:
-        dataout: '{recipe.basedir}/{recipe.ms_primary}/svis_preflagsmooth'
-        imagesout: '{recipe.basedir}/{recipe.ms_primary}/svis_preflagsmooth'
+        dataout: '{recipe.basedir}/{recipe.ms_primary}/presmooth'
+        imagesout: '{recipe.basedir}/{recipe.ms_primary}/presmooth'
         wcol: SIGMA_SPECTRUM
         nthreads: '{recipe.nthreads}'
         ms: '{recipe.ms_primary}'
-
-    # bsmooth:
-    #   cab: bsmooth
-    #   info: Smooth weighted average bandpass solutions
-    #   params:
-    #     gain_dir: '{recipe.basedir}/{recipe.ms_primary}/b1.qc/'  # result placed in smoothed.qc inside this folder
-    #     gain_term: B
-    #     reject_amp_thresh: 5.5
-    #     reject_phase_thresh: 55.5
-    #     do_plots: true
-    #     nthreads: =recipe.nthreads
-    #     ref_ant: 45
-    #     dof0: 2.0
-    #     nreweight: 10
-    #     sigman_min: 0.05
 
     gkbsmooth:
       cab: quartical
@@ -310,7 +295,7 @@ crosscal:
         solver.robust: true
         solver.threads: 1
         solver.reference_antenna: =recipe.ref_ant
-        output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/gkb2.qc/'
+        output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/gkb_smoothed.qc/'
         output.log_directory: '{recipe.basedir}/{recipe.ms_primary}/logs.qc'
         output.overwrite: true
         output.products: [residual]
@@ -345,28 +330,8 @@ crosscal:
       cab: surfchi2
       info: Plot mean chisq per scan and baseline before flagging
       params:
-        dataout: '{recipe.basedir}/svis_preflag'
+        dataout: '{recipe.basedir}/{recipe.ms_primary}/postsmooth'
         imagesout: '{recipe.basedir}/svis_preflag'
-        wcol: SIGMA_SPECTRUM
-        nthreads: '{recipe.nthreads}'
-        ms: '{recipe.ms_primary}'
-
-    chi2flag:
-      cab: flagchi2
-      info: Flag individual data points based on their chi2 values
-      params:
-        wcol: SIGMA_SPECTRUM
-        nthreads: '{recipe.nthreads}'
-        ms: '{recipe.ms_primary}'
-        flag_above: 7.5
-        unflag_below: 0.0
-
-    chi2plots_postflag:
-      cab: surfchi2
-      info: Plot mean chisq per scan and baseline after flagging
-      params:
-        dataout: '{recipe.basedir}/svis_postflag'
-        imagesout: '{recipe.basedir}/svis_postflag'
         wcol: SIGMA_SPECTRUM
         nthreads: '{recipe.nthreads}'
         ms: '{recipe.ms_primary}'
