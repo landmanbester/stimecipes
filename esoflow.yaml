@@ -430,14 +430,15 @@ crosscal:
         output.apply_p_jones_inv: false
         output.net_gains: [G, K, B]
         mad_flags.enable: false
-        dask.threads: 64
-        dask.scheduler: processes
+        dask.threads: 1
+        dask.workers: 64
+        dask.scheduler: distributed
         G.type: diag_complex
-        G.time_interval: 0
+        G.time_interval: 1
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/G'
         K.type: delay
-        K.time_interval: 0
+        K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
         K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/K'
