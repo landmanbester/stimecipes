@@ -135,9 +135,9 @@ cabs:
 
   surfchi2:
     command: surfchi2
-    backend:
-      native:
-        virtual_env: ~/.venv/svis
+    # backend:
+    #   native:
+    #     virtual_env: ~/.venv/svis
     policies:
       prefix: '--'
       replace: {'_': '-'}

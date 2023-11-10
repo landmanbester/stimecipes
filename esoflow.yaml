@@ -452,8 +452,6 @@ crosscal:
         B.interp_mode: ampphase
         B.interp_method: 1dsmooth
 
-
-
 image:
   name: ESOIMAGE
   info: An imaging step of the ESO137 self-calibration recipe
