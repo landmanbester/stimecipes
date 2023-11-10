@@ -436,7 +436,7 @@ crosscal:
         G.type: diag_complex
         G.time_interval: 1
         G.freq_interval: 0
-        # G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/G'
+        G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/G'
         K.type: delay
         K.time_interval: 1
         K.freq_interval: 0
