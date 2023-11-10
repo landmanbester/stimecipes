@@ -431,9 +431,9 @@ crosscal:
         output.apply_p_jones_inv: false
         output.net_gains: [G, K, B]
         mad_flags.enable: false
-        dask.threads: 1
-        dask.workers: 32
-        dask.scheduler: distributed
+        dask.threads: 64
+        dask.workers: 1
+        dask.scheduler: processes
         G.type: diag_complex
         G.time_interval: 1
         G.freq_interval: 0
