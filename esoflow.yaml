@@ -408,7 +408,7 @@ crosscal:
       info: Smooth bandpass per scan and transfer solutions
       params:
         input_ms.path: '{recipe.ms_target}'
-        input_ms.time_chunk: 0
+        input_ms.time_chunk: 150
         input_ms.freq_chunk: 0
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
@@ -442,7 +442,7 @@ crosscal:
         K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
-        # K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/K'
+        K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/K'
         K.interp_mode: ampphase
         K.interp_method: 2dlinear
         B.type: diag_complex
