@@ -517,7 +517,7 @@ crosscal:
         B.time_interval: 0
         B.freq_interval: 1
         B.interp_mode: ampphase
-        B.interp_method: 1dsmooth
+        B.interp_method: 2dlinear
 
 image:
   name: ESOIMAGE
