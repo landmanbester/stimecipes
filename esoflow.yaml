@@ -492,8 +492,8 @@ crosscal:
         output.gain_directory: '{recipe.basedir}/{recipe.ms_target}/gkb.qc/'
         output.log_directory: '{recipe.basedir}/{recipe.ms_target}/logs.qc'
         output.overwrite: true
-        output.products:
-        output.columns:
+        output.products: [corrected_data, corrected_weight]
+        output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains: [G, K, B]
