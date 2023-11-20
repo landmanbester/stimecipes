@@ -487,7 +487,7 @@ crosscal:
         solver.propagate_flags: false
         solver.robust: true
         solver.threads: 1
-        solver.bypass: true
+        solver.bypass: false
         solver.reference_antenna: =recipe.ref_ant
         output.gain_directory: '{recipe.basedir}/{recipe.ms_target}/gkb_unsmoothed.qc/'
         output.log_directory: '{recipe.basedir}/{recipe.ms_target}/logs.qc'
