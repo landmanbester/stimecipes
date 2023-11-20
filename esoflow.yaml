@@ -504,16 +504,16 @@ crosscal:
         G.type: diag_complex
         G.time_interval: 1
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/G'
+        G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/G'
         K.type: delay
         K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/K'
+        K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/K'
         K.interp_mode: ampphase
         K.interp_method: 2dlinear
         B.type: diag_complex
-        B.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/B'
+        B.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/B'
         B.time_interval: 0
         B.freq_interval: 1
         B.interp_mode: ampphase
