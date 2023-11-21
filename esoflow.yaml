@@ -476,7 +476,7 @@ crosscal:
       params:
         input_ms.path: '{recipe.ms_target}'
         input_ms.time_chunk: 150
-        input_ms.freq_chunk: 0
+        input_ms.freq_chunk: 256
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_corr: [0, 3]
@@ -500,7 +500,7 @@ crosscal:
         mad_flags.enable: false
         dask.threads: 64
         dask.workers: 1
-        dask.scheduler: processes
+        dask.scheduler: distributed
         G.type: diag_complex
         G.time_interval: 1
         G.freq_interval: 0
