@@ -502,7 +502,7 @@ crosscal:
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
         dask.threads: 8
-        dask.scheduler: processes
+        dask.scheduler: distributed
         G.type: diag_complex
         G.time_interval: 0
         G.freq_interval: 0
@@ -521,7 +521,7 @@ crosscal:
         B.time_interval: 0
         B.freq_interval: 1
         B.interp_mode: ampphase
-        B.interp_method: 1dsmooth
+        B.interp_method: 2dlinear
         E.type: complex
         E.time_interval: 0
         E.freq_interval: 1
