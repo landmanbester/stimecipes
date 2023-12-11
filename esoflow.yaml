@@ -428,8 +428,8 @@ crosscal:
         output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/'
         output.log_directory: '{recipe.basedir}/{recipe.ms_primary}/logs.qc'
         output.overwrite: true
-        output.products: [residual]
-        output.columns: [RESIDUAL]
+        output.products: [residual, corrected_data, corrected_weight]
+        output.columns: [RESIDUAL, CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [G, K, B]
@@ -491,8 +491,8 @@ crosscal:
         output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/gkbe.qc/'
         output.log_directory: '{recipe.basedir}/{recipe.ms_primary}/logs.qc'
         output.overwrite: true
-        output.products: [residual]
-        output.columns: [RESIDUAL]
+        output.products: [residual, corrected_data, corrected_weight]
+        output.columns: [RESIDUAL, CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [G, K, B, E]
