@@ -428,11 +428,11 @@ crosscal:
         output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/'
         output.log_directory: '{recipe.basedir}/{recipe.ms_primary}/logs.qc'
         output.overwrite: true
-        output.products: [residual, corrected_data, corrected_weight]
-        output.columns: [RESIDUAL, CORRECTED_DATA, WEIGHT_SPECTRUM]
+        output.products: [residual]
+        output.columns: [RESIDUAL]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [G, K, B]
+        output.net_gains: #[G, K, B]
         mad_flags.enable: true
         mad_flags.whitening: native
         mad_flags.threshold_bl: 3.5
@@ -459,6 +459,59 @@ crosscal:
         B.freq_interval: 1
         B.interp_mode: ampphase
         B.interp_method: 1dsmooth
+
+    correct_gkb:
+      cab: quartical
+      info: Make corrected data products to compare pfb and wsc outputs
+      params:
+        input_ms.path: '{recipe.ms_primary}'
+        input_ms.time_chunk: '0'
+        input_ms.freq_chunk: '0'
+        input_ms.select_uv_range: [150,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe: '{recipe.model_column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G,K,B]
+        solver.iter_recipe: [0,0,0]
+        solver.propagate_flags: true
+        solver.robust: false
+        solver.threads: 1
+        solver.reference_antenna: =recipe.ref_ant
+        output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/corrected_gkb.qc/'
+        output.log_directory: '{recipe.basedir}/{recipe.ms_primary}/logs.qc'
+        output.overwrite: true
+        output.products: [corrected_residual, corrected_weight]
+        output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+        output.flags: true
+        output.apply_p_jones_inv: false
+        output.net_gains: [G, K, B]
+        mad_flags.enable: false
+        mad_flags.whitening: native
+        mad_flags.threshold_bl: 3.5
+        mad_flags.threshold_global: 0
+        mad_flags.max_deviation: 0
+        dask.threads: 64
+        dask.scheduler: distributed
+        G.type: diag_complex
+        G.time_interval: 0
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/G'
+        G.interp_mode: ampphase
+        G.interp_method: 2dlinear
+        K.type: delay
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/K'
+        K.interp_mode: ampphase
+        K.interp_method: 2dlinear
+        B.type: diag_complex
+        B.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/B'
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.interp_mode: ampphase
+        B.interp_method: 2dlinear
 
     chi2plots_final:
       cab: surfchi2
@@ -525,6 +578,65 @@ crosscal:
         E.type: complex
         E.time_interval: 0
         E.freq_interval: 1
+
+    correct_gkbe:
+      cab: quartical
+      info: Make corrected data products to compare pfb and wsc outputs
+      params:
+        input_ms.path: '{recipe.ms_primary}'
+        input_ms.time_chunk: '0'
+        input_ms.freq_chunk: '0'
+        input_ms.select_uv_range: [150,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe: '{recipe.model_column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G,K,B,E]
+        solver.iter_recipe: [0,0,0]
+        solver.propagate_flags: true
+        solver.robust: false
+        solver.threads: 1
+        solver.reference_antenna: =recipe.ref_ant
+        output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/corrected_gkbe.qc/'
+        output.log_directory: '{recipe.basedir}/{recipe.ms_primary}/logs.qc'
+        output.overwrite: true
+        output.products: [corrected_residual, corrected_weight]
+        output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+        output.flags: true
+        output.apply_p_jones_inv: false
+        output.net_gains: [G, K, B]
+        mad_flags.enable: false
+        mad_flags.whitening: native
+        mad_flags.threshold_bl: 3.5
+        mad_flags.threshold_global: 0
+        mad_flags.max_deviation: 0
+        dask.threads: 64
+        dask.scheduler: distributed
+        G.type: diag_complex
+        G.time_interval: 0
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkbe.qc/G'
+        G.interp_mode: ampphase
+        G.interp_method: 2dlinear
+        K.type: delay
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkbe.qc/K'
+        K.interp_mode: ampphase
+        K.interp_method: 2dlinear
+        B.type: diag_complex
+        B.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkbe.qc/B'
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.interp_mode: ampphase
+        B.interp_method: 2dlinear
+        E.type: complex
+        E.time_interval: 0
+        E.freq_interval: 1
+        E.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkbe.qc/E'
+        E.interp_mode: ampphase
+        E.interp_method: 2dlinear
 
     calibrator_transfer:
       cab: quartical
