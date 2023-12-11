@@ -484,7 +484,7 @@ crosscal:
         output.products: [corrected_residual, corrected_weight]
         output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: true
-        output.apply_p_jones_inv: false
+        output.apply_p_jones_inv: true
         output.net_gains:
         mad_flags.enable: false
         mad_flags.whitening: native
