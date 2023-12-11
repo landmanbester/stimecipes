@@ -485,7 +485,7 @@ crosscal:
         output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [G, K, B]
+        output.net_gains:
         mad_flags.enable: false
         mad_flags.whitening: native
         mad_flags.threshold_bl: 3.5
@@ -604,7 +604,7 @@ crosscal:
         output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [G, K, B]
+        output.net_gains:
         mad_flags.enable: false
         mad_flags.whitening: native
         mad_flags.threshold_bl: 3.5
