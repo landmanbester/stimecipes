@@ -174,6 +174,9 @@ crosscal:
     ref_ant:
       dtype: int
       default: 45
+    rotate_parang:
+      dtype: bool
+      default: true
 
   steps:
     # we need a restimator step here but how do we use the output??
@@ -306,7 +309,7 @@ crosscal:
         output.columns: [RESIDUAL]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains:
+        output.net_gains: [G,K,B]
         mad_flags.enable: true
         mad_flags.whitening: native
         mad_flags.threshold_bl: 4.5
@@ -369,7 +372,7 @@ crosscal:
         output.columns: [RESIDUAL]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains:
+        output.net_gains: [G,K,B]
         mad_flags.enable: true
         mad_flags.whitening: native
         mad_flags.threshold_bl: 3.5
@@ -432,7 +435,7 @@ crosscal:
         output.columns: [RESIDUAL]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: #[G, K, B]
+        output.net_gains: [G, K, B]
         mad_flags.enable: true
         mad_flags.whitening: native
         mad_flags.threshold_bl: 3.5
@@ -545,9 +548,9 @@ crosscal:
         output.log_directory: '{recipe.basedir}/{recipe.ms_primary}/logs.qc'
         output.overwrite: true
         output.products: [residual]
-        output.columns: [RESIDUAL]
+        output.columns: [RESIDUAL_GKBE]
         output.flags: true
-        output.apply_p_jones_inv: true
+        output.apply_p_jones_inv: =recipe.rotate_parang
         output.net_gains: [G, K, B, E]
         mad_flags.enable: true
         mad_flags.whitening: native
@@ -716,11 +719,11 @@ crosscal:
         solver.threads: 1
         solver.bypass: false
         solver.reference_antenna: =recipe.ref_ant
-        output.gain_directory: '{recipe.basedir}/{recipe.ms_target}/gkb_unsmoothed.qc/'
+        output.gain_directory: '{recipe.basedir}/{recipe.ms_target}/gkb_init.qc/'
         output.log_directory: '{recipe.basedir}/{recipe.ms_target}/logs.qc'
         output.overwrite: true
-        output.products: [corrected_data, corrected_weight]
-        output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+        output.products:
+        output.columns:
         output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains: [G, K, B]
@@ -731,16 +734,16 @@ crosscal:
         G.type: diag_complex
         G.time_interval: 1
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/G'
+        G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/G'
         K.type: delay
         K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/K'
+        K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/K'
         K.interp_mode: ampphase
         K.interp_method: 2dlinear
         B.type: diag_complex
-        B.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/B'
+        B.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/B'
         B.time_interval: 0
         B.freq_interval: 1
         B.interp_mode: ampphase
