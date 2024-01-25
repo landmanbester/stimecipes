@@ -130,8 +130,8 @@ em_step:
         # super_resolution_factor: '{recipe.super_resolution_factor}'
         robustness: '{recipe.robustness}'
         overwrite: false
-        residual: true
-        l2reweight_dof: 5
+        residual: false
+        # l2reweight_dof: 5
         output_filename: =recipe.basename
         log_directory: =recipe.logdir
         postfix: =recipe.iter
