@@ -1,0 +1,191 @@
+_include:
+  - (pfb)stimela_cabs.yml
+
+opts:
+  log:
+    dir: logs
+    nest: 2
+
+init:
+  name: spotless
+  info: Initialise Stokes data products for a single dataset
+
+  inputs:
+    ms:
+      dtype: List[str]
+      required: true
+    basedir:
+      dtype: str
+      required: true
+    nthreads_dask:
+      dtype: int
+      default: 4
+    nvthreads:
+      dtype: int
+      default: 2
+    data_column:
+      default: DATA
+      dtype: str
+    flag_column:
+      default: FLAG
+      dtype: str
+
+  steps:
+    init_obs:
+      cab: pfb_init
+      info:
+        Initialise imaging data products
+      params:
+        ms: =recipe.ms
+        output_filename: '{recipe.basedir}/P000/data'
+        log_directory: '{recipe.basedir}/P000/logs'
+        data_column: =recipe.data_column
+        flag_column: =recipe.flag_column
+        nthreads_dask: =recipe.nthreads_dask
+        nvthreads: =recipe.nvthreads
+
+
+em_step:
+  info: Run single EM step with grid and spotless worker
+
+  inputs:
+    basename:
+      required: true
+    logdir:
+      required: true
+    iter:
+      dtype: int
+      required: true
+    data_column:
+      default: DATA
+    weight_column:
+      default: None
+    flag_column:
+      default: FLAG
+    cell_size:
+      dtype: float
+      default: 8
+      info: 'cell size in arcseconds'
+    nx:
+      dtype: int
+      default: 1280
+      info: 'number of pixels in x direction'
+    ny:
+      dtype: int
+      default: 1280
+      info: 'number of pixels in y direction'
+    super_resolution_factor:
+      dtype: float
+      default: 2.0
+    field_of_view:
+      dtype: float
+      default: 3.0
+    niter:
+      dtype: int
+      default: 10
+    tol:
+      dtype: float
+      abbreviation: tol
+      default: 0.001
+      info: 'tolerance for convergence'
+    rmsfactor:
+      dtype: float
+      abbreviation: rms
+      default: 0.5
+      info: 'thresholding factor'
+    robustness:
+      dtype: float
+      abbreviation: rob
+      default: 0.0
+      info: 'robustness factor for briggs weighting'
+    nthreads_dask:
+      dtype: int
+      default: 4
+      aliases: ['*.nthreads_dask']
+    nvthreads:
+      dtype: int
+      default: 2
+      aliases: ['*.nvthreads']
+    nband:
+      dtype: int
+      default: 4
+      aliases: ['*.nband']
+
+  # # an alias is a recipe parameter that maps to parameters of step(s)
+  # aliases:
+  #   output_filename: [grid.output_filename, spotless.output_filename]
+  #   nband: [grid.nband, spotless.nband]
+  #   nvthreads: [grid.nvthreads, spotless.nvthreads]
+  #   nthreads_dask: [grid.nthreads_dask, spotless.nvthreads]
+
+
+  steps:
+
+    grid:
+      cab: pfb_grid
+      params:
+        cell_size: '{recipe.cell_size}'
+        nx: '{recipe.nx}'
+        ny: '{recipe.ny}'
+        # super_resolution_factor: '{recipe.super_resolution_factor}'
+        robustness: '{recipe.robustness}'
+        overwrite: false
+        residual: true
+        l2reweight_dof: 5
+        output_filename: =recipe.basename
+        log_directory: =recipe.logdir
+        postfix: =recipe.iter
+        nthreads_dask: =recipe.nthreads_dask
+
+    spotless:
+      cab: pfb_spotless
+      params:
+        rmsfactor: '{recipe.rmsfactor}'
+        niter: '{recipe.niter}'
+        tol: '{recipe.tol}'
+        l1reweight_from: 3
+        pd_tol: 5e-4
+        pd_report_freq: 50
+        # bases: ['self','db1','db2']
+        nlevels: 3
+        memory_greedy: true
+        output_filename: =recipe.basename
+        log_directory: =recipe.logdir
+        postfix: =recipe.iter
+        nthreads_dask: =recipe.nthreads_dask
+
+
+em_loop:
+  info: Loop over em_steps
+
+  # assign:
+  #   log:
+  #     dir: log-{recipe.step@index}
+  for_loop:
+    var: iter
+    over: iters
+
+  inputs:
+    iters:
+      dtype: List[int]
+      default: [1,2,3,4,5]
+    data_column:
+      default: DATA
+    weight_column:
+      default: None
+    flag_column:
+      default: FLAG
+    basename:
+      required: true
+
+  steps:
+    gospotless:
+      recipe: em_step
+      params:
+        data_column: =recipe.data_column
+        flag_column: =recipe.flag_column
+        basename: '{recipe.basename}/P000/data'
+        logdir: '{recipe.basename}/P000/logs'
+        iter: =recipe.iter
+
+
