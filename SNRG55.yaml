@@ -49,7 +49,7 @@ em_step:
   info: Run single EM step with grid and spotless worker
 
   inputs:
-    basename:
+    outfile:
       required: true
     logdir:
       required: true
@@ -82,7 +82,7 @@ em_step:
       default: 3.0
     niter:
       dtype: int
-      default: 30
+      default: 15
     tol:
       dtype: float
       abbreviation: tol
@@ -130,9 +130,9 @@ em_step:
         # super_resolution_factor: '{recipe.super_resolution_factor}'
         robustness: '{recipe.robustness}'
         overwrite: false
-        residual: false
-        # l2reweight_dof: 5
-        output_filename: =recipe.basename
+        residual: true
+        l2reweight_dof: 5
+        output_filename: =recipe.outfile
         log_directory: =recipe.logdir
         postfix: =recipe.iter
         nthreads_dask: =recipe.nthreads_dask
@@ -143,13 +143,13 @@ em_step:
         rmsfactor: '{recipe.rmsfactor}'
         niter: '{recipe.niter}'
         tol: '{recipe.tol}'
-        l1reweight_from: 3
+        l1reweight_from: 5
         pd_tol: 5e-4
         pd_report_freq: 50
         # bases: ['self','db1','db2']
         nlevels: 3
         memory_greedy: true
-        output_filename: =recipe.basename
+        output_filename: =recipe.outfile
         log_directory: =recipe.logdir
         postfix: =recipe.iter
         nthreads_dask: =recipe.nthreads_dask
@@ -168,14 +168,14 @@ em_loop:
   inputs:
     iters:
       dtype: List[int]
-      default: [0]
+      default: [1,2,3,4,5,6,7,8,9,10]
     data_column:
       default: DATA
     weight_column:
       default: None
     flag_column:
       default: FLAG
-    basename:
+    basedir:
       required: true
 
   steps:
@@ -184,8 +184,8 @@ em_loop:
       params:
         data_column: =recipe.data_column
         flag_column: =recipe.flag_column
-        basename: '{recipe.basename}/P000/data'
-        logdir: '{recipe.basename}/P000/logs'
+        outfile: '{recipe.basedir}/P000/data'
+        logdir: '{recipe.basedir}/P000/logs'
         iter: =recipe.iter
 
 
