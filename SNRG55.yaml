@@ -136,6 +136,7 @@ em_step:
         log_directory: =recipe.logdir
         postfix: =recipe.iter
         nthreads_dask: =recipe.nthreads_dask
+        transfer_model_from: 'output/P000/data_I_{recipe.iter-1}.dds'
 
     spotless:
       cab: pfb_spotless
