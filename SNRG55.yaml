@@ -191,6 +191,6 @@ em_loop:
         outfile: '{recipe.basedir}/P000/data'
         logdir: '{recipe.basedir}/P000/logs'
         iter: =recipe.iter
-        previous_iter: =recipe.iter-1
+        previous_iter: =recipe.iter - 1
 
 
