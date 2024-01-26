@@ -56,6 +56,9 @@ em_step:
     iter:
       dtype: int
       required: true
+    previous_iter:
+      dtype: int
+      required: true
     data_column:
       default: DATA
     weight_column:
@@ -136,7 +139,7 @@ em_step:
         log_directory: =recipe.logdir
         postfix: =recipe.iter
         nthreads_dask: =recipe.nthreads_dask
-        transfer_model_from: 'output/P000/data_I_{recipe.iter-1}.dds'
+        transfer_model_from: 'output/P000/data_I_{recipe.previous_iter}.dds'
 
     spotless:
       cab: pfb_spotless
@@ -188,5 +191,6 @@ em_loop:
         outfile: '{recipe.basedir}/P000/data'
         logdir: '{recipe.basedir}/P000/logs'
         iter: =recipe.iter
+        previous_iter: =recipe.iter-1
 
 
