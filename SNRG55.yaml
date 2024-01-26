@@ -164,6 +164,8 @@ em_step:
         nbasisf: 4
         overwrite: false
         postfix: recipe.iter
+        output_filename: =recipe.outfile
+        log_directory: =recipe.logdir
 
 
 em_loop:
