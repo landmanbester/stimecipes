@@ -158,6 +158,13 @@ em_step:
         postfix: =recipe.iter
         nthreads_dask: =recipe.nthreads_dask
 
+    model2comps:
+      cab: pfb_model2comps
+      params:
+        nbasisf: 4
+        overwrite: false
+        postfix: recipe.iter
+
 
 em_loop:
   info: Loop over em_steps
