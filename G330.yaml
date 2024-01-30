@@ -87,7 +87,7 @@ init_loop:
       dtype: str
     flag_column:
       default: FLAG
-      dtype:
+      dtype: str
     channels_per_image:
       dtype: int
       default: 256
