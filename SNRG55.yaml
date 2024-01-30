@@ -168,6 +168,9 @@ em_loop:
       dtype: int
       default: 4
       aliases: ['*.nband']
+    tol:
+      dtype: float
+      default: 1e-4
 
   steps:
     grid:
@@ -193,14 +196,12 @@ em_loop:
 
     spotless:
       cab: pfb_spotless
-      assign:
-        tol: 1e-3
       params:
         rmsfactor: =recipe.rmsfactor
         niter: =IF(recipe.iter==0, 30, 15)
         tol: =recipe.tol
         l1reweight_from: =IF(recipe.iter==0, 10, 5)
-        pd_tol: 5e-4
+        pd_tol: 1e-4
         pd_report_freq: 50
         # bases: ['self','db1','db2']
         nlevels: 3
