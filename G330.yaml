@@ -51,7 +51,7 @@ init_loop:
   info: init loop over datasets
 
   assign:
-    obs: F000
+    obs: G33089
 
   for_loop:
     var: obs
