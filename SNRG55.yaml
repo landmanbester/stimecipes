@@ -26,6 +26,8 @@ init:
     data_column:
       default: DATA
       dtype: str
+    weight_column:  # not used by default
+      dtype: str
     flag_column:
       default: FLAG
       dtype: str
@@ -37,28 +39,94 @@ init:
         Initialise imaging data products
       params:
         ms: =recipe.ms
-        output_filename: '{recipe.basedir}/P000/data'
-        log_directory: '{recipe.basedir}/P000/logs'
+        output_filename: '{recipe.basedir}/data'
+        log_directory: '{recipe.basedir}/logs'
         data_column: =recipe.data_column
         flag_column: =recipe.flag_column
         nthreads_dask: =recipe.nthreads_dask
         nvthreads: =recipe.nvthreads
 
 
-em_step:
-  info: Run single EM step with grid and spotless worker
+init_loop:
+  info: init loop over datasets
+
+  assign:
+    obs: F000
+
+  for_loop:
+    var: obs
+    over: [F000, F001, F005, F01]
+    # scatter: 4  # to do it in parallel
+
+  # observation specific settings in subsections
+  assign_based_on:
+    obs:
+      F000:
+        ms: [msdir/SNR_G55_10s.calib.ms]
+      F001:
+        ms: [msdir/SNR_G55_10s.calib.unflagged_0.001.ms]
+      F005:
+        ms: [msdir/SNR_G55_10s.calib.unflagged_0.005.ms]
+      F01:
+        ms: [msdir/SNR_G55_10s.calib.unflagged_0.01.ms]
 
   inputs:
-    outfile:
-      required: true
-    logdir:
-      required: true
-    iter:
+    nthreads_dask:
       dtype: int
-      required: true
-    previous_iter:
+      default: 4
+    nvthreads:
       dtype: int
+      default: 2
+    data_column:
+      default: DATA
+      dtype: str
+    weight_column:
+      default: UNSET  # not used by default
+      dtype: str
+    flag_column:
+      default: FLAG
+      dtype: str
+
+  steps:
+    make_xds:
+      recipe: init
+      params:
+        ms: =recipe.ms
+        basedir: 'output/{recipe.obs}'
+        nthreads_dask: =recipe.nthreads_dask
+        nvthreads: =recipe.nvthreads
+        data_column: =recipe.data_column
+        weight_column: =recipe.weight_column
+        flag_column: =recipe.flag_column
+
+
+em_loop:
+  info: Loop over em_steps
+
+  # assign:
+  #   output_filename: '{recipe.outdir}/data'
+  #   log_directory: '{recipe.outdir}/logs'
+  #   transfer_model_from: =IF(recipe.iter==0, '', 'output/P000/data_I_{recipe.previous_iter}_model.mds')
+
+  # aliases:
+  #   output_filename: ["*.output_filename"]
+  #   log_directory: ["*.log_directory"]
+
+  for_loop:
+    var: iter
+    over: iters
+
+  inputs:
+    basedir:
       required: true
+    obs:
+      choices: ['F000', 'F001', 'F005', 'F01']
+      required: true
+    iters:
+      dtype: List[int]
+      default: [0,1,2,3,4,5,6,7]
+      info:
+        List enumerating number of EM steps to perform
     data_column:
       default: DATA
     weight_column:
@@ -67,15 +135,12 @@ em_step:
       default: FLAG
     cell_size:
       dtype: float
-      default: 5
       info: 'cell size in arcseconds'
     nx:
       dtype: int
-      default: 2048
       info: 'number of pixels in x direction'
     ny:
       dtype: int
-      default: 2048
       info: 'number of pixels in y direction'
     super_resolution_factor:
       dtype: float
@@ -83,28 +148,18 @@ em_step:
     field_of_view:
       dtype: float
       default: 3.0
-    niter:
-      dtype: int
-      default: 15
-    tol:
-      dtype: float
-      abbreviation: tol
-      default: 0.001
-      info: 'tolerance for convergence'
     rmsfactor:
       dtype: float
-      abbreviation: rms
       default: 0.65
       info: 'thresholding factor'
     robustness:
       dtype: float
-      abbreviation: rob
       default: -0.5
       info: 'robustness factor for briggs weighting'
     nthreads_dask:
       dtype: int
       default: 4
-      aliases: ['*.nthreads_dask']
+      aliases: ['*.nthreads_dask']  # does not work. Bug in for loop?
     nvthreads:
       dtype: int
       default: 2
@@ -114,92 +169,52 @@ em_step:
       default: 4
       aliases: ['*.nband']
 
-  # # an alias is a recipe parameter that maps to parameters of step(s)
-  # aliases:
-  #   output_filename: [grid.output_filename, spotless.output_filename]
-  #   nband: [grid.nband, spotless.nband]
-  #   nvthreads: [grid.nvthreads, spotless.nvthreads]
-  #   nthreads_dask: [grid.nthreads_dask, spotless.nvthreads]
-
-
   steps:
-
     grid:
       cab: pfb_grid
+      assign:
+        previous_iter: =recipe.iter - 1
+        model_name: '{recipe.basedir}/{recipe.obs}/data_I_{recipe.previous_iter}_model.mds'
       params:
-        cell_size: '{recipe.cell_size}'
-        nx: '{recipe.nx}'
-        ny: '{recipe.ny}'
-        # super_resolution_factor: '{recipe.super_resolution_factor}'
-        robustness: '{recipe.robustness}'
-        overwrite: false
-        residual: true
-        l2reweight_dof: 5
-        output_filename: =recipe.outfile
-        log_directory: =recipe.logdir
+        # cell_size: =recipe.cell_size
+        # nx: =recipe.nx
+        # ny: =recipe.ny
+        super_resolution_factor: =recipe.super_resolution_factor
+        field_of_view: =recipe.field_of_view
+        robustness: =recipe.robustness
+        overwrite: true
+        residual: =IF(recipe.iter==0, false, true)  # Don't try to compute residual at first iteration
+        l2reweight_dof: =IF(recipe.iter==0, 0, 5)  # Don't reweight at first iteration
         postfix: =recipe.iter
         nthreads_dask: =recipe.nthreads_dask
-        transfer_model_from: 'output/P000/data_I_{recipe.previous_iter}_model.mds'
+        transfer_model_from: =IF(recipe.iter==0, '', '{recipe.model_name}')
+        output_filename: '{recipe.basedir}/{recipe.obs}/data'
+        log_directory: '{recipe.basedir}/{recipe.obs}/logs'
 
     spotless:
       cab: pfb_spotless
+      assign:
+        tol: 1e-3
       params:
-        rmsfactor: '{recipe.rmsfactor}'
-        niter: '{recipe.niter}'
-        tol: '{recipe.tol}'
-        l1reweight_from: 5
+        rmsfactor: =recipe.rmsfactor
+        niter: =IF(recipe.iter==0, 30, 15)
+        tol: =recipe.tol
+        l1reweight_from: =IF(recipe.iter==0, 10, 5)
         pd_tol: 5e-4
         pd_report_freq: 50
         # bases: ['self','db1','db2']
         nlevels: 3
         memory_greedy: true
-        output_filename: =recipe.outfile
-        log_directory: =recipe.logdir
         postfix: =recipe.iter
         nthreads_dask: =recipe.nthreads_dask
+        output_filename: '{recipe.basedir}/{recipe.obs}/data'
+        log_directory: '{recipe.basedir}/{recipe.obs}/logs'
 
     model2comps:
       cab: pfb_model2comps
       params:
         nbasisf: 4
-        overwrite: false
-        postfix: recipe.iter
-        output_filename: =recipe.outfile
-        log_directory: =recipe.logdir
-
-
-em_loop:
-  info: Loop over em_steps
-
-  # assign:
-  #   log:
-  #     dir: log-{recipe.step@index}
-  for_loop:
-    var: iter
-    over: iters
-
-  inputs:
-    iters:
-      dtype: List[int]
-      default: [1,2,3,4,5,6,7,8,9,10]
-    data_column:
-      default: DATA
-    weight_column:
-      default: None
-    flag_column:
-      default: FLAG
-    basedir:
-      required: true
-
-  steps:
-    gospotless:
-      recipe: em_step
-      params:
-        data_column: =recipe.data_column
-        flag_column: =recipe.flag_column
-        outfile: '{recipe.basedir}/P000/data'
-        logdir: '{recipe.basedir}/P000/logs'
-        iter: =recipe.iter
-        previous_iter: =recipe.iter - 1
-
-
+        overwrite: true
+        postfix: =recipe.iter
+        output_filename: '{recipe.basedir}/{recipe.obs}/data'
+        log_directory: '{recipe.basedir}/{recipe.obs}/logs'
