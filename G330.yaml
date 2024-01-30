@@ -6,46 +6,6 @@ opts:
     dir: logs
     nest: 2
 
-init:
-  name: spotless
-  info: Initialise Stokes data products for a single dataset
-
-  inputs:
-    ms:
-      dtype: List[str]
-      required: true
-    basedir:
-      dtype: str
-      required: true
-    nthreads_dask:
-      dtype: int
-      default: 4
-    nvthreads:
-      dtype: int
-      default: 2
-    data_column:
-      default: DATA
-      dtype: str
-    weight_column:  # not used by default
-      dtype: str
-    flag_column:
-      default: FLAG
-      dtype: str
-
-  steps:
-    init_obs:
-      cab: pfb_init
-      info:
-        Initialise imaging data products
-      params:
-        ms: =recipe.ms
-        output_filename: '{recipe.basedir}/data'
-        log_directory: '{recipe.basedir}/logs'
-        data_column: =recipe.data_column
-        flag_column: =recipe.flag_column
-        nthreads_dask: =recipe.nthreads_dask
-        nvthreads: =recipe.nvthreads
-
 
 init_loop:
   info: init loop over datasets
@@ -99,16 +59,19 @@ init_loop:
       default: 2
 
   steps:
-    make_xds:
-      recipe: init
+    init_obs:
+      cab: pfb_init
+      info:
+        Initialise imaging data products
       params:
         ms: =recipe.ms
-        basedir: 'output/{recipe.obs}'
+        output_filename: 'output/{recipe.obs}/data'
+        log_directory: 'output/{recipe.obs}/logs'
+        data_column: =recipe.data_column
+        flag_column: =recipe.flag_column
+        weight_column: =recipe.weight_column
         nthreads_dask: =recipe.nthreads_dask
         nvthreads: =recipe.nvthreads
-        data_column: =recipe.data_column
-        weight_column: =recipe.weight_column
-        flag_column: =recipe.flag_column
         channels_per_image: =recipe.channels_per_image
         integrations_per_image: =recipe.integrations_per_image
         chan_average: =recipe.chan_average
