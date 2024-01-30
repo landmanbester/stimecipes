@@ -43,7 +43,7 @@ init_loop:
       default: DATA
       dtype: str
     weight_column:
-      default: WEIGHT
+      default: None
       dtype: str
     flag_column:
       default: FLAG
