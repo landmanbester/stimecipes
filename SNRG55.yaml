@@ -304,6 +304,7 @@ em_clean:
         sigmathreshold: =recipe.sigmathreshold
         memory_greedy: true
         postfix: =recipe.iter
+        mop_flux: false
         nthreads_dask: =recipe.nthreads_dask
         output_filename: '{recipe.basedir}/{recipe.obs}/clean'
         log_directory: '{recipe.basedir}/{recipe.obs}/logs'
