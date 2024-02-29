@@ -100,17 +100,8 @@ init_loop:
         flag_column: =recipe.flag_column
 
 
-em_loop:
+em_spotless:
   info: Loop over em_steps
-
-  # assign:
-  #   output_filename: '{recipe.outdir}/data'
-  #   log_directory: '{recipe.outdir}/logs'
-  #   transfer_model_from: =IF(recipe.iter==0, '', 'output/P000/data_I_{recipe.previous_iter}_model.mds')
-
-  # aliases:
-  #   output_filename: ["*.output_filename"]
-  #   log_directory: ["*.log_directory"]
 
   for_loop:
     var: iter
@@ -205,6 +196,116 @@ em_loop:
         pd_report_freq: 50
         # bases: ['self','db1','db2']
         nlevels: 3
+        memory_greedy: true
+        postfix: =recipe.iter
+        nthreads_dask: =recipe.nthreads_dask
+        output_filename: '{recipe.basedir}/{recipe.obs}/data'
+        log_directory: '{recipe.basedir}/{recipe.obs}/logs'
+
+    model2comps:
+      cab: pfb_model2comps
+      params:
+        nbasisf: 4
+        overwrite: true
+        postfix: =recipe.iter
+        output_filename: '{recipe.basedir}/{recipe.obs}/data'
+        log_directory: '{recipe.basedir}/{recipe.obs}/logs'
+
+
+em_clean:
+  info: Loop over em_steps
+
+  for_loop:
+    var: iter
+    over: iters
+
+  inputs:
+    basedir:
+      required: true
+    obs:
+      choices: ['F000', 'F001', 'F005', 'F01']
+      required: true
+    iters:
+      dtype: List[int]
+      default: [0,1,2,3,4,5,6,7]
+      info:
+        List enumerating number of EM steps to perform
+    data_column:
+      default: DATA
+    weight_column:
+      default: None
+    flag_column:
+      default: FLAG
+    cell_size:
+      dtype: float
+      info: 'cell size in arcseconds'
+    nx:
+      dtype: int
+      info: 'number of pixels in x direction'
+    ny:
+      dtype: int
+      info: 'number of pixels in y direction'
+    super_resolution_factor:
+      dtype: float
+      default: 2.0
+    field_of_view:
+      dtype: float
+      default: 3.0
+    sigmathreshold:
+      dtype: float
+      default: 2.0
+      info: 'multiple of rms used to set stopping threshold'
+    gamma:
+      dtype: float
+      default: 0.1
+      info: 'Minor loop gain'
+    robustness:
+      dtype: float
+      default: -0.5
+      info: 'robustness factor for briggs weighting'
+    nthreads_dask:
+      dtype: int
+      default: 4
+      aliases: ['*.nthreads_dask']  # does not work. Bug in for loop?
+    nvthreads:
+      dtype: int
+      default: 2
+      aliases: ['*.nvthreads']
+    nband:
+      dtype: int
+      default: 4
+      aliases: ['*.nband']
+    tol:
+      dtype: float
+      default: 1e-4
+
+  steps:
+    grid:
+      cab: pfb_grid
+      assign:
+        previous_iter: =recipe.iter - 1
+        model_name: '{recipe.basedir}/{recipe.obs}/data_I_{recipe.previous_iter}_model.mds'
+      params:
+        # cell_size: =recipe.cell_size
+        # nx: =recipe.nx
+        # ny: =recipe.ny
+        super_resolution_factor: =recipe.super_resolution_factor
+        field_of_view: =recipe.field_of_view
+        robustness: =recipe.robustness
+        overwrite: true
+        residual: =IF(recipe.iter==0, false, true)  # Don't try to compute residual at first iteration
+        l2reweight_dof: =IF(recipe.iter==0, 0, 5)  # Don't reweight at first iteration
+        postfix: =recipe.iter
+        nthreads_dask: =recipe.nthreads_dask
+        transfer_model_from: =IF(recipe.iter==0, '', '{recipe.model_name}')
+        output_filename: '{recipe.basedir}/{recipe.obs}/data'
+        log_directory: '{recipe.basedir}/{recipe.obs}/logs'
+
+    clean:
+      cab: pfb_clean
+      params:
+        nmiter: =IF(recipe.iter==0, 30, 15)
+        sigmathreshold: =recipe.sigmathreshold
         memory_greedy: true
         postfix: =recipe.iter
         nthreads_dask: =recipe.nthreads_dask
