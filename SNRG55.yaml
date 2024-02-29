@@ -182,7 +182,7 @@ em_spotless:
         postfix: =recipe.iter
         nthreads_dask: =recipe.nthreads_dask
         transfer_model_from: =IF(recipe.iter==0, '', '{recipe.model_name}')
-        output_filename: '{recipe.basedir}/{recipe.obs}/data'
+        output_filename: '{recipe.basedir}/{recipe.obs}/spotless'
         log_directory: '{recipe.basedir}/{recipe.obs}/logs'
 
     spotless:
@@ -199,7 +199,7 @@ em_spotless:
         memory_greedy: true
         postfix: =recipe.iter
         nthreads_dask: =recipe.nthreads_dask
-        output_filename: '{recipe.basedir}/{recipe.obs}/data'
+        output_filename: '{recipe.basedir}/{recipe.obs}/spotless'
         log_directory: '{recipe.basedir}/{recipe.obs}/logs'
 
     model2comps:
@@ -208,7 +208,7 @@ em_spotless:
         nbasisf: 4
         overwrite: true
         postfix: =recipe.iter
-        output_filename: '{recipe.basedir}/{recipe.obs}/data'
+        output_filename: '{recipe.basedir}/{recipe.obs}/spotless'
         log_directory: '{recipe.basedir}/{recipe.obs}/logs'
 
 
@@ -298,7 +298,7 @@ em_clean:
         postfix: =recipe.iter
         nthreads_dask: =recipe.nthreads_dask
         transfer_model_from: =IF(recipe.iter==0, '', '{recipe.model_name}')
-        output_filename: '{recipe.basedir}/{recipe.obs}/data'
+        output_filename: '{recipe.basedir}/{recipe.obs}/clean'
         log_directory: '{recipe.basedir}/{recipe.obs}/logs'
 
     clean:
@@ -309,7 +309,7 @@ em_clean:
         memory_greedy: true
         postfix: =recipe.iter
         nthreads_dask: =recipe.nthreads_dask
-        output_filename: '{recipe.basedir}/{recipe.obs}/data'
+        output_filename: '{recipe.basedir}/{recipe.obs}/clean'
         log_directory: '{recipe.basedir}/{recipe.obs}/logs'
 
     model2comps:
@@ -318,5 +318,5 @@ em_clean:
         nbasisf: 4
         overwrite: true
         postfix: =recipe.iter
-        output_filename: '{recipe.basedir}/{recipe.obs}/data'
+        output_filename: '{recipe.basedir}/{recipe.obs}/clean'
         log_directory: '{recipe.basedir}/{recipe.obs}/logs'
