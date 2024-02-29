@@ -170,9 +170,7 @@ em_spotless:
         previous_iter: =recipe.iter - 1
         model_name: '{recipe.basedir}/{recipe.obs}/data_I_{recipe.previous_iter}_model.mds'
       params:
-        # cell_size: =recipe.cell_size
-        # nx: =recipe.nx
-        # ny: =recipe.ny
+        xds: '{recipe.basedir}/{recipe.obs}/data_I.xds'
         super_resolution_factor: =recipe.super_resolution_factor
         field_of_view: =recipe.field_of_view
         robustness: =recipe.robustness
@@ -286,9 +284,7 @@ em_clean:
         previous_iter: =recipe.iter - 1
         model_name: '{recipe.basedir}/{recipe.obs}/data_I_{recipe.previous_iter}_model.mds'
       params:
-        # cell_size: =recipe.cell_size
-        # nx: =recipe.nx
-        # ny: =recipe.ny
+        xds: '{recipe.basedir}/{recipe.obs}/data_I.xds'
         super_resolution_factor: =recipe.super_resolution_factor
         field_of_view: =recipe.field_of_view
         robustness: =recipe.robustness
