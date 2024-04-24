@@ -1,0 +1,177 @@
+_include:
+  - (pfb)stimela_cabs.yml
+
+opts:
+  log:
+    dir: logs
+    nest: 2
+
+spotless:
+  name: SPOTLESS
+  info: spotless deconvolution algorithm
+
+  assign:
+    ldir: DIRNAME(recipe.output_filename)
+
+  inputs:
+    ms:
+      dtype: str
+      required: true
+      aliases: ['*.ms']
+      info:
+        Path to MS
+    output_filename:
+      required: True
+      aliases: ["*.output_filename"]
+      info:
+        Basename of ouput products
+    nband:
+      required: True
+      aliases: ['*.nband']
+      info:
+        Number of imaging bands (typically divisible by 2)
+    cpi:
+      dtype: int
+      default: 32
+      info:
+        Number of channels per image.
+        Default (-1, 0, None) -> dataset per spw.
+    ipi:
+      dtype: int
+      default: -1
+      info:
+        Number of time integrations per image.
+        Default (-1, 0, None) -> dataset per scan.
+    fov:
+      dtype: float
+      default: 3.0
+      info:
+        Field of view in degrees
+    srf:
+      dtype: float
+      default: 2
+      info:
+        Will over-sample Nyquist by this factor at max frequency
+    data_column:
+      dtype: str
+      default: CORRECTED_DATA
+      info:
+        Which column to image
+    weight_column:
+      dtype: str
+      default: WEIGHT_SPECTRUM
+    model_column:
+      dtype: str
+      default: MODEL_DATA
+    outputs:
+      dtype: str
+      default: mMrRiI
+      info:
+        Output products of the restore worker.
+        (m)odel, (r)esidual, (i)mage, (c)lean beam, (d)irty, (f)ft_residuals
+        Captitals for cubes, lower case for MFS images.
+    nthreads:
+      default: 32
+      info:
+        Total number of threads to use.
+        You typically want to use a multiple of nband
+        for optimal resource utilisation.
+    niter:
+      dtype: int
+      default: 12
+      info:
+        Number of major iterations
+    l1reweight-from:
+      dtype: int
+      default: 6
+      info:
+        When to start L1 reweigting
+    rmsfactor:
+      dtype: float
+      default: 0.65
+      info:
+        Set's the strength of the regulariser in terms of rms.
+        Usually between 0.5 and 1.5 with larger values corresponding to stronger regularisation.
+        0.65 is sometimes the magic number
+    positivity:
+      dtype: int
+      default: 1
+      info:
+        Set to zero to switch off positivity constraint.
+    tol:
+      dtype: float
+      default: 0.0005
+      info:
+        Stop the deconvolution when |model-modelp|/|modelp| < tol
+
+  steps:
+    init:
+      cab: pfb.init
+      info:
+        Precompute visibilities for output products.
+        In this case simply the Stokes I visibilities (default)
+      params:
+        data_column: =recipe.data_column
+        weight_column: =recipe.weight_column
+        max_field_of_view: =recipe.field_of_view*1.1
+        channels_per_image: =recipe.cpi
+        integrations_per_image: =recipe.ipi
+        overwrite: false
+        scheduler: distributed
+        nworkers: =recipe.nband
+        nthreads_dask: =recipe.nthreads//recipe.nband//2
+        nvthreads: 2
+
+    grid:
+      cab: pfb.grid
+      info:
+        Flip visibilties into image space data products.
+      params:
+        robustness: -1.0
+        overwrite: false
+        scheduler: distributed
+        nworkers: =recipe.nband
+        nthreads_dask: 2
+        nvthreads: =recipe.nthreads//recipe.nband
+
+    deconv:
+      cab: pfb.spotless
+      info:
+        Deconvolve with spotless worker
+      params:
+        niter: =recipe.niter
+        l1reweight_from: =recipe.l1reweight_from
+        rmsfactor: =recipe.rmsfactor
+        positivity: =recipe.positivity
+        pd_maxit: 400
+        pd_tol: 3e-4
+        pd_report_freq: 50
+        pd_verbose: 2
+        tol: =recipe.tol
+        pm_maxit: 250
+        pm_tol: 5e-4
+        scheduler: threads
+        nthreads_dask: =recipe.nband
+        nvthreads: =recipe.nthreads//recipe.nband
+        bases: self,db1,db2,db3
+
+    restore:
+      cab: pfb.restore
+      info:
+        Create image products (including cubes)
+      params:
+        nvthreads: =recipe.nthreads
+        outputs: =recipe.outputs
+        overwrite: true
+
+    degrid:
+      cab: pfb.degrid
+      info:
+        Render component model to visibilities
+      params:
+        model_column: =recipe.model_column
+        channels_per_image: =recipe.cpi
+        integrations_per_image: =recipe.ipi
+        nthreads_dask: =recipe.nband
+        nvthreads: =recipe.nthreads//recipe.nband
+
