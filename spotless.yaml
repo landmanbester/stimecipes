@@ -15,17 +15,22 @@ spotless:
 
   inputs:
     ms:
-      dtype: str
       required: true
       aliases: ['*.ms']
       info:
         Path to MS
-    output_filename:
+    output-filename:
       required: True
-      aliases: ["*.output_filename"]
+      aliases: ["*.output-filename"]
       info:
         Basename of ouput products
+    log-directory:
+      required: true
+      aliases: ["*.log-directory"]
+      info:
+        Directory in which to place logs
     nband:
+      dtype: int
       required: True
       aliases: ['*.nband']
       info:
@@ -33,15 +38,19 @@ spotless:
     cpi:
       dtype: int
       default: 32
+      aliases: ['*.channels-per-image']
       info:
         Number of channels per image.
         Default (-1, 0, None) -> dataset per spw.
+        Only applied to init and degrid steps.
     ipi:
       dtype: int
       default: -1
+      aliases: ['*.integrations-per-image']
       info:
         Number of time integrations per image.
         Default (-1, 0, None) -> dataset per scan.
+        Only applied to init and degrid steps.
     fov:
       dtype: float
       default: 3.0
@@ -52,15 +61,15 @@ spotless:
       default: 2
       info:
         Will over-sample Nyquist by this factor at max frequency
-    data_column:
+    data-column:
       dtype: str
       default: CORRECTED_DATA
       info:
         Which column to image
-    weight_column:
+    weight-column:
       dtype: str
       default: WEIGHT_SPECTRUM
-    model_column:
+    model-column:
       dtype: str
       default: MODEL_DATA
     outputs:
@@ -71,6 +80,7 @@ spotless:
         (m)odel, (r)esidual, (i)mage, (c)lean beam, (d)irty, (f)ft_residuals
         Captitals for cubes, lower case for MFS images.
     nthreads:
+      dtype: int
       default: 32
       info:
         Total number of threads to use.
@@ -103,6 +113,21 @@ spotless:
       default: 0.0005
       info:
         Stop the deconvolution when |model-modelp|/|modelp| < tol
+    robustness:
+      dtype: float
+      default: -1
+      info:
+        Robustness value for Briggs weighting
+    overwrite:
+      dtype: bool
+      default: false
+      aliases: ['*.overwrite']
+      info:
+        Allow overwriting existing data products
+    product:
+      default: I
+      info:
+        Stokes product
 
   steps:
     init:
@@ -110,29 +135,32 @@ spotless:
       info:
         Precompute visibilities for output products.
         In this case simply the Stokes I visibilities (default)
+      # assign:
+      #   a: 1.1
       params:
-        data_column: =recipe.data_column
-        weight_column: =recipe.weight_column
-        max_field_of_view: =recipe.field_of_view*1.1
-        channels_per_image: =recipe.cpi
-        integrations_per_image: =recipe.ipi
-        overwrite: false
+        data-column: =recipe.data-column
+        weight-column: =recipe.weight-column
+        max-field-of-view: =recipe.fov * 1.1
         scheduler: distributed
         nworkers: =recipe.nband
-        nthreads_dask: =recipe.nthreads//recipe.nband//2
+        nthreads-dask: =recipe.nthreads//recipe.nband
         nvthreads: 2
+        overwrite: =recipe.overwrite
+        channels-per-image: =recipe.cpi
+        integrations-per-image: =recipe.ipi
 
     grid:
       cab: pfb.grid
       info:
         Flip visibilties into image space data products.
       params:
-        robustness: -1.0
-        overwrite: false
+        robustness: =recipe.robustness
+        field-of-view: =recipe.fov
         scheduler: distributed
         nworkers: =recipe.nband
-        nthreads_dask: 2
+        nthreads-dask: 2
         nvthreads: =recipe.nthreads//recipe.nband
+        overwrite: =recipe.overwrite
 
     deconv:
       cab: pfb.spotless
@@ -140,18 +168,18 @@ spotless:
         Deconvolve with spotless worker
       params:
         niter: =recipe.niter
-        l1reweight_from: =recipe.l1reweight_from
+        l1reweight-from: =recipe.l1reweight-from
         rmsfactor: =recipe.rmsfactor
         positivity: =recipe.positivity
-        pd_maxit: 400
-        pd_tol: 3e-4
-        pd_report_freq: 50
-        pd_verbose: 2
+        pd-maxit: 400
+        pd-tol: 3e-4
+        pd-report-freq: 50
+        pd-verbose: 2
         tol: =recipe.tol
-        pm_maxit: 250
-        pm_tol: 5e-4
+        pm-maxit: 250
+        pm-tol: 5e-4
         scheduler: threads
-        nthreads_dask: =recipe.nband
+        nthreads-dask: =recipe.nband
         nvthreads: =recipe.nthreads//recipe.nband
         bases: self,db1,db2,db3
 
@@ -162,16 +190,17 @@ spotless:
       params:
         nvthreads: =recipe.nthreads
         outputs: =recipe.outputs
-        overwrite: true
+        overwrite: =recipe.overwrite
 
     degrid:
       cab: pfb.degrid
       info:
         Render component model to visibilities
       params:
-        model_column: =recipe.model_column
-        channels_per_image: =recipe.cpi
-        integrations_per_image: =recipe.ipi
-        nthreads_dask: =recipe.nband
+        model-column: =recipe.model-column
+        nthreads-dask: =recipe.nband
         nvthreads: =recipe.nthreads//recipe.nband
+        channels-per-image: =recipe.cpi
+        integrations-per-image: =recipe.ipi
+        mds: '{recipe.output-filename}_{recipe.product}_main_model_{recipe.niter}.mds'  # how to do this better?
 
