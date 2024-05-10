@@ -8,6 +8,8 @@ opts:
   log:
     dir: logs
     nest: 2
+  backend:
+    select: native
 
 
 # Missing features
