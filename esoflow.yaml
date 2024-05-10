@@ -373,7 +373,7 @@ crosscal:
         output.columns: [RESIDUAL]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [G,K,B]
+        # output.net_gains: [G,K,B]
         mad_flags.enable: true
         mad_flags.whitening: native
         mad_flags.threshold_bl: 3.5
@@ -384,18 +384,18 @@ crosscal:
         G.type: diag_complex
         G.time_interval: 0
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_smoothed.qc/G'
+        G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gk1.qc/G'
         G.interp_mode: ampphase
         G.interp_method: 2dlinear
         K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_smoothed.qc/K'
+        K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gk1.qc/K'
         K.interp_mode: ampphase
         K.interp_method: 2dlinear
         B.type: diag_complex
-        B.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_smoothed.qc/B'
+        B.load_from: '{recipe.basedir}/{recipe.ms_primary}/b1.qc/B'
         B.time_interval: 0
         B.freq_interval: 4
         B.interp_mode: ampphase
@@ -701,54 +701,54 @@ crosscal:
     #     E.interp_mode: ampphase
     #     E.interp_method: 2dlinear
 
-    # calibrator_transfer:
-    #   cab: quartical
-    #   info: Smooth bandpass per scan and transfer solutions
-    #   params:
-    #     input_ms.path: '{recipe.ms_target}'
-    #     input_ms.time_chunk: 150
-    #     input_ms.freq_chunk: 256
-    #     input_ms.select_uv_range: [150,0]
-    #     input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
-    #     input_ms.select_corr: [0, 3]
-    #     input_model.recipe:
-    #     input_model.apply_p_jones: false
-    #     solver.terms: [G,K,B]
-    #     solver.iter_recipe: [0,0,0]
-    #     solver.propagate_flags: false
-    #     solver.robust: false
-    #     solver.threads: 1
-    #     solver.bypass: true
-    #     solver.reference_antenna: =recipe.ref_ant
-    #     output.gain_directory: '{recipe.basedir}/{recipe.ms_target}/gkb_init.qc/'
-    #     output.log_directory: '{recipe.basedir}/{recipe.ms_target}/logs.qc'
-    #     output.overwrite: true
-    #     output.products:
-    #     output.columns:
-    #     output.flags: false
-    #     output.apply_p_jones_inv: false
-    #     output.net_gains: [G, K, B]
-    #     mad_flags.enable: false
-    #     dask.threads: 64
-    #     dask.workers: 1
-    #     dask.scheduler: distributed
-    #     G.type: diag_complex
-    #     G.time_interval: 1
-    #     G.freq_interval: 0
-    #     G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/G'
-    #     K.type: delay
-    #     K.time_interval: 1
-    #     K.freq_interval: 0
-    #     K.initial_estimate: false
-    #     K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/K'
-    #     K.interp_mode: ampphase
-    #     K.interp_method: 2dlinear
-    #     B.type: diag_complex
-    #     B.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/B'
-    #     B.time_interval: 0
-    #     B.freq_interval: 1
-    #     B.interp_mode: ampphase
-    #     B.interp_method: 2dlinear
+    calibrator_transfer:
+      cab: quartical
+      info: Smooth bandpass per scan and transfer solutions
+      params:
+        input_ms.path: '{recipe.ms_target}'
+        input_ms.time_chunk: 150
+        input_ms.freq_chunk: 256
+        input_ms.select_uv_range: [150,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe:
+        input_model.apply_p_jones: false
+        solver.terms: [G,K,B]
+        solver.iter_recipe: [0,0,0]
+        solver.propagate_flags: false
+        solver.robust: false
+        solver.threads: 1
+        solver.bypass: true
+        solver.reference_antenna: =recipe.ref_ant
+        output.gain_directory: '{recipe.basedir}/{recipe.ms_target}/gkb_init.qc/'
+        output.log_directory: '{recipe.basedir}/{recipe.ms_target}/logs.qc'
+        output.overwrite: true
+        output.products:
+        output.columns:
+        output.flags: false
+        output.apply_p_jones_inv: false
+        output.net_gains: [G, K, B]
+        mad_flags.enable: false
+        dask.threads: 64
+        dask.workers: 1
+        dask.scheduler: distributed
+        G.type: diag_complex
+        G.time_interval: 1
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/G'
+        K.type: delay
+        K.time_interval: 1
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/K'
+        K.interp_mode: ampphase
+        K.interp_method: 2dlinear
+        B.type: diag_complex
+        B.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/B'
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.interp_mode: ampphase
+        B.interp_method: 2dlinear
 
     # calibrator_transfer_gkbe:
     #   cab: quartical
