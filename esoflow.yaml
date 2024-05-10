@@ -160,7 +160,7 @@ crosscal:
       aliases: ['*.input_ms.data_column']
     sigma_column:
       default: SIGMA_SPECTRUM
-      aliases: ['*.input_ms.sigma_column']
+      # aliases: ['*.input_ms.sigma_column']
       info: Original std of noise used to construct weights
     weight_column:
       default: WEIGHT_SPECTRUM
