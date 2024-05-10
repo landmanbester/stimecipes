@@ -143,11 +143,13 @@ spotless:
         max-field-of-view: =recipe.fov * 1.1
         scheduler: distributed
         nworkers: =recipe.nband
-        nthreads-dask: =recipe.nthreads//recipe.nband
-        nvthreads: 2
+        nthreads-dask: 1
+        nvthreads: =recipe.nthreads//recipe.nband
         overwrite: =recipe.overwrite
         channels-per-image: =recipe.cpi
         integrations-per-image: =recipe.ipi
+        # freq-range: 570230468.75:924574218.75
+        # chan-average: 2
 
     grid:
       cab: pfb.grid
