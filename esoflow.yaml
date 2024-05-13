@@ -363,7 +363,7 @@ crosscal:
         input_model.recipe: '{recipe.model_column}'
         input_model.apply_p_jones: false
         solver.terms: [G,K,B]
-        solver.iter_recipe: [30,30,30,20,20,20,10,10,10,5,5,5]
+        solver.iter_recipe: [30,30,30]
         solver.propagate_flags: true
         solver.robust: false
         solver.threads: 8
