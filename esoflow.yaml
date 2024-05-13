@@ -863,7 +863,7 @@ image:
         sigma-column: =recipe.sigma-column
         gain-table: [=recipe.gain1, =recipe.gain2]
         integrations-per-image: -1
-        channels-per-image: 256
+        channels-per-image: 64
         nthreads-dask: =recipe.nband
         nvthreads: =recipe.nthreads//recipe.nband
         scheduler: threads
