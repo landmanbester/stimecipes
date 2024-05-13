@@ -828,6 +828,9 @@ image:
   inputs:
     basedir:
       default: 'output'
+    log-directory:
+      default: 'output/logs'
+      aliases: ['*.log-directory']
     data-column:
       default: DATA
     sigma-column:
