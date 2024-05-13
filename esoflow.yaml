@@ -857,11 +857,11 @@ image:
       cab: pfb.init
       info: 'Initialise imaging data products'
       params:
-        ms: [recipe.ms1, recipe.ms2]
+        ms: [=recipe.ms1, =recipe.ms2]
         output-filename: '{recipe.basedir}/stage1'
         data-column: =recipe.data_column
         sigma-column: =recipe.sigma_column
-        gain-table: [recipe.gain1, recipe.gain2]
+        gain-table: [=recipe.gain1, =recipe.gain2]
         integrations-per-image: -1
         channels-per-image: 256
         nthreads-dask: =recipe.nband
