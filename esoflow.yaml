@@ -1,6 +1,6 @@
 _include:
   # - lb-cabs.yaml
-  # - (pfb)stimela_cabs.yml
+  - (pfb)stimela_cabs.yml
   # - (lbscratch)stimela_cabs.yaml
   - (quartical)stimela_cabs.yaml
 
@@ -828,12 +828,12 @@ image:
   inputs:
     basedir:
       default: 'output'
-    data_column:
+    data-column:
       default: DATA
-    sigma_column:
+    sigma-column:
       default: SIGMA_SPECTRUM
       info: Original std of noise used to construct weights
-    model_column:
+    model-column:
       dtype: str
       default: MODEL_DATA
     nband:
@@ -851,16 +851,16 @@ image:
 
   steps:
     init1:
-      cab: pfb_init
+      cab: pfb.init
       info: 'Initialise imaging data products'
       params:
         ms: [recipe.ms1, recipe.ms2]
-        output_filename: '{recipe.basedir}/stage1'
-        data_column: =recipe.data_column
-        sigma_column: =recipe.sigma_column
-        gain_table: [recipe.gain1, recipe.gain2]
-        integrations_per_image: -1
-        channels_per_image: 256
+        output-filename: '{recipe.basedir}/stage1'
+        data-column: =recipe.data_column
+        sigma-column: =recipe.sigma_column
+        gain-table: [recipe.gain1, recipe.gain2]
+        integrations-per-image: -1
+        channels-per-image: 256
         nthreads-dask: =recipe.nband
         nvthreads: =recipe.nthreads//recipe.nband
         scheduler: threads
@@ -869,48 +869,34 @@ image:
 
 
     grid1:
-      cab: pfb_grid
+      cab: pfb.grid
       info: 'Grid data for initial imaging'
       params:
-        output_filename: '{recipe.basedir}/stage1'
+        output-filename: '{recipe.basedir}/stage1'
         robustness: -1
-        fits_cubes: true
-        field_of_view: 2.25
-        super_resolution_factor: 2.5
+        fits-cubes: true
+        field-of-view: 2.25
+        super-resolution-factor: 2.5
         nthreads-dask: =recipe.nband
         nvthreads: =recipe.nthreads//recipe.nband
 
     spotless1:
-      cab: pfb_spotless
+      cab: pfb.spotless
       params:
-        output_filename: '{recipe.basedir}/stage1'
-        fits_cubes: true
+        output-filename: '{recipe.basedir}/stage1'
+        fits-cubes: true
         niter: 10
         nthreads-dask: =recipe.nband
         nvthreads: =recipe.nthreads//recipe.nband
         bases: 'self,db1,db2,db3,db4,db5'
         nlevels: 3
-        l1reweight_from: 5
-        pd_tol: 3e-4
-        pd_maxit: 500
-        pd_verbose: 2
-        pd_report_freq: 50
+        l1reweight-from: 5
+        pd-tol: 3e-4
+        pd-maxit: 500
+        pd-verbose: 2
+        pd-report-freq: 50
         tol: 1e-4
         rmsfactor: 1.0
-
-#     # forward
-#     # grid with reweight
-#     # spotless
-#     # forward
-
-#     degrid1:
-#       cab: pfb_degrid
-#       info: Populate MODEL_DATA with model visibilities
-#       params:
-#         ms: '{recipe.ms}'
-#         output_filename: '{recipe.basedir}/stage1'
-#         nband_out: 32
-#         spectral_poly_order: 4
 
 
 # selfcal:
