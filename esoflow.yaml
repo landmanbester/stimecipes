@@ -807,87 +807,96 @@ crosscal:
     #     E.interp_mode: ampphase
     #     E.interp_method: 2dlinear
 
-# image:
-#   name: ESOIMAGE
-#   info: An imaging step of the ESO137 self-calibration recipe
+image:
+  name: ESOIMAGE
+  info: An imaging step of the ESO137 self-calibration recipe
 
-#   inputs:
-#     ms:
-#       dtype: MS
-#       required: true
-#     basedir:
-#       default: 'output'
-#     data_column:
-#       default: DATA
-#     sigma_column:
-#       default: SIGMA_SPECTRUM
-#       info: Original std of noise used to construct weights
-#     weight_column:
-#       default: WEIGHT_SPECTRUM
-#       info: Modified weights to be written to this column
-#     model_column:
-#       dtype: str
-#       default: MODEL_DATA
-#     nband:
-#       default: 8
-#       aliases: ['*.nband']
-#       info: Number of imaging bands
-#     scheduler:
-#       dtype: str
-#       default: threads
-#       aliases: ['*.scheduler']
-#       info: Dask scheduler to use
-#     nthreads:
-#       dtype: int
-#       default: 64
+  assign:
+    ms1: /scratch/bester/ms1_target.zarr
+    ms2: /scratch/bester/ms2_target.zarr
+    gain1: /home/bester/projects/ESO137/output/scratch/bester/ms1_target.zarr/gkb_init.qc/GKB-net
+    gain2: /home/bester/projects/ESO137/output/scratch/bester/ms2_target.zarr/gkb_init.qc/GKB-net
+    band: HI
 
-#   steps:
-#     init1:
-#       cab: pfb_init
-#       info: 'Initialise imaging data products'
-#       params:
-#         ms: '{recipe.ms}'
-#         output_filename: '{recipe.basedir}/stage1'
-#         data_column: =recipe.data_column
-#         sigma_column: =recipe.sigma_column
-#         gain_table: '{recipe.basedir}/target_gains_init.qc/'
-#         gain_term: 'GKB-net'
-#         integrations_per_image: -1
-#         channels_per_image: 256
-#         nthreads: =recipe.nthreads
-#         nworkers: 8
-#         nthreads_per_worker: 8
-#         scheduler: threads
+  assign_based_on:
+    band:
+      HI:
+        frange: 1295000000:1503000000
+      LO:
+        frange: 980000000:1080000000
 
-#     grid1:
-#       cab: pfb_grid
-#       info: 'Grid data for initial imaging'
-#       params:
-#         output_filename: '{recipe.basedir}/stage1'
-#         robustness: -1
-#         fits_cubes: true
-#         field_of_view: 2.5
-#         super_resolution_factor: 1.5
-#         nthreads: '{recipe.nthreads}'
-#         nworkers: 8
+  inputs:
+    basedir:
+      default: 'output'
+    data_column:
+      default: DATA
+    sigma_column:
+      default: SIGMA_SPECTRUM
+      info: Original std of noise used to construct weights
+    model_column:
+      dtype: str
+      default: MODEL_DATA
+    nband:
+      default: 8
+      aliases: ['*.nband']
+      info: Number of imaging bands
+    scheduler:
+      dtype: str
+      default: threads
+      aliases: ['*.scheduler']
+      info: Dask scheduler to use
+    nthreads:
+      dtype: int
+      default: 64
 
-#     spotless1:
-#       cab: pfb_spotless
-#       params:
-#         output_filename: '{recipe.basedir}/stage1'
-#         fits_cubes: true
-#         niter: 10
-#         nthreads: '{recipe.nthreads}'
-#         bases: 'self,db1,db2,db3,db4,db5'
-#         nlevels: 3
-#         l1reweight_from: 5
-#         pd_tol: 1e-4
-#         pd_maxit: 500
-#         pd_verbose: 2
-#         pd_report_freq: 50
-#         tol: 0.001
-#         rmsfactor: 5
-#         pm_tol: 1e-4
+  steps:
+    init1:
+      cab: pfb_init
+      info: 'Initialise imaging data products'
+      params:
+        ms: [recipe.ms1, recipe.ms2]
+        output_filename: '{recipe.basedir}/stage1'
+        data_column: =recipe.data_column
+        sigma_column: =recipe.sigma_column
+        gain_table: [recipe.gain1, recipe.gain2]
+        integrations_per_image: -1
+        channels_per_image: 256
+        nthreads-dask: =recipe.nband
+        nvthreads: =recipe.nthreads//recipe.nband
+        scheduler: threads
+        chan-average: 4
+        freq-range: =recipe.frange
+
+
+    grid1:
+      cab: pfb_grid
+      info: 'Grid data for initial imaging'
+      params:
+        output_filename: '{recipe.basedir}/stage1'
+        robustness: -1
+        fits_cubes: true
+        field_of_view: 2.25
+        super_resolution_factor: 2.5
+        nthreads-dask: =recipe.nband
+        nvthreads: =recipe.nthreads//recipe.nband
+
+    spotless1:
+      cab: pfb_spotless
+      params:
+        output_filename: '{recipe.basedir}/stage1'
+        fits_cubes: true
+        niter: 10
+        nthreads-dask: =recipe.nband
+        nvthreads: =recipe.nthreads//recipe.nband
+        bases: 'self,db1,db2,db3,db4,db5'
+        nlevels: 3
+        l1reweight_from: 5
+        pd_tol: 3e-4
+        pd_maxit: 500
+        pd_verbose: 2
+        pd_report_freq: 50
+        tol: 1e-4
+        rmsfactor: 1.0
 
 #     # forward
 #     # grid with reweight
