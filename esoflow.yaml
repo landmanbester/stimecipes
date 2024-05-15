@@ -228,8 +228,8 @@ crosscal:
             B = global freq variable complex gain,  G(t)
       params:
         input_ms.path: '{recipe.ms_primary}'
-        input_ms.time_chunk: '0'
-        input_ms.freq_chunk: '32'
+        input_ms.time_chunk: 0
+        input_ms.freq_chunk: 128
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]

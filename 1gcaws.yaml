@@ -3,11 +3,24 @@ _include:
   - (cultcargo)quartical.yml
   - (cultcargo)pfb-clean.yml
 
-opts:
+opts:  # This section is largely just to ensure that all these fields exist.
   backend:
-    kube:
-      enable: true
     select: kube
+    kube:
+      job_pod:
+        memory:
+          limit: 0
+        cpu:
+          request:
+            0
+      dask_cluster:
+        num_workers: 1
+        worker_pod:
+          memory:
+            limit: 0
+          cpu:
+            request:
+              0
 
 1gc:
   name: CROSSCAL
