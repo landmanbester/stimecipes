@@ -146,15 +146,27 @@ crosscal:
   name: ESOCROSSCAL
   info: The ESO137 cross calibration and diagnostics recipe
 
+  assign:
+    obs: 1
+
+  for_loop:
+    var: obs
+    over: [1, 2]
+    # scatter: 4  # to do it in parallel
+
+  # observation specific settings in subsections
+  assign_based_on:
+    obs:
+      1:
+        ms_primary: msdir/ms1_primary.ms
+        ms_target: /scratch/bester/ms1_target.zarr
+        ref_ant: 43
+      2:
+        ms_primary: msdir/ms2_primary.ms
+        ms_target: /scratch/bester/ms2_target.zarr
+        ref_ant: 54
+
   inputs:
-    ms_primary:
-      dtype: MS
-      required: true
-      abbreviation: msp
-    ms_target:
-      dtype: MS
-      required: true
-      abbreviation: mst
     basedir:
       default: 'output'
     data_column:
@@ -173,29 +185,21 @@ crosscal:
     nthreads:
       dtype: int
       default: 32
-    ref_ant:
-      dtype: int
-      default: 54
-    rotate_parang:
-      dtype: bool
-      default: true
 
   steps:
-    # we need a restimator step here but how do we use the output??
-
     gkcal1:
       cab: quartical
       info: GK on the primary where
             G = per scan time variable complex gain G(t)
             K = per scan delay exp(i delta(t) nu)
       params:
-        input_ms.path: '{recipe.ms_primary}'
+        input_ms.path: =recipe.ms_primary
         input_ms.time_chunk: '0'
         input_ms.freq_chunk: '0'
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_corr: [0, 3]
-        input_model.recipe: '{recipe.model_column}'
+        input_model.recipe: =recipe.model_column
         input_model.apply_p_jones: false
         solver.terms: [G,K]
         solver.iter_recipe: [100,100,50,50]
@@ -227,13 +231,13 @@ crosscal:
       info: B on the primary where
             B = global freq variable complex gain,  G(t)
       params:
-        input_ms.path: '{recipe.ms_primary}'
+        input_ms.path: =recipe.ms_primary
         input_ms.time_chunk: 0
         input_ms.freq_chunk: 128
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
-        input_model.recipe: '{recipe.model_column}'
+        input_model.recipe: =recipe.model_column
         input_model.apply_p_jones: false
         solver.terms: [G,K,B]
         solver.iter_recipe: [0,0,250]
@@ -244,8 +248,8 @@ crosscal:
         output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/b1_norob.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: true
-        output.products: [residual]
-        output.columns: [RESIDUAL]
+        output.products:
+        output.columns:
         output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains: []
@@ -353,14 +357,14 @@ crosscal:
       cab: quartical
       info: Final solve to refine B solution intervals
       params:
-        input_ms.path: '{recipe.ms_primary}'
+        input_ms.path: =recipe.ms_primary
         input_ms.sigma_column: SIGMA_SPECTRUM
         input_ms.time_chunk: '0'
         input_ms.freq_chunk: '0'
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_corr: [0, 3]
-        input_model.recipe: '{recipe.model_column}'
+        input_model.recipe: =recipe.model_column
         input_model.apply_p_jones: false
         solver.terms: [G,K,B]
         solver.iter_recipe: [50,50,50]
@@ -858,7 +862,7 @@ image:
       info: 'Initialise imaging data products'
       params:
         ms: [=recipe.ms1, =recipe.ms2]
-        output-filename: '{recipe.basedir}/stage1'
+        output-filename: '{recipe.basedir}/stage1_{recipe.band}'
         data-column: =recipe.data-column
         sigma-column: =recipe.sigma-column
         gain-table: [=recipe.gain1, =recipe.gain2]
