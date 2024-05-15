@@ -5,6 +5,8 @@ _include:
 
 opts:
   backend:
+    kube:
+      enable: true
     select: kube
 
 1gc:
@@ -57,17 +59,17 @@ opts:
 
   steps:
     init:
-      cab: pfb_init
+      cab: pfb.init
       info: Initialise Stokes data products
       backend:
         kube:
           # debug_mode: true
           job_pod:  # This is where the main aplication runs.
-            type: thin
+            type: medium
             memory:
-              limit: 6Gi
+              limit: 16Gi
             cpu:
-              limit: 1
+              request: 4
           dask_cluster:  # Set up the dask cluster.
             name: pfb-test-cluster
             num_workers: 16  # Zero will disable cluster.
@@ -75,7 +77,7 @@ opts:
             worker_pod:
               type: medium
               cpu:
-                limit: 15
+                request: 15
               memory:
                   limit: "55Gi"
           always_pull_images: true
@@ -97,7 +99,7 @@ opts:
         chan_average: 4
 
     grid:
-      cab: pfb_grid
+      cab: pfb.grid
       info: Initialise image data products
       backend:
         kube:
@@ -134,7 +136,7 @@ opts:
         log_directory: =recipe.basedir
 
     deconv:
-      cab: pfb_spotless
+      cab: pfb.spotless
       info: Deconvolve image with spotless algorithm
       backend:
         kube:
