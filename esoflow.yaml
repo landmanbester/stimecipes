@@ -147,7 +147,7 @@ crosscal:
   info: The ESO137 cross calibration and diagnostics recipe
 
   assign:
-    obs: 1
+    obs: '1'
 
   for_loop:
     var: obs
@@ -157,11 +157,11 @@ crosscal:
   # observation specific settings in subsections
   assign_based_on:
     obs:
-      1:
+      '1':
         ms_primary: msdir/ms1_primary.ms
         ms_target: /scratch/bester/ms1_target.zarr
         ref_ant: 43
-      2:
+      '2':
         ms_primary: msdir/ms2_primary.ms
         ms_target: /scratch/bester/ms2_target.zarr
         ref_ant: 54
