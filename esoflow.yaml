@@ -879,7 +879,7 @@ image:
       cab: pfb.grid
       info: 'Grid data for initial imaging'
       params:
-        output-filename: '{recipe.basedir}/stage1'
+        output-filename: '{recipe.basedir}/stage1_{recipe.band}'
         robustness: -1
         fits-cubes: true
         field-of-view: 2.25
@@ -890,7 +890,7 @@ image:
     spotless1:
       cab: pfb.spotless
       params:
-        output-filename: '{recipe.basedir}/stage1'
+        output-filename: '{recipe.basedir}/stage1_{recipe.band}'
         fits-cubes: true
         niter: 10
         nthreads-dask: =recipe.nband
