@@ -873,6 +873,7 @@ image:
         scheduler: threads
         chan-average: 4
         freq-range: =recipe.frange
+        overwrite: true
 
 
     grid1:
