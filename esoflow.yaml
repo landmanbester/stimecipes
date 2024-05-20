@@ -827,6 +827,8 @@ image:
 
   assign_based_on:
     band:
+      FULL:
+        frange: 882541016:1626316406.25
       HI:
         frange: 1295000000:1503000000
       LO:
@@ -860,8 +862,26 @@ image:
       default: 64
 
   steps:
-    init1:
+    init:
       cab: pfb.init
+      info: 'Initialise imaging data products'
+      params:
+        ms: [=recipe.ms1, =recipe.ms2]
+        output-filename: '{recipe.basedir}/stage1_{recipe.band}'
+        data-column: =recipe.data-column
+        sigma-column: =recipe.sigma-column
+        gain-table: [=recipe.gain1, =recipe.gain2]
+        integrations-per-image: -1
+        channels-per-image: 32
+        nthreads-dask: =recipe.nband
+        nvthreads: 4
+        scheduler: threads
+        chan-average: 4
+        freq-range: =recipe.frange
+        overwrite: true
+
+    imit:
+      cab: pfb.imit
       info: 'Initialise imaging data products'
       params:
         ms: [=recipe.ms1, =recipe.ms2]
