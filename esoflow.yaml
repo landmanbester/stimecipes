@@ -146,8 +146,8 @@ crosscal:
   name: ESOCROSSCAL
   info: The ESO137 cross calibration and diagnostics recipe
 
-  assign:
-    obs: '2'
+  # assign:
+  #   obs: '2'
 
   # for_loop:
   #   var: obs
@@ -167,6 +167,9 @@ crosscal:
         ref_ant: 54
 
   inputs:
+    obs:
+      dtype: str
+      required: true
     basedir:
       default: 'output'
     data_column:
@@ -369,14 +372,14 @@ crosscal:
         solver.terms: [G,K,B]
         solver.iter_recipe: [150,150,150,50,50,50,10,10,10]
         solver.propagate_flags: true
-        solver.robust: false
+        solver.robust: true
         solver.threads: 8
         solver.reference_antenna: =recipe.ref_ant
-        output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_init.qc/'
+        output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_init_rob.qc/'
         output.log_directory: '{recipe.basedir}/{recipe.ms_primary}/logs.qc'
         output.overwrite: true
-        output.products: [residual]
-        output.columns: [RESIDUAL]
+        # output.products: [residual]
+        # output.columns: [RESIDUAL]
         output.flags: true
         output.apply_p_jones_inv: false
         # output.net_gains: [G,K,B]
