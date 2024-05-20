@@ -889,8 +889,8 @@ image:
         data-column: =recipe.data-column
         sigma-column: =recipe.sigma-column
         gain-table: [=recipe.gain1, =recipe.gain2]
-        integrations-per-image: -1
-        channels-per-image: 32
+        integrations-per-image: 150
+        channels-per-image: 128
         nthreads-dask: 2
         nvthreads: 2
         nworkers: 32
