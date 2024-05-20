@@ -147,7 +147,7 @@ crosscal:
   info: The ESO137 cross calibration and diagnostics recipe
 
   assign:
-    obs: '1'
+    obs: '2'
 
   # for_loop:
   #   var: obs
