@@ -891,9 +891,10 @@ image:
         gain-table: [=recipe.gain1, =recipe.gain2]
         integrations-per-image: -1
         channels-per-image: 32
-        nthreads-dask: =recipe.nband
-        nvthreads: 4
-        scheduler: threads
+        nthreads-dask: 2
+        nvthreads: 2
+        nworkers: 32
+        scheduler: distributed
         chan-average: 4
         freq-range: =recipe.frange
         overwrite: true
