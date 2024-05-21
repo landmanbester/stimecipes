@@ -892,10 +892,10 @@ image:
         sigma-column: =recipe.sigma-column
         gain-table: [=recipe.gain1, =recipe.gain2]
         integrations-per-image: 150
-        channels-per-image: 128
-        nthreads-dask: 2
-        nvthreads: 2
-        nworkers: 32
+        channels-per-image: 256
+        nthreads-dask: 1
+        nvthreads: 1
+        nworkers: 64
         scheduler: distributed
         chan-average: 4
         freq-range: =recipe.frange
