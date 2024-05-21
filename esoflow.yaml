@@ -838,7 +838,7 @@ image:
       default: FULL
       info: FULL, HI or LO part of the band.
     basedir:
-      default: 'output'
+      default: '/scratch/bester'
     log-directory:
       default: 'output/logs'
       aliases: ['*.log-directory']
@@ -851,12 +851,12 @@ image:
       dtype: str
       default: MODEL_DATA
     nband:
-      default: 8
+      default: 14
       aliases: ['*.nband']
       info: Number of imaging bands
     scheduler:
       dtype: str
-      default: threads
+      default: distributed
       aliases: ['*.scheduler']
       info: Dask scheduler to use
     nthreads:
@@ -896,7 +896,6 @@ image:
         nthreads-dask: 1
         nvthreads: 1
         nworkers: 64
-        scheduler: distributed
         chan-average: 4
         freq-range: =recipe.frange
         overwrite: true
@@ -919,18 +918,26 @@ image:
       params:
         output-filename: '{recipe.basedir}/stage1_{recipe.band}'
         fits-cubes: true
-        niter: 10
-        nthreads-dask: =recipe.nband
-        nvthreads: =recipe.nthreads//recipe.nband
-        bases: 'self,db1,db2,db3,db4,db5'
+        niter: 50
+        bases: 'self,db1'
         nlevels: 3
-        l1reweight-from: 5
+        l1reweight-from: 6
         pd-tol: 3e-4
         pd-maxit: 500
         pd-verbose: 2
         pd-report-freq: 50
-        tol: 1e-4
-        rmsfactor: 1.0
+        tol: 1e-3
+        rmsfactor: 1.25
+        nthreads-dask: 1
+        nvthreads: 5
+        nworkers: 14
+        field-of-view: 2.25
+        super-resolution-factor: 2.0
+        robustness: -1.5
+        mf-weighting: false
+        l2-reweight-dof: 2.5
+
+
 
 
 # selfcal:
