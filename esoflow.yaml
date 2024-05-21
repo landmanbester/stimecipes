@@ -835,7 +835,7 @@ image:
 
   inputs:
     band:
-      defaut: FULL
+      default: FULL
       info: FULL, HI or LO part of the band.
     basedir:
       default: 'output'
