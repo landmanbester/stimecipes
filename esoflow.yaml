@@ -877,7 +877,7 @@ image:
         channels-per-image: 32
         nthreads-dask: =recipe.nband
         nvthreads: 4
-        scheduler: threads
+        scheduler: distributed
         chan-average: 4
         freq-range: =recipe.frange
         overwrite: true
@@ -896,6 +896,7 @@ image:
         nthreads-dask: 1
         nvthreads: 1
         nworkers: 64
+        scheduler: distributed
         chan-average: 4
         freq-range: =recipe.frange
         overwrite: true
@@ -931,6 +932,7 @@ image:
         nthreads-dask: 1
         nvthreads: 5
         nworkers: 14
+        scheduler: distributed
         field-of-view: 2.25
         super-resolution-factor: 2.0
         robustness: -1.5
