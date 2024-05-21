@@ -823,7 +823,6 @@ image:
     ms2: /scratch/bester/ms2_target.zarr
     gain1: /home/bester/projects/ESO137/output/scratch/bester/ms1_target.zarr/gkb_init.qc/GKB-net
     gain2: /home/bester/projects/ESO137/output/scratch/bester/ms2_target.zarr/gkb_init.qc/GKB-net
-    band: HI
 
   assign_based_on:
     band:
@@ -835,6 +834,9 @@ image:
         frange: 980000000:1080000000
 
   inputs:
+    band:
+      defaut: FULL
+      info: FULL, HI or LO part of the band.
     basedir:
       default: 'output'
     log-directory:
