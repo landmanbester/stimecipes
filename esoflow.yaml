@@ -900,6 +900,7 @@ image:
         chan-average: 4
         freq-range: =recipe.frange
         overwrite: true
+        bda-decorr: 0.98
 
 
     grid1:
