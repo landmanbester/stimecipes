@@ -887,7 +887,7 @@ image:
       info: 'Initialise imaging data products'
       params:
         ms: [=recipe.ms1, =recipe.ms2]
-        output-filename: '{recipe.basedir}/stage1_{recipe.band}'
+        output-filename: '{recipe.basedir}/stage1_bda_{recipe.band}'
         data-column: =recipe.data-column
         sigma-column: =recipe.sigma-column
         gain-table: [=recipe.gain1, =recipe.gain2]
