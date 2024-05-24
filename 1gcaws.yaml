@@ -128,7 +128,7 @@ opts:  # This section is largely just to ensure that all these fields exist.
         config.opts.backend.kube.env.NUMBA_NUM_THREADS: '14'
         config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '14'
         config.opts.backend.kube.env.JAX_ENABLE_X64: 'True'
-        # config.opts.backend.kube.env.LD_LIBRARY_PATH:
+        config.opts.backend.kube.env.LD_LIBRARY_PATH: '/usr/local/lib'
       info: 'Initialise imaging data products'
       backend:
         kube:
