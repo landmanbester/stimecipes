@@ -120,6 +120,15 @@ opts:  # This section is largely just to ensure that all these fields exist.
 
     deconv:
       cab: pfb.spotless
+      assign:  # we need this so the workers get the right env vars
+        config.opts.backend.kube.env.OMP_NUM_THREADS: '14'
+        config.opts.backend.kube.env.OPENBLAS_NUM_THREADS: '14'
+        config.opts.backend.kube.env.MKL_NUM_THREADS: '14'
+        config.opts.backend.kube.env.VECLIB_MAXIMUM_THREADS: '14'
+        config.opts.backend.kube.env.NUMBA_NUM_THREADS: '14'
+        config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '14'
+        config.opts.backend.kube.env.JAX_ENABLE_X64: 'True'
+        # config.opts.backend.kube.env.LD_LIBRARY_PATH:
       info: 'Initialise imaging data products'
       backend:
         kube:
