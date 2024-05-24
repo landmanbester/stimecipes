@@ -74,6 +74,9 @@ opts:  # This section is largely just to ensure that all these fields exist.
     nworkers:
       dtype: int
       default: 32
+    reset-cache:
+      dtype: bool
+      default: false
 
   steps:
     init:  # 1090.5248334407806s with 32 c6in.2xlarge with 1 dask-thread and 1 vthread
@@ -120,6 +123,8 @@ opts:  # This section is largely just to ensure that all these fields exist.
       info: 'Initialise imaging data products'
       backend:
         kube:
+          # debug:
+          #   pause-on-start: true
           job_pod:  # This is where the main application runs.
             type: fat
             memory:
@@ -168,6 +173,7 @@ opts:  # This section is largely just to ensure that all these fields exist.
         robustness: -1.5
         mf-weighting: false
         l2-reweight-dof: 2.5
+        reset-cache: =recipe.reset-cache
 
 
 # useful kubectl commands
