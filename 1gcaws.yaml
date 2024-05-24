@@ -123,8 +123,8 @@ opts:  # This section is largely just to ensure that all these fields exist.
       info: 'Initialise imaging data products'
       backend:
         kube:
-          # debug:
-          #   pause-on-start: true
+          debug:
+            pause_on_start: true
           job_pod:  # This is where the main application runs.
             type: fat
             memory:
