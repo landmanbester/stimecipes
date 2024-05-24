@@ -7,6 +7,7 @@ opts:  # This section is largely just to ensure that all these fields exist.
   backend:
     select: kube
     kube:
+      context: 'lbester-rarg-test-eks-cluster'
       job_pod:
         memory:
           limit: 0
@@ -59,8 +60,8 @@ opts:  # This section is largely just to ensure that all these fields exist.
       dtype: str
       default: MODEL_DATA
     nband:
+      dtype: int
       default: 14
-      aliases: ['*.nband']
       info: Number of imaging bands
     scheduler:
       dtype: str
@@ -75,24 +76,28 @@ opts:  # This section is largely just to ensure that all these fields exist.
       default: 32
 
   steps:
-    init:
+    init:  # 1090.5248334407806s with 32 c6in.2xlarge with 1 dask-thread and 1 vthread
       cab: pfb.imit
       assign:
         config.opts.backend.kube.dask_cluster.num_workers: =recipe.nworkers
+        config.opts.backend.kube.predefined_pod_specs.pudgy.nodeSelector.rarg/instance-type: c6in.2xlarge
+        config.opts.backend.kube.job_pod.memory.limit: "14Gi"
+        config.opts.backend.kube.job_pod.cpu.request: "6"
+        config.opts.backend.kube.dask_cluster.worker_pod.memory.limit: "14Gi"
+        config.opts.backend.kube.dask_cluster.worker_pod.cpu.request: "6"
       info: 'Initialise imaging data products'
       backend:
         kube:
           job_pod:  # This is where the main application runs.
-            type: thin
+            type: pudgy
           dask_cluster:  # Set up the dask cluster.
             enable: true
             name: pfb-test-cluster
             memory_limit: 0
             threads_per_worker: 1
             worker_pod:
-              type: thin
+              type: pudgy
           always_pull_images: true
-
       params:
         ms: [=recipe.ms1, =recipe.ms2]
         output-filename: '{recipe.basedir}/stage1_{recipe.band}'
@@ -102,31 +107,61 @@ opts:  # This section is largely just to ensure that all these fields exist.
         integrations-per-image: 150
         channels-per-image: 256
         nthreads-dask: 1
-        nvthreads: 1
+        nvthreads: 6
         nworkers: =recipe.nworkers
         scheduler: distributed
         chan-average: 4
         freq-range: =recipe.frange
         overwrite: true
+        bda-decorr: 0.98
 
     deconv:
       cab: pfb.spotless
+      info: 'Initialise imaging data products'
+      backend:
+        kube:
+          job_pod:  # This is where the main application runs.
+            type: fat
+            memory:
+              limit: "115Gi"
+            cpu:
+              request: "14"
+          dask_cluster:  # Set up the dask cluster.
+            # scheduler_pod:
+            #   type: scheduler
+            #   memory:
+            #     limit: "4Gi"
+            #   cpu:
+            #     request: "1"
+            enable: true
+            num_workers: 14
+            name: pfb-test-cluster
+            memory_limit: 0  # dask cluster setup
+            threads_per_worker: 1
+            worker_pod:  # resource specification for autoscaler
+              type: fat
+              memory:
+                limit: "115Gi"
+              cpu:
+                request: "14"
+          always_pull_images: true
       params:
         output-filename: '{recipe.basedir}/stage1_{recipe.band}'
-        fits-cubes: true
-        niter: 50
-        bases: 'self,db1'
+        fits-cubes: false
+        niter: 1
+        bases: 'self,db1,db2,db3'
         nlevels: 3
         l1reweight-from: 6
         pd-tol: 3e-4
-        pd-maxit: 500
+        pd-maxit: 50
         pd-verbose: 2
-        pd-report-freq: 50
+        pd-report-freq: 10
         tol: 1e-3
         rmsfactor: 1.25
         nthreads-dask: 1
-        nvthreads: 5
+        nvthreads: 14
         nworkers: 14
+        nband: 14
         scheduler: distributed
         field-of-view: 2.25
         super-resolution-factor: 2.0
@@ -134,7 +169,8 @@ opts:  # This section is largely just to ensure that all these fields exist.
         mf-weighting: false
         l2-reweight-dof: 2.5
 
-# command:
-# pfb init --ms s3://ratt-public-data/ESO137/ms2_target.zarr -o s3://rarg-test-binface/pfb-test/test --nthreads-dask 15 --nvthreads 1 --scheduler distributed --integrations-per-image 150 --channels-per-image 64 --nworkers 2 --overwrite --data-column DATA --sigma-column SIGMA_SPECTRUM
-# gain table not currently accessible
-# --gain-table s3://ratt-public-data/ESO137/ms2_gains.qc --gain-term GK-net
+
+# useful kubectl commands
+# get namespaces -
+# switch namespace - kubectl config use-context lbester-rarg-test-eks-cluster
+# clean up - kubectl delete daskjobs.kubernetes.dask.org -n rarg-test-compute dj-deb951c0
