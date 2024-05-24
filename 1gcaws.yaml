@@ -29,9 +29,9 @@ opts:  # This section is largely just to ensure that all these fields exist.
 
   assign:
     ms1: s3://ratt-public-data/ESO137/ms1_target.zarr
-    ms2: s3://ratt-public-data/ESO137/ms2_target.zarr
+    #ms2: s3://ratt-public-data/ESO137/ms2_target.zarr
     gain1: s3://ratt-public-data/ESO137/ms1_gains.qc/GKB-net
-    gain2: s3://ratt-public-data/ESO137/ms2_gains.qc/GKB-net
+    #gain2: s3://ratt-public-data/ESO137/ms2_gains.qc/GKB-net
 
   assign_based_on:
     band:
@@ -44,7 +44,7 @@ opts:  # This section is largely just to ensure that all these fields exist.
 
   inputs:
     band:
-      default: FULL
+      default: HI
       info: FULL, HI or LO part of the band.
     basedir:
       default: 's3://rarg-test-binface/ESO137'
@@ -102,11 +102,11 @@ opts:  # This section is largely just to ensure that all these fields exist.
               type: pudgy
           always_pull_images: true
       params:
-        ms: [=recipe.ms1, =recipe.ms2]
+        ms: [=recipe.ms1]
         output-filename: '{recipe.basedir}/stage1_{recipe.band}'
         data-column: =recipe.data-column
         sigma-column: =recipe.sigma-column
-        gain-table: [=recipe.gain1, =recipe.gain2]
+        gain-table: [=recipe.gain1]
         integrations-per-image: 150
         channels-per-image: 256
         nthreads-dask: 1
@@ -123,8 +123,8 @@ opts:  # This section is largely just to ensure that all these fields exist.
       info: 'Initialise imaging data products'
       backend:
         kube:
-          debug:
-            pause_on_start: true
+          # debug:
+          #   pause_on_start: true
           job_pod:  # This is where the main application runs.
             type: fat
             memory:
@@ -139,7 +139,7 @@ opts:  # This section is largely just to ensure that all these fields exist.
             #   cpu:
             #     request: "1"
             enable: true
-            num_workers: 14
+            num_workers: 4
             name: pfb-test-cluster
             memory_limit: 0  # dask cluster setup
             threads_per_worker: 1
@@ -165,8 +165,8 @@ opts:  # This section is largely just to ensure that all these fields exist.
         rmsfactor: 1.25
         nthreads-dask: 1
         nvthreads: 14
-        nworkers: 14
-        nband: 14
+        nworkers: 4
+        nband: 4
         scheduler: distributed
         field-of-view: 2.25
         super-resolution-factor: 2.0
