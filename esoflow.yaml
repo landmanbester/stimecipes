@@ -872,7 +872,7 @@ image:
       default: 64
     reset-cache:
       dtype: bool
-      defaukt: false
+      default: false
 
   steps:
     init:
