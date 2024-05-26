@@ -818,13 +818,17 @@ image:
   name: ESOIMAGE
   info: An imaging step of the ESO137 self-calibration recipe
 
-  assign:
-    ms1: /scratch/bester/ms1_target.zarr
-    ms2: /scratch/bester/ms2_target.zarr
-    gain1: /home/bester/projects/ESO137/output/scratch/bester/ms1_target.zarr/gkb_init.qc/GKB-net
-    gain2: /home/bester/projects/ESO137/output/scratch/bester/ms2_target.zarr/gkb_init.qc/GKB-net
-
   assign_based_on:
+    obs:
+      '1':
+        ms: [/scratch/bester/ms1_target.zarr]
+        gain: [/home/bester/projects/ESO137/output/scratch/bester/ms1_target.zarr/gkb_init.qc/GKB-net]
+      '2':
+        ms: [/scratch/bester/ms2_target.zarr]
+        gain: [/home/bester/projects/ESO137/output/scratch/bester/ms2_target.zarr/gkb_init.qc/GKB-net]
+      'combined':
+        ms: [/scratch/bester/ms1_target.zarr, /scratch/bester/ms2_target.zarr]
+        gain: [/home/bester/projects/ESO137/output/scratch/bester/ms1_target.zarr/gkb_init.qc/GKB-net,/home/bester/projects/ESO137/output/scratch/bester/ms2_target.zarr/gkb_init.qc/GKB-net]
     band:
       FULL:
         frange: 882541016:1626316406.25
@@ -834,6 +838,10 @@ image:
         frange: 980000000:1080000000
 
   inputs:
+    obs:
+      default: '2'
+      info:
+        Which observation to process
     band:
       default: FULL
       info: FULL, HI or LO part of the band.
@@ -851,7 +859,7 @@ image:
       dtype: str
       default: MODEL_DATA
     nband:
-      default: 14
+      default: 10
       aliases: ['*.nband']
       info: Number of imaging bands
     scheduler:
@@ -862,37 +870,22 @@ image:
     nthreads:
       dtype: int
       default: 64
+    reset-cache:
+      dtype: bool
+      defaukt: false
 
   steps:
     init:
-      cab: pfb.init
-      info: 'Initialise imaging data products'
-      params:
-        ms: [=recipe.ms1, =recipe.ms2]
-        output-filename: '{recipe.basedir}/stage1_{recipe.band}'
-        data-column: =recipe.data-column
-        sigma-column: =recipe.sigma-column
-        gain-table: [=recipe.gain1, =recipe.gain2]
-        integrations-per-image: -1
-        channels-per-image: 32
-        nthreads-dask: =recipe.nband
-        nvthreads: 4
-        scheduler: distributed
-        chan-average: 4
-        freq-range: =recipe.frange
-        overwrite: true
-
-    imit:
       cab: pfb.imit
       info: 'Initialise imaging data products'
       params:
-        ms: [=recipe.ms1, =recipe.ms2]
-        output-filename: '{recipe.basedir}/stage1_bda_{recipe.band}'
+        ms: =recipe.ms
+        output-filename: '{recipe.basedir}/stage1_{recipe.obs}_{recipe.band}'
         data-column: =recipe.data-column
         sigma-column: =recipe.sigma-column
-        gain-table: [=recipe.gain1, =recipe.gain2]
+        gain-table: =recipe.gain
         integrations-per-image: 150
-        channels-per-image: 256
+        channels-per-image: 384
         nthreads-dask: 1
         nvthreads: 1
         nworkers: 64
@@ -900,45 +893,34 @@ image:
         chan-average: 4
         freq-range: =recipe.frange
         overwrite: true
-        bda-decorr: 0.98
+        bda-decorr: 1.0
 
-
-    grid1:
-      cab: pfb.grid
-      info: 'Grid data for initial imaging'
-      params:
-        output-filename: '{recipe.basedir}/stage1_{recipe.band}'
-        robustness: -1
-        fits-cubes: true
-        field-of-view: 2.25
-        super-resolution-factor: 2.5
-        nthreads-dask: =recipe.nband
-        nvthreads: =recipe.nthreads//recipe.nband
-
-    spotless1:
+    spotless:
       cab: pfb.spotless
       params:
-        output-filename: '{recipe.basedir}/stage1_{recipe.band}'
-        fits-cubes: true
+        output-filename: '{recipe.basedir}/stage1_{recipe.obs}_{recipe.band}'
         niter: 50
-        bases: 'self,db1'
+        bases: 'self,db1,db2'
         nlevels: 3
-        l1reweight-from: 6
+        l1reweight-from: 4
         pd-tol: 3e-4
-        pd-maxit: 500
+        pd-maxit: 350
         pd-verbose: 2
         pd-report-freq: 50
         tol: 1e-3
-        rmsfactor: 1.25
+        rmsfactor: 3.0
         nthreads-dask: 1
-        nvthreads: 5
-        nworkers: 14
+        nvthreads: 6
+        nworkers: 10
         scheduler: distributed
-        field-of-view: 2.25
-        super-resolution-factor: 2.0
-        robustness: -1.5
+        field-of-view: 2.1
+        super-resolution-factor: 2.5
+        robustness: -3.0
         mf-weighting: false
         l2-reweight-dof: 2.5
+        l2-reweight-from: 8
+        l2-max-reweight: 50
+        reset-cache: =recipe.reset-cache
 
 
 
