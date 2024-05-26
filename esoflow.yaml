@@ -919,7 +919,7 @@ image:
         mf-weighting: false
         l2-reweight-dof: 2.5
         l2-reweight-from: 8
-        l2-max-reweight: 50
+        max-l2-reweight: 50
         reset-cache: =recipe.reset-cache
 
 
