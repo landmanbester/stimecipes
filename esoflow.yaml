@@ -896,10 +896,10 @@ image:
         nvthreads: 1
         nworkers: 64
         scheduler: distributed
-        chan-average: 4
+        chan-average: =recipe.chan-average
         freq-range: =recipe.frange
         overwrite: true
-        bda-decorr: 1.0
+        bda-decorr: =recipe.bda-decorr
 
     spotless:
       cab: pfb.spotless
