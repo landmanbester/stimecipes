@@ -873,6 +873,12 @@ image:
     reset-cache:
       dtype: bool
       default: false
+    bda-decorr:
+      dtype: float
+      default: 1.0
+    chan-average:
+      dtype: int
+      default: 8
 
   steps:
     init:
