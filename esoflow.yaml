@@ -831,7 +831,7 @@ image:
         gain: [/home/bester/projects/ESO137/output/scratch/bester/ms1_target.zarr/gkb_init.qc/GKB-net,/home/bester/projects/ESO137/output/scratch/bester/ms2_target.zarr/gkb_init.qc/GKB-net]
     band:
       FULL:
-        frange: 882541016:1626316406.25
+        frange: 882750000:1685200000
       HI:
         frange: 1295000000:1503000000
       LO:
@@ -880,7 +880,7 @@ image:
       info: 'Initialise imaging data products'
       params:
         ms: =recipe.ms
-        output-filename: '{recipe.basedir}/stage1_{recipe.obs}_{recipe.band}'
+        output-filename: '{recipe.basedir}/stage1_obs{recipe.obs}_{recipe.band}'
         data-column: =recipe.data-column
         sigma-column: =recipe.sigma-column
         gain-table: =recipe.gain
@@ -898,7 +898,7 @@ image:
     spotless:
       cab: pfb.spotless
       params:
-        output-filename: '{recipe.basedir}/stage1_{recipe.obs}_{recipe.band}'
+        output-filename: '{recipe.basedir}/stage1_obs{recipe.obs}_{recipe.band}'
         niter: 50
         bases: 'self,db1,db2'
         nlevels: 3
@@ -910,8 +910,8 @@ image:
         tol: 1e-3
         rmsfactor: 3.0
         nthreads-dask: 1
-        nvthreads: 6
-        nworkers: 10
+        nvthreads: 7
+        nworkers: =recipe.nband
         scheduler: distributed
         field-of-view: 2.1
         super-resolution-factor: 2.5
