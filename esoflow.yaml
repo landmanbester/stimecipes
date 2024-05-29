@@ -669,7 +669,7 @@ selfcal:
         netgain: /home/bester/projects/ESO137/output/scratch/bester/ms1_target.zarr/gkb_init.qc/GKB-net
         ref_ant: 43
       '2':
-        ms: /scratch/bester/ms2_target.zarr
+        ms: /home/bester/projects/ESO137/msdir/ms2_target.zarr
         netgain: /home/bester/projects/ESO137/output/gains/ms2_target.zarr/gkb_init.qc/GKB-net
         ref_ant: 54
 
