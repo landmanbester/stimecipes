@@ -675,6 +675,10 @@ selfcal:
 
 
   inputs:
+    obs:
+      required: true
+      info:
+        1 or 2
     ms:
       dtype: MS
       required: true
