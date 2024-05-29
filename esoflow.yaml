@@ -698,6 +698,9 @@ selfcal:
     nthreads:
       dtype: int
       default: 32
+    overwrite:
+      dtype: bool
+      default: false
 
 
   steps:
@@ -723,7 +726,7 @@ selfcal:
         solver.reference_antenna: 43
         output.gain_directory: '{recipe.basedir}/stage1.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
-        output.overwrite:
+        output.overwrite: =recipe.overwrite
         output.products:
         output.columns:
         output.flags: true
