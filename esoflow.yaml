@@ -670,7 +670,7 @@ selfcal:
         ref_ant: 43
       '2':
         ms: /home/bester/projects/ESO137/msdir/ms2_target.zarr
-        netgain: /home/bester/projects/ESO137/output/gains/ms2_target.zarr/gkb_init.qc/GKB-net
+        netgain: /home/bester/projects/ESO137/output/gains/ms2_target.zarr/stage1.qc/GK-net
         ref_ant: 54
 
 
@@ -723,8 +723,8 @@ selfcal:
         solver.propagate_flags: true
         solver.robust: true
         solver.threads: 2
-        solver.reference_antenna: 43
-        output.gain_directory: '{recipe.basedir}/stage1.qc'
+        solver.reference_antenna: =recipe.ref_ant
+        output.gain_directory: '{recipe.basedir}/stage2.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: =recipe.overwrite
         output.products:
@@ -734,7 +734,7 @@ selfcal:
         output.net_gains: [G, K]
         mad_flags.enable: true
         mad_flags.whitening: native
-        mad_flags.threshold_bl: 7.5
+        mad_flags.threshold_bl: 5.5
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
         dask.threads: '{recipe.nthreads}'
