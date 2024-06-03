@@ -605,7 +605,7 @@ image:
       default: 1.0
     chan-average:
       dtype: int
-      default: 8
+      default: 4
 
   steps:
     init:
@@ -617,11 +617,11 @@ image:
         data-column: =recipe.data-column
         sigma-column: =recipe.sigma-column
         gain-table: =recipe.gain
-        integrations-per-image: 150
+        integrations-per-image: -1
         channels-per-image: 384
         nthreads-dask: 1
         nvthreads: 1
-        nworkers: 64
+        nworkers: 32
         scheduler: distributed
         chan-average: =recipe.chan-average
         freq-range: =recipe.frange
@@ -635,7 +635,7 @@ image:
         niter: 50
         bases: 'self,db1,db2'
         nlevels: 3
-        l1reweight-from: 4
+        l1reweight-from: 6
         pd-tol: 3e-4
         pd-maxit: 350
         pd-verbose: 2
@@ -651,7 +651,7 @@ image:
         robustness: -3.0
         mf-weighting: false
         l2-reweight-dof: 2.5
-        l2-reweight-from: 8
+        l2-reweight-from: 10
         max-l2-reweight: 50
         reset-cache: =recipe.reset-cache
 
@@ -748,7 +748,7 @@ selfcal:
         K.type: delay_and_offset
         K.interp_method: 2dlinear
         K.interp_mode: ampphase
-        K.time_interval: 5
+        K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
 
