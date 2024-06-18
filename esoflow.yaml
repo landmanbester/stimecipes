@@ -703,6 +703,11 @@ selfcal:
     overwrite:
       dtype: bool
       default: false
+    tint:
+      dtype: int
+      default: 5
+      info:
+        Time solution interval for delay_and_offset
 
 
   steps:
@@ -750,7 +755,7 @@ selfcal:
         K.type: delay_and_offset
         K.interp_method: 2dlinear
         K.interp_mode: ampphase
-        K.time_interval: 5
+        K.time_interval: =recipe.tint
         K.freq_interval: 0
         K.initial_estimate: false
 
