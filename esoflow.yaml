@@ -666,11 +666,13 @@ selfcal:
     obs:
       '1':
         ms: /scratch/bester/ms1_target.zarr
-        netgain: /home/bester/projects/ESO137/output/scratch/bester/ms1_target.zarr/gkb_init.qc/GKB-net
+        # netgain: /home/bester/projects/ESO137/output/scratch/bester/ms1_target.zarr/gkb_init.qc/GKB-net
+        netgain: '/home/bester/projects/ESO137/output/gains/obs1/stage1.qc/GK-net'
         ref_ant: 43
       '2':
         ms: /scratch/bester/ms2_target.zarr
-        netgain: /home/bester/projects/ESO137/output/scratch/bester/ms2_target.zarr/gkb_init.qc/GKB-net
+        # netgain: /home/bester/projects/ESO137/output/scratch/bester/ms2_target.zarr/gkb_init.qc/GKB-net
+        netgain: '/home/bester/projects/ESO137/output/gains/obs2/stage1.qc/GK-net'
         ref_ant: 54
 
   assign:
