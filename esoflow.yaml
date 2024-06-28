@@ -836,7 +836,7 @@ selfcal:
         output.columns: [RESIDUAL]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [G, K]
+        output.net_gains: [G, J]
         mad_flags.enable: false
         mad_flags.whitening: native
         mad_flags.threshold_bl: 7
