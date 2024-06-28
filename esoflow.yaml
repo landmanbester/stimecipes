@@ -776,16 +776,16 @@ selfcal:
         input_model.recipe: =recipe.model-column
         input_model.apply_p_jones: false
         solver.terms: [G,J]
-        solver.iter_recipe: [0,0]  #,0,30,0,20,0,10,0,5]
+        solver.iter_recipe: [0,50,0,30,0,20,0,10,0,5]
         solver.propagate_flags: true
         solver.robust: true
         solver.threads: 4
         solver.reference_antenna: =recipe.ref_ant
-        output.gain_directory: '{recipe.basedir}/stage{recipe.stage}_interp.qc'
+        output.gain_directory: '{recipe.basedir}/stage{recipe.stage}.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: =recipe.overwrite
-        output.products: [residual]
-        output.columns: [RESIDUAL]
+        output.products:  #[residual]
+        output.columns:  #[RESIDUAL]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [G, J]
@@ -803,61 +803,60 @@ selfcal:
         G.time_interval: 1
         G.freq_interval: 1
         J.type: complex
-        J.load_from: '/home/bester/projects/ESO137/output/gains/obs2/stage3.qc/J'
+        J.interp_method: 2dlinear
+        J.interp_mode: ampphase
+        J.time_interval: 150
+        J.freq_interval: 256
+        J.initial_estimate: false
+
+    interp2:
+      cab: quartical
+      info: Interpolate gain solutions
+      params:
+        input_ms.path: '{recipe.ms}'
+        input_ms.data_column: DATA
+        input_ms.sigma_column: SIGMA_SPECTRUM
+        input_ms.time_chunk: 150
+        input_ms.freq_chunk: 256
+        input_ms.select_uv_range: [50,0]
+        input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe: '{recipe.model_column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G,J]
+        solver.iter_recipe: [0,0]
+        solver.propagate_flags: true
+        solver.robust: false
+        solver.threads: 1
+        solver.reference_antenna: 43
+        output.gain_directory: '{recipe.basedir}/stage{recipe.stage}_interp.qc'
+        output.log_directory: '{recipe.basedir}/logs.qc'
+        output.overwrite: =recipe.overwrite
+        output.products: [residual]
+        output.columns: [RESIDUAL]
+        output.flags: true
+        output.apply_p_jones_inv: false
+        output.net_gains: [G, K]
+        mad_flags.enable: false
+        mad_flags.whitening: native
+        mad_flags.threshold_bl: 7
+        mad_flags.threshold_global: 0
+        mad_flags.max_deviation: 0
+        dask.threads: 32
+        dask.scheduler: threads
+        G.type: complex
+        G.load_from: =recipe.netgain
+        G.interp_method: 2dlinear
+        G.interp_mode: ampphase
+        G.time_interval: 1
+        G.freq_interval: 1
+        J.type: complex
         J.interp_method: 2dlinear
         J.interp_mode: ampphase
         J.time_interval: 1
         J.freq_interval: 1
         J.initial_estimate: false
-
-#     interp2:
-#       cab: quartical
-#       info: Interpolate gain solutions
-#       params:
-#         input_ms.path: '{recipe.ms}'
-#         input_ms.data_column: DATA
-#         input_ms.sigma_column: SIGMA_SPECTRUM
-#         input_ms.time_chunk: 30
-#         input_ms.freq_chunk: 0
-#         input_ms.select_uv_range: [50,0]
-#         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
-#         input_ms.select_corr: [0, 3]
-#         input_model.recipe: '{recipe.model_column}'
-#         input_model.apply_p_jones: false
-#         solver.terms: [G,K]
-#         solver.iter_recipe: [0,0]
-#         solver.propagate_flags: true
-#         solver.robust: false
-#         solver.threads: 1
-#         solver.reference_antenna: 43
-#         output.gain_directory: '{recipe.basedir}/target_gains_stage2_interp.qc'
-#         output.log_directory: '{recipe.basedir}/logs.qc'
-#         output.overwrite: true
-#         output.products: [residual]
-#         output.columns: [RESIDUAL]
-#         output.flags: true
-#         output.apply_p_jones_inv: false
-#         output.net_gains: [G, K]
-#         mad_flags.enable: true
-#         mad_flags.whitening: native
-#         mad_flags.threshold_bl: 7
-#         mad_flags.threshold_global: 10
-#         mad_flags.max_deviation: 12
-#         dask.threads: '{recipe.nthreads}'
-#         dask.scheduler: threads
-#         G.type: complex
-#         G.load_from: '{recipe.basedir}/target_gains_init.qc/GKB-net'
-#         G.interp_method: 2dlinear
-#         G.interp_mode: ampphase
-#         G.time_interval: 1
-#         G.freq_interval: 1
-#         K.type: delay_and_offset
-#         K.interp_method: 2dlinear
-#         K.interp_mode: ampphase
-#         K.time_interval: 1
-#         K.freq_interval: 0
-#         K.initial_estimate: false
-#         K.load_from: '{recipe.basedir}/target_gains_stage2.qc/K'
+        J.load_from: '{recipe.basedir}/stage{recipe.stage}.qc/J'
 
 #     selfcal3:
 #       cab: quartical
