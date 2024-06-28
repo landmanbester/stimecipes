@@ -821,7 +821,7 @@ selfcal:
         input_ms.select_uv_range: [50,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
-        input_model.recipe: '{recipe.model_column}'
+        input_model.recipe: =recipe.model-column
         input_model.apply_p_jones: false
         solver.terms: [G,J]
         solver.iter_recipe: [0,0]
