@@ -779,7 +779,7 @@ selfcal:
         solver.iter_recipe: [0,50,0,30,0,20,0,10,0,5]
         solver.propagate_flags: true
         solver.robust: true
-        solver.threads: 1
+        solver.threads: 2
         solver.reference_antenna: =recipe.ref_ant
         output.gain_directory: '{recipe.basedir}/stage{recipe.stage}.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
@@ -794,7 +794,7 @@ selfcal:
         mad_flags.threshold_bl: 5.5
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
-        dask.threads: 64
+        dask.threads: 32
         dask.scheduler: distributed
         G.type: complex
         G.load_from: =recipe.netgain
@@ -842,7 +842,7 @@ selfcal:
         mad_flags.threshold_bl: 7
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
-        dask.threads: 64
+        dask.threads: 32
         dask.scheduler: threads
         G.type: complex
         G.load_from: =recipe.netgain
