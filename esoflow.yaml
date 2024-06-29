@@ -768,8 +768,8 @@ selfcal:
         input_ms.path: '{recipe.ms}'
         input_ms.data_column: =recipe.data-column
         input_ms.sigma_column: =recipe.sigma-column
-        input_ms.time_chunk: 150
-        input_ms.freq_chunk: 256
+        input_ms.time_chunk: 50
+        input_ms.freq_chunk: 128
         input_ms.select_uv_range: [50,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
@@ -779,7 +779,7 @@ selfcal:
         solver.iter_recipe: [0,50,0,30,0,20,0,10,0,5]
         solver.propagate_flags: true
         solver.robust: true
-        solver.threads: 4
+        solver.threads: 2
         solver.reference_antenna: =recipe.ref_ant
         output.gain_directory: '{recipe.basedir}/stage{recipe.stage}.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
@@ -794,7 +794,7 @@ selfcal:
         mad_flags.threshold_bl: 5.5
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
-        dask.threads: 16
+        dask.threads: 32
         dask.scheduler: distributed
         G.type: complex
         G.load_from: =recipe.netgain
@@ -805,8 +805,8 @@ selfcal:
         J.type: complex
         J.interp_method: 2dlinear
         J.interp_mode: ampphase
-        J.time_interval: 150
-        J.freq_interval: 256
+        J.time_interval: 50
+        J.freq_interval: 128
         J.initial_estimate: false
 
     interp2:
