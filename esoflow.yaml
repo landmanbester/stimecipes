@@ -775,8 +775,8 @@ selfcal:
         input_ms.select_corr: [0, 3]
         input_model.recipe: =recipe.model-column
         input_model.apply_p_jones: false
-        solver.terms: [G,J]
-        solver.iter_recipe: [0,50,0,30,0,20,0,10,0,5]
+        solver.terms: [G,J,K]
+        solver.iter_recipe: [0,50,50,0,30,30,0,20,20,0,10,10]
         solver.propagate_flags: true
         solver.robust: true
         solver.threads: 4
@@ -788,7 +788,7 @@ selfcal:
         output.columns:  #[RESIDUAL]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [G, J]
+        output.net_gains: [G, J, K]
         mad_flags.enable: true
         mad_flags.whitening: native
         mad_flags.threshold_bl: 5.5
@@ -808,6 +808,12 @@ selfcal:
         J.time_interval: 75
         J.freq_interval: 256
         J.initial_estimate: false
+        K.type: delay_and_offset
+        K.interp_method: 2dlinear
+        K.interp_mode: ampphase
+        K.time_interval: 1
+        K.freq_interval: 0
+        K.initial_estimate: false
 
     interp2:
       cab: quartical
@@ -823,8 +829,8 @@ selfcal:
         input_ms.select_corr: [0, 3]
         input_model.recipe: =recipe.model-column
         input_model.apply_p_jones: false
-        solver.terms: [G,J]
-        solver.iter_recipe: [0,0]
+        solver.terms: [G,J,K]
+        solver.iter_recipe: [0,0,0]
         solver.propagate_flags: true
         solver.robust: false
         solver.threads: 1
