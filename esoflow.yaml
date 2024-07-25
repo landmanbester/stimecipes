@@ -675,6 +675,20 @@ apply_gains_ms:
   assign:
     basedir: '/home/bester/projects/ESO137/output/gains/obs{recipe.obs}'
 
+  inputs:
+    obs:
+      required: true
+      info:
+        1 or 2
+    data-column:
+      default: DATA
+    sigma-column:
+      default: SIGMA_SPECTRUM
+      info: Original std of noise used to construct weights
+    model-column:
+      dtype: str
+      default: MODEL_DATA
+
   steps:
     applycal:
       cab: quartical
