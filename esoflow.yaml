@@ -656,7 +656,64 @@ image:
         reset-cache: =recipe.reset-cache
 
 
+apply_gains_ms:
+  info: Apply Quartical gains to MS for imaging with wsclean
 
+  assign_based_on:
+    obs:
+      '1':
+        ms: msdir/ms1_target.ms
+        # netgain: /home/bester/projects/ESO137/output/scratch/bester/ms1_target.zarr/gkb_init.qc/GKB-net
+        netgain: 'output/gains/obs1/stage6_interp.qc/GJK-net'
+        ref_ant: 43
+      '2':
+        ms: msdir/ms2_target.ms
+        # netgain: /home/bester/projects/ESO137/output/scratch/bester/ms2_target.zarr/gkb_init.qc/GKB-net
+        netgain: 'output/gains/obs2/stage6_interp.qc/GJK-net'
+        ref_ant: 54
+
+  assign:
+    basedir: '/home/bester/projects/ESO137/output/gains/obs{recipe.obs}'
+
+  steps:
+    applycal:
+      cab: quartical
+      info: Interpolate gain solutions
+      params:
+        input_ms.path: '{recipe.ms}'
+        input_ms.data_column: DATA
+        input_ms.sigma_column: SIGMA_SPECTRUM
+        input_ms.time_chunk: 75
+        input_ms.freq_chunk: 256
+        input_ms.select_uv_range: [50,0]
+        input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
+        input_ms.select_corr: [0, 3]
+        input_model.recipe: =recipe.model-column
+        input_model.apply_p_jones: false
+        solver.terms: [J]
+        solver.iter_recipe: [0]
+        solver.propagate_flags: false
+        solver.robust: false
+        solver.threads: 1
+        solver.reference_antenna: =recipe.ref_ant
+        output.gain_directory: '{recipe.basedir}/applywsc.qc'
+        output.log_directory: '{recipe.basedir}/logs.qc'
+        output.overwrite: =recipe.overwrite
+        output.products: [corrected_data, corrected_weight]
+        output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+        output.flags: false
+        output.apply_p_jones_inv: false
+        output.net_gains:
+        mad_flags.enable: false
+        dask.threads: 16
+        dask.scheduler: threads
+        J.type: complex
+        J.interp_method: 2dlinear
+        J.interp_mode: ampphase
+        J.time_interval: 1
+        J.freq_interval: 1
+        J.initial_estimate: false
+        J.load_from: =recipe.netgain
 
 selfcal:
   name: ESOCAL
