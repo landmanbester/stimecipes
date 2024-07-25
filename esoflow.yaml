@@ -685,9 +685,6 @@ apply_gains_ms:
     sigma-column:
       default: SIGMA_SPECTRUM
       info: Original std of noise used to construct weights
-    model-column:
-      dtype: str
-      default: MODEL_DATA
 
   steps:
     applycal:
@@ -702,7 +699,6 @@ apply_gains_ms:
         input_ms.select_uv_range: [50,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
-        input_model.recipe: =recipe.model-column
         input_model.apply_p_jones: false
         solver.terms: [J]
         solver.iter_recipe: [0]
