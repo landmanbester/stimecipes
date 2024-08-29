@@ -9,81 +9,134 @@ opts:
 
 esoimage:
   name: esoimage
-  info: Imaging ESO137 with spotless recipe
+  info: ESO137 imaging recipe
+
+  assign:
+    ms: [/scratch/bester/ms1_target.zarr,/scratch/bester/ms2_target.zarr]
+    gains: ['/home/bester/projects/ESO137/output/gains/obs1/stage6_interp.qc/GJK-net',
+            '/home/bester/projects/ESO137/output/gains/obs2/stage6_interp.qc/GJK-net']
+
+  assign_based_on:
+    band:
+      FULL: '882750000.0:1685041015.625'  # 883063476.5625:1684727539.0625  # averaged min and max
+      HI: '882750000.0:1685041015.625'
+      LO: '882750000.0:1685041015.625'
+
 
   inputs:
-    ms:
-      dtype: str
+    basedir:
       required: true
-      aliases: ['*.ms']
-    basedir:  # point to some fast file storage
-      default: 'out'
-    data_column:
-      default: DATA
-      aliases: ['*.data_column']
-    weight_column:
-      default: WEIGHT_SPECTRUM
-      aliases: ['*.weight_column']
-    model_column:
-      default: MODEL_DATA
-      aliases: ['*.model_column']
-    nband:
-      default: 8
-      aliases: ['*.nband']
-      info: Number of imaging bands
+      info:
+        Base directory in which to place output data products.
+    band:
+      default: FULL
+    fits-output-folder:
+      dtype: str
+      aliases: ['*.fits-output-folder']
+      info:
+        Directory to place fits files
+    log-directory:
+      dtype: str
+      aliases: ['*.log-directory']
+      info:
+        Directory in which to place logs
+    channels-per-image:
+      default: 384
+      info:
+        Number of channels per image.
+        Determines number of output bands.
+    integrations-per-image:
+      default: -1
+      info:
+        Number of integrations per image.
+    robustness:
+      dtype: float
+      default: 0.0
+      info:
+        Briggs robustness level.
+        Less than -2 corresponds to uniform, larger than 2 to natural.
     nthreads:
       dtype: int
-      default: 64
-      aliases: ['*.nthreads']
-    field_of_view:
+      default: 8
+    field-of-view:
+      dtype: float
+      default: 2.0
+    super-resolution-factor:
+      dtype: float
       default: 2.5
-      aliases: ['*.field_of_view']
+      info:
+        How much to oversample Nyquist by at the highest frequency
+    chan-average:
+      dtype: int
+      default: 4
+      info:
+        How many channels to average together
+    bda-decorr:
+      dtype: float
+      default: 0.98
+      info:
+        Amount of amplitude loss that can be tolerated at edge of field
+    niter:
+      dtype: int
+      default: 15
+      info:
+        Number of major cycles
+    l1-reweight-from:
+      dtype: int
+      default: 7
+    rmsfactor:
+      dtype: float
+      default: 1.0
+      info:
+        Multiple of the rms to threshold by
     overwrite:
       default: true
       aliases: ['*.overwrite']
 
   steps:
     init:
-      cab: pfb_init
+      cab: pfb.init
       info: 'Initialise imaging data products'
       params:
-        ms: '{recipe.ms}'
-        output_filename: '{recipe.basedir}/clean'
-        scheduler: distributed
-        nthreads_per_worker: 8
+        ms: =recipe.ms
+        gain-table: =recipe.gains
+        output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
+        nthreads: 2
+        nworkers: 16
+        sigma-column: SIGMA_SPECTRUM
+        chan-average: =recipe.chan-average
+        max-field-of-view: =recipe.field-of-view
+        bda-decorr: =recipe.bda-decorr
 
     grid:
-      cab: pfb_grid
+      cab: pfb.grid
       info: 'Setup grid for imaging'
       params:
-        output_filename: '{recipe.basedir}/clean'
-        robustness: 0
-        fits_cubes: true
-        residual: false
-        scheduler: distributed
+        output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
+        super-resolution-factor: =recipe.super-resolution-factor
+        field-of-view: =recipe.field-of-view
+        robustness: =recipe.robustness
+        nthreads: 8
+        nworkers: 8
 
-    clean:
+
+    sara:
       cab: pfb_clean
       info: Cleaning step
       params:
-        output_filename: '{recipe.basedir}/clean'
-        nmiter: 5
-        scheduler: threads
-        memory_greedy: true
-
-    degrid:
-      cab: pfb_degrid
-      info: Populate MODEL_DATA with model visibilities
-      params:
-        output_filename: '{recipe.basedir}/clean'
-        nband_out: 32
-        spectral_poly_order: 4
-        scheduler: distributed
-
-    restore:
-      cab: pfb_restore
-      info: Render model image to restored
-      params:
-        output_filename: '{recipe.basedir}/clean'
-        scheduler: threads
+        output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
+        niter: =recipe.niter
+        bases: 'self,db1,db2,db3'
+        nlevels: 2
+        l1-reweight-from: =recipe.l1-reweight-from
+        pd-tol: 2e-4
+        pd-maxit: 450
+        pd-verbose: 2
+        pd-report-freq: 50
+        tol: 1e-3
+        gamma: 0.9
+        rmsfactor: =recipe.rmsfactor
+        epsfactor: 1.0
+        positivity: 1
+        nthreads: 64
 
