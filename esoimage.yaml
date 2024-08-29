@@ -5,6 +5,8 @@ opts:
   log:
     dir: logs
     nest: 2
+  backend:
+    select: native
 
 
 esoimage:
@@ -97,6 +99,13 @@ esoimage:
     init:
       cab: pfb.init
       info: 'Initialise imaging data products'
+      # assign:
+      #   config.opts.backend.kube.dask_cluster.num_workers: 16
+      #   config.opts.backend.kube.predefined_pod_specs.pudgy.nodeSelector.rarg/instance-type: m5.4xlarge
+      #   config.opts.backend.kube.job_pod.memory.limit: "60Gi"
+      #   config.opts.backend.kube.job_pod.cpu.request: "6"
+      #   config.opts.backend.kube.dask_cluster.worker_pod.memory.limit: "14Gi"
+      #   config.opts.backend.kube.dask_cluster.worker_pod.cpu.request: "6"
       params:
         ms: =recipe.ms
         gain-table: =recipe.gains
