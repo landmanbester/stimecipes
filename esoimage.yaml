@@ -1,5 +1,5 @@
 _include:
-  - (pfb)stimela_cabs.yaml
+  - (pfb)stimela_cabs.yml
 
 opts:
   log:
