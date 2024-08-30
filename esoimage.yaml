@@ -20,9 +20,12 @@ esoimage:
 
   assign_based_on:
     band:
-      FULL: '882750000.0:1685041015.625'  # 883063476.5625:1684727539.0625  # averaged min and max
-      HI: '882750000.0:1685041015.625'
-      LO: '882750000.0:1685041015.625'
+      'FULL':
+        freq-range: '882750000.0:1685041015.625'  # 883063476.5625:1684727539.0625  # averaged min and max
+      'HI':
+        freq-range: '1.295e9:1.503e9'
+      'LO':
+        freq-range: '0.961e9:1.145e9'
 
 
   inputs:
@@ -111,11 +114,15 @@ esoimage:
         gain-table: =recipe.gains
         output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
         nthreads: 2
-        nworkers: 16
+        nworkers: 32
         sigma-column: SIGMA_SPECTRUM
+        channels-per-image: =recipe.channels-per-image
+        integrations-per-image: =recipe.integrations-per-image
         chan-average: =recipe.chan-average
         max-field-of-view: =recipe.field-of-view
         bda-decorr: =recipe.bda-decorr
+        freq-range: =recipe.freq-range
+        overwrite: =recipe.overwrite
 
     grid:
       cab: pfb.grid
@@ -125,12 +132,11 @@ esoimage:
         super-resolution-factor: =recipe.super-resolution-factor
         field-of-view: =recipe.field-of-view
         robustness: =recipe.robustness
-        nthreads: 8
-        nworkers: 8
-
+        nthreads: 10
+        nworkers: 5
 
     sara:
-      cab: pfb_clean
+      cab: pfb.sara
       info: Cleaning step
       params:
         output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
@@ -138,7 +144,7 @@ esoimage:
         bases: 'self,db1,db2,db3'
         nlevels: 2
         l1-reweight-from: =recipe.l1-reweight-from
-        pd-tol: 2e-4
+        pd-tol: [2e-4]
         pd-maxit: 450
         pd-verbose: 2
         pd-report-freq: 50
@@ -147,5 +153,15 @@ esoimage:
         rmsfactor: =recipe.rmsfactor
         epsfactor: 1.0
         positivity: 1
-        nthreads: 64
+        nthreads: 48
+
+    restore:
+      cab: pfb.restore
+      info: Produce restored image.
+      params:
+        output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
+        nworkers: 10
+        nthreads: 5
+        outputs: mMrRiI
+
 
