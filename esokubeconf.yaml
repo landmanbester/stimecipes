@@ -56,68 +56,68 @@ opts:
         CONFIGURATT_CACHE_DIR: /mnt/data/stimela-test
 
 
-  steps:
-    init:
-      assign:
-        config.opts.backend.kube.dask_cluster.num_workers: 16
-        config.opts.backend.kube.predefined_pod_specs.pudgy.nodeSelector.rarg/instance-type: m5.4xlarge
-        config.opts.backend.kube.job_pod.memory.limit: "60Gi"
-        config.opts.backend.kube.job_pod.cpu.request: "6"
-        config.opts.backend.kube.dask_cluster.worker_pod.memory.limit: "60Gi"
-        config.opts.backend.kube.dask_cluster.worker_pod.cpu.request: "6"
-      backend:
-        kube:
-          job_pod:  # This is where the main application runs.
+steps:
+  init:
+    assign:
+      config.opts.backend.kube.dask_cluster.num_workers: 16
+      config.opts.backend.kube.predefined_pod_specs.pudgy.nodeSelector.rarg/instance-type: m5.4xlarge
+      config.opts.backend.kube.job_pod.memory.limit: "60Gi"
+      config.opts.backend.kube.job_pod.cpu.request: "6"
+      config.opts.backend.kube.dask_cluster.worker_pod.memory.limit: "60Gi"
+      config.opts.backend.kube.dask_cluster.worker_pod.cpu.request: "6"
+    backend:
+      kube:
+        job_pod:  # This is where the main application runs.
+          type: pudgy
+        dask_cluster:  # Set up the dask cluster.
+          enable: true
+          name: pfb-test-cluster
+          memory_limit: 0
+          threads_per_worker: 1
+          worker_pod:
             type: pudgy
-          dask_cluster:  # Set up the dask cluster.
-            enable: true
-            name: pfb-test-cluster
-            memory_limit: 0
-            threads_per_worker: 1
-            worker_pod:
-              type: pudgy
-          always_pull_images: true
+        always_pull_images: true
 
-    grid:
-      assign:  # we need this so the workers get the right env vars
-        config.opts.backend.kube.dask_cluster.num_workers: 10
-        config.opts.backend.kube.predefined_pod_specs.pudgy.nodeSelector.rarg/instance-type: m5.4xlarge
-        config.opts.backend.kube.job_pod.memory.limit: "60Gi"
-        config.opts.backend.kube.job_pod.cpu.request: "6"
-        config.opts.backend.kube.dask_cluster.worker_pod.memory.limit: "60Gi"
-        config.opts.backend.kube.dask_cluster.worker_pod.cpu.request: "6"
-        config.opts.backend.kube.env.OMP_NUM_THREADS: '6'
-        config.opts.backend.kube.env.OPENBLAS_NUM_THREADS: '6'
-        config.opts.backend.kube.env.MKL_NUM_THREADS: '6'
-        config.opts.backend.kube.env.VECLIB_MAXIMUM_THREADS: '6'
-        config.opts.backend.kube.env.NUMBA_NUM_THREADS: '6'
-        config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '6'
-        config.opts.backend.kube.env.JAX_ENABLE_X64: 'True'
-        config.opts.backend.kube.env.LD_LIBRARY_PATH: '/usr/local/lib'
-      backend:
-        kube:
-          job_pod:  # This is where the main application runs.
+  grid:
+    assign:  # we need this so the workers get the right env vars
+      config.opts.backend.kube.dask_cluster.num_workers: 10
+      config.opts.backend.kube.predefined_pod_specs.pudgy.nodeSelector.rarg/instance-type: m5.4xlarge
+      config.opts.backend.kube.job_pod.memory.limit: "60Gi"
+      config.opts.backend.kube.job_pod.cpu.request: "6"
+      config.opts.backend.kube.dask_cluster.worker_pod.memory.limit: "60Gi"
+      config.opts.backend.kube.dask_cluster.worker_pod.cpu.request: "6"
+      config.opts.backend.kube.env.OMP_NUM_THREADS: '6'
+      config.opts.backend.kube.env.OPENBLAS_NUM_THREADS: '6'
+      config.opts.backend.kube.env.MKL_NUM_THREADS: '6'
+      config.opts.backend.kube.env.VECLIB_MAXIMUM_THREADS: '6'
+      config.opts.backend.kube.env.NUMBA_NUM_THREADS: '6'
+      config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '6'
+      config.opts.backend.kube.env.JAX_ENABLE_X64: 'True'
+      config.opts.backend.kube.env.LD_LIBRARY_PATH: '/usr/local/lib'
+    backend:
+      kube:
+        job_pod:  # This is where the main application runs.
+          type: pudgy
+        dask_cluster:  # Set up the dask cluster.
+          enable: true
+          name: pfb-test-cluster
+          memory_limit: 0
+          threads_per_worker: 1
+          worker_pod:
             type: pudgy
-          dask_cluster:  # Set up the dask cluster.
-            enable: true
-            name: pfb-test-cluster
-            memory_limit: 0
-            threads_per_worker: 1
-            worker_pod:
-              type: pudgy
-          always_pull_images: true
+        always_pull_images: true
 
-    sara:
-      assign:  # we need this so the workers get the right env vars
-        config.opts.backend.kube.env.OMP_NUM_THREADS: '14'
-        config.opts.backend.kube.env.OPENBLAS_NUM_THREADS: '14'
-        config.opts.backend.kube.env.MKL_NUM_THREADS: '14'
-        config.opts.backend.kube.env.VECLIB_MAXIMUM_THREADS: '14'
-        config.opts.backend.kube.env.NUMBA_NUM_THREADS: '14'
-        config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '14'
-        config.opts.backend.kube.env.LD_LIBRARY_PATH: '/usr/local/lib'
+  sara:
+    assign:  # we need this so the workers get the right env vars
+      config.opts.backend.kube.env.OMP_NUM_THREADS: '14'
+      config.opts.backend.kube.env.OPENBLAS_NUM_THREADS: '14'
+      config.opts.backend.kube.env.MKL_NUM_THREADS: '14'
+      config.opts.backend.kube.env.VECLIB_MAXIMUM_THREADS: '14'
+      config.opts.backend.kube.env.NUMBA_NUM_THREADS: '14'
+      config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '14'
+      config.opts.backend.kube.env.LD_LIBRARY_PATH: '/usr/local/lib'
 
-    pull_model:
+  pull_model:
 
 
 cabs:

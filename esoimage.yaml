@@ -148,6 +148,12 @@ esoimage:
         positivity: 1
         nthreads: 64
 
+    pull_model:
+      cab: s3tolocal
+      params:
+        source: s3://path
+        dest: /local/path
+
     restore:
       cab: pfb.restore
       info: Produce restored image.

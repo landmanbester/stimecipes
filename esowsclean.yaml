@@ -74,6 +74,7 @@ esoimage:
         use-wgridder: true
         no-update-model-required: true
         log-time: true
+        temp-dir: =recipe.basedir
 
 
 
