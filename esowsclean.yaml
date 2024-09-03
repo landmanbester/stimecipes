@@ -35,7 +35,7 @@ esoimage:
       dtype: int
       required: true
     column:
-      default: CORRECTED_DATA
+      default: DATA
     nchan:
       dtype: int
       default: 10
