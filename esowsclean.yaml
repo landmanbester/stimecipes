@@ -48,32 +48,32 @@ esoimage:
 
   steps:
     image:
-    cab: wsclean
-    params:
-      ms: =recipe.ms
-      prefix: '{recipe.basedir}/{recipe.prefix}'
-      size: =recipe.size
-      scale: =recipe.scale
-      column: =recipe.column
-      nchan: =recipe.nchan
-      channel-range: =recipe.channel-range
-      pol: I
-      threads: =recipe.nthreads
-      weight: recipe.weight
-      multiscale: true
-      multiscale-max-scales: 8
-      multiscale-gain: 0.15
-      niter: 1000000
-      nmiter: 10
-      auto-threshold: 1
-      auto-mask: 4.0
-      gain: 0.1
-      mgain: 0.85
-      join-channels: true
-      padding: 2.0
-      use-wgridder: true
-      no-update-model-required: true
-      log-time: true
+      cab: wsclean
+      params:
+        ms: =recipe.ms
+        prefix: '{recipe.basedir}/{recipe.prefix}'
+        size: =recipe.size
+        scale: =recipe.scale
+        column: =recipe.column
+        nchan: =recipe.nchan
+        channel-range: =recipe.channel-range
+        pol: I
+        threads: =recipe.nthreads
+        weight: recipe.weight
+        multiscale: true
+        multiscale-max-scales: 8
+        multiscale-gain: 0.15
+        niter: 1000000
+        nmiter: 10
+        auto-threshold: 1
+        auto-mask: 4.0
+        gain: 0.1
+        mgain: 0.85
+        join-channels: true
+        padding: 2.0
+        use-wgridder: true
+        no-update-model-required: true
+        log-time: true
 
 
 
