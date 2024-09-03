@@ -1,0 +1,82 @@
+_include:
+  - (cultcargo)wsclean.yml
+
+opts:
+  log:
+    dir: logs
+    nest: 2
+  backend:
+    select: native
+
+esoimage:
+  name: esoimage
+  info: ESO137 imaging recipe
+
+  assign:
+    ms: [/home/bester/projects/ESO137/msdir/ms1_target_ave4chan_bdafov2d98.ms,
+         /home/bester/projects/ESO137/msdir/ms2_target_ave4chan_bdafov2d98.ms]
+
+  inputs:
+    basedir:
+      required: true
+      info:
+        Base directory in which to place output data products.
+    prefix:
+      required: true
+      info:
+        Prefix to use for output images.
+    size:
+      dtype: Union[int, Tuple[int, int]]
+      required: true
+    scale:
+      dtype: float
+      required: true
+    nthreads:
+      dtype: int
+      required: true
+    column:
+      default: CORRECTED_DATA
+    nchan:
+      dtype: int
+      default: 10
+    channel-range:
+      dtype: List[int]
+      default: [32,991]  # ignore flagged edges
+    weight:
+      dtype: Tuple[str, float]
+      default: (briggs,-0.3)
+
+  steps:
+    image:
+    cab: wsclean
+    params:
+      ms: =recipe.ms
+      prefix: '{recipe.basedir}/{recipe.prefix}'
+      size: =recipe.size
+      scale: =recipe.scale
+      column: =recipe.column
+      nchan: =recipe.nchan
+      channel-range: =recipe.channel-range
+      pol: I
+      threads: =recipe.nthreads
+      weight: recipe.weight
+      multiscale: true
+      multiscale-max-scales: 8
+      multiscale-gain: 0.15
+      niter: 1000000
+      nmiter: 10
+      auto-threshold: 1
+      auto-mask: 4.0
+      gain: 0.1
+      mgain: 0.85
+      join-channels: true
+      padding: 2.0
+      use-wgridder: true
+      no-update-model-required: true
+      log-time: true
+
+
+
+
+
+

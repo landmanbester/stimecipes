@@ -102,19 +102,12 @@ esoimage:
     init:
       cab: pfb.init
       info: 'Initialise imaging data products'
-      # assign:
-      #   config.opts.backend.kube.dask_cluster.num_workers: 16
-      #   config.opts.backend.kube.predefined_pod_specs.pudgy.nodeSelector.rarg/instance-type: m5.4xlarge
-      #   config.opts.backend.kube.job_pod.memory.limit: "60Gi"
-      #   config.opts.backend.kube.job_pod.cpu.request: "6"
-      #   config.opts.backend.kube.dask_cluster.worker_pod.memory.limit: "14Gi"
-      #   config.opts.backend.kube.dask_cluster.worker_pod.cpu.request: "6"
       params:
         ms: =recipe.ms
         gain-table: =recipe.gains
         output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
-        nthreads: 2
-        nworkers: 32
+        nthreads: 1
+        nworkers: 64
         sigma-column: SIGMA_SPECTRUM
         channels-per-image: =recipe.channels-per-image
         integrations-per-image: =recipe.integrations-per-image
@@ -132,8 +125,8 @@ esoimage:
         super-resolution-factor: =recipe.super-resolution-factor
         field-of-view: =recipe.field-of-view
         robustness: =recipe.robustness
-        nthreads: 10
-        nworkers: 5
+        nthreads: 7
+        nworkers: 10
 
     sara:
       cab: pfb.sara
@@ -153,7 +146,7 @@ esoimage:
         rmsfactor: =recipe.rmsfactor
         epsfactor: 1.0
         positivity: 1
-        nthreads: 48
+        nthreads: 64
 
     restore:
       cab: pfb.restore

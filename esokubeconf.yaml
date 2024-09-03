@@ -1,0 +1,125 @@
+opts:
+  backend:
+    kube:
+      enable: true
+      dir: /mnt/data/stimela-test
+      namespace: rarg-test-compute
+      volumes:
+        rarg-test-compute-efs-pvc:
+          mount: /mnt/data
+
+      ## override user/group ID
+      user:
+        uid: 1000
+        gid: 1000
+      ## you can specify a global memory default for pods here,
+      ## otherwise go on a per-cab or per-step basis
+      # memory: 64Gi
+
+      ## some predefined pod specs
+      predefined_pod_specs:
+        admin:
+          nodeSelector:
+            rarg/node-class: admin
+        scheduler:
+          nodeSelector:
+            rarg/node-class: compute
+            rarg/instance-type: m6i.large
+            rarg/capacity-type: ON_DEMAND
+        thin:
+          nodeSelector:
+            rarg/node-class: compute
+            rarg/instance-type: m5.large
+            rarg/capacity-type: ON_DEMAND
+        pudgy:
+          nodeSelector:
+            rarg/node-class: compute
+            rarg/instance-type: c6in.2xlarge
+            rarg/capacity-type: ON_DEMAND
+        medium:
+          nodeSelector:
+            rarg/node-class: compute
+            rarg/instance-type: m5.4xlarge
+            rarg/capacity-type: ON_DEMAND
+        fat:
+          nodeSelector:
+            rarg/node-class: compute
+            rarg/instance-type: r5.4xlarge
+            rarg/capacity-type: ON_DEMAND
+
+      ## default type to use
+      job_pod:
+        type: admin
+
+      env:
+        NUMBA_CACHE_DIR: /mnt/data/stimela-test
+        CONFIGURATT_CACHE_DIR: /mnt/data/stimela-test
+
+
+  steps:
+    init:
+      assign:
+        config.opts.backend.kube.dask_cluster.num_workers: 16
+        config.opts.backend.kube.predefined_pod_specs.pudgy.nodeSelector.rarg/instance-type: m5.4xlarge
+        config.opts.backend.kube.job_pod.memory.limit: "60Gi"
+        config.opts.backend.kube.job_pod.cpu.request: "6"
+        config.opts.backend.kube.dask_cluster.worker_pod.memory.limit: "60Gi"
+        config.opts.backend.kube.dask_cluster.worker_pod.cpu.request: "6"
+      backend:
+        kube:
+          job_pod:  # This is where the main application runs.
+            type: pudgy
+          dask_cluster:  # Set up the dask cluster.
+            enable: true
+            name: pfb-test-cluster
+            memory_limit: 0
+            threads_per_worker: 1
+            worker_pod:
+              type: pudgy
+          always_pull_images: true
+
+    grid:
+      assign:  # we need this so the workers get the right env vars
+        config.opts.backend.kube.dask_cluster.num_workers: 10
+        config.opts.backend.kube.predefined_pod_specs.pudgy.nodeSelector.rarg/instance-type: m5.4xlarge
+        config.opts.backend.kube.job_pod.memory.limit: "60Gi"
+        config.opts.backend.kube.job_pod.cpu.request: "6"
+        config.opts.backend.kube.dask_cluster.worker_pod.memory.limit: "60Gi"
+        config.opts.backend.kube.dask_cluster.worker_pod.cpu.request: "6"
+        config.opts.backend.kube.env.OMP_NUM_THREADS: '6'
+        config.opts.backend.kube.env.OPENBLAS_NUM_THREADS: '6'
+        config.opts.backend.kube.env.MKL_NUM_THREADS: '6'
+        config.opts.backend.kube.env.VECLIB_MAXIMUM_THREADS: '6'
+        config.opts.backend.kube.env.NUMBA_NUM_THREADS: '6'
+        config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '6'
+        config.opts.backend.kube.env.JAX_ENABLE_X64: 'True'
+        config.opts.backend.kube.env.LD_LIBRARY_PATH: '/usr/local/lib'
+      backend:
+        kube:
+          job_pod:  # This is where the main application runs.
+            type: pudgy
+          dask_cluster:  # Set up the dask cluster.
+            enable: true
+            name: pfb-test-cluster
+            memory_limit: 0
+            threads_per_worker: 1
+            worker_pod:
+              type: pudgy
+          always_pull_images: true
+
+    sara:
+      assign:  # we need this so the workers get the right env vars
+        config.opts.backend.kube.env.OMP_NUM_THREADS: '14'
+        config.opts.backend.kube.env.OPENBLAS_NUM_THREADS: '14'
+        config.opts.backend.kube.env.MKL_NUM_THREADS: '14'
+        config.opts.backend.kube.env.VECLIB_MAXIMUM_THREADS: '14'
+        config.opts.backend.kube.env.NUMBA_NUM_THREADS: '14'
+        config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '14'
+        config.opts.backend.kube.env.LD_LIBRARY_PATH: '/usr/local/lib'
+
+    pull_model:
+
+
+cabs:
+  model_from_s3:
+    command: aws s3 cp 's3://rarg-test-binface/ESO137/'
