@@ -41,7 +41,7 @@ esoimage:
       default: 10
     channel-range:
       dtype: List[int]
-      default: [32,991]  # ignore flagged edges
+      default: 32 991
     weight:
       dtype: Tuple[str, float]
       default: [briggs,-0.3]
