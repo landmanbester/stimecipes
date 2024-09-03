@@ -59,7 +59,7 @@ esoimage:
         channel-range: =recipe.channel-range
         pol: I
         threads: =recipe.nthreads
-        weight: recipe.weight
+        weight: =recipe.weight
         multiscale: true
         multiscale-max-scales: 8
         multiscale-gain: 0.15
