@@ -29,7 +29,7 @@ esoimage:
       dtype: Union[int, Tuple[int, int]]
       required: true
     scale:
-      dtype: float
+      dtype: Union[str, float]
       required: true
     nthreads:
       dtype: int
