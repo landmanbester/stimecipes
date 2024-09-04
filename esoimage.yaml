@@ -6,8 +6,9 @@ opts:
     dir: logs
     nest: 2
   backend:
-    native:
-      enable: true
+    select: 'native'
+    # native:
+    #   enable: true
 
 
 
