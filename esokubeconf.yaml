@@ -1,8 +1,8 @@
 opts:
   backend:
     kube:
-      enable: true
-      dir: /mnt/data/stimela-test
+      enable: false  # we don't use kube for all steps
+      dir: /mnt/data/pfb-test
       namespace: rarg-test-compute
       volumes:
         rarg-test-compute-efs-pvc:
@@ -12,9 +12,6 @@ opts:
       user:
         uid: 1000
         gid: 1000
-      ## you can specify a global memory default for pods here,
-      ## otherwise go on a per-cab or per-step basis
-      # memory: 64Gi
 
       ## some predefined pod specs
       predefined_pod_specs:
@@ -29,97 +26,76 @@ opts:
         thin:
           nodeSelector:
             rarg/node-class: compute
-            rarg/instance-type: m5.large
+            rarg/instance-type: c6in.2xlarge
             rarg/capacity-type: ON_DEMAND
         pudgy:
           nodeSelector:
             rarg/node-class: compute
-            rarg/instance-type: c6in.2xlarge
-            rarg/capacity-type: ON_DEMAND
-        medium:
-          nodeSelector:
-            rarg/node-class: compute
-            rarg/instance-type: m5.4xlarge
+            rarg/instance-type: c6in.8xlarge
             rarg/capacity-type: ON_DEMAND
         fat:
           nodeSelector:
             rarg/node-class: compute
-            rarg/instance-type: r5.4xlarge
+            rarg/instance-type: c6in.24xlarge
             rarg/capacity-type: ON_DEMAND
-
-      ## default type to use
-      job_pod:
-        type: admin
 
       env:
         NUMBA_CACHE_DIR: /mnt/data/stimela-test
         CONFIGURATT_CACHE_DIR: /mnt/data/stimela-test
 
+# cabs:
+#   s3tolocal:
+#     command: aws s3
+#       inputs:
 
-steps:
-  init:
-    assign:
-      config.opts.backend.kube.dask_cluster.num_workers: 16
-      config.opts.backend.kube.predefined_pod_specs.pudgy.nodeSelector.rarg/instance-type: m5.4xlarge
-      config.opts.backend.kube.job_pod.memory.limit: "60Gi"
-      config.opts.backend.kube.job_pod.cpu.request: "6"
-      config.opts.backend.kube.dask_cluster.worker_pod.memory.limit: "60Gi"
-      config.opts.backend.kube.dask_cluster.worker_pod.cpu.request: "6"
-    backend:
-      kube:
-        job_pod:  # This is where the main application runs.
-          type: pudgy
-        dask_cluster:  # Set up the dask cluster.
+esoimage:
+  steps:
+    init:
+      backend:
+        native:  # need to configure to use singularity image
           enable: true
-          name: pfb-test-cluster
-          memory_limit: 0
-          threads_per_worker: 1
-          worker_pod:
-            type: pudgy
-        always_pull_images: true
 
-  grid:
-    assign:  # we need this so the workers get the right env vars
-      config.opts.backend.kube.dask_cluster.num_workers: 10
-      config.opts.backend.kube.predefined_pod_specs.pudgy.nodeSelector.rarg/instance-type: m5.4xlarge
-      config.opts.backend.kube.job_pod.memory.limit: "60Gi"
-      config.opts.backend.kube.job_pod.cpu.request: "6"
-      config.opts.backend.kube.dask_cluster.worker_pod.memory.limit: "60Gi"
-      config.opts.backend.kube.dask_cluster.worker_pod.cpu.request: "6"
-      config.opts.backend.kube.env.OMP_NUM_THREADS: '6'
-      config.opts.backend.kube.env.OPENBLAS_NUM_THREADS: '6'
-      config.opts.backend.kube.env.MKL_NUM_THREADS: '6'
-      config.opts.backend.kube.env.VECLIB_MAXIMUM_THREADS: '6'
-      config.opts.backend.kube.env.NUMBA_NUM_THREADS: '6'
-      config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '6'
-      config.opts.backend.kube.env.JAX_ENABLE_X64: 'True'
-      config.opts.backend.kube.env.LD_LIBRARY_PATH: '/usr/local/lib'
-    backend:
-      kube:
-        job_pod:  # This is where the main application runs.
-          type: pudgy
-        dask_cluster:  # Set up the dask cluster.
+    grid:
+      assign:
+        # we need this so the workers get the right env vars
+        config.opts.backend.kube.env.NUMBA_NUM_THREADS: '30'
+        config.opts.backend.kube.env.JAX_ENABLE_X64: 'True'
+        config.opts.backend.kube.env.LD_LIBRARY_PATH: '/usr/local/lib'
+      backend:
+        kube:
           enable: true
-          name: pfb-test-cluster
-          memory_limit: 0
-          threads_per_worker: 1
-          worker_pod:
+          job_pod:  # This is where the main application runs.
             type: pudgy
-        always_pull_images: true
+            memory_limit: "60Gi"
+            cpu:
+              request: 24  # > than half available
+          dask_cluster:  # Set up the Dask cluster.
+            enable: true
+            num_workers: 10
+            name: pfb-test-cluster
+            threads_per_worker: 1
+            worker_pod:
+              type: pudgy
+              memory_limit: "60Gi"
+              cpu:
+                request: 24
+          always_pull_images: true
 
-  sara:
-    assign:  # we need this so the workers get the right env vars
-      config.opts.backend.kube.env.OMP_NUM_THREADS: '14'
-      config.opts.backend.kube.env.OPENBLAS_NUM_THREADS: '14'
-      config.opts.backend.kube.env.MKL_NUM_THREADS: '14'
-      config.opts.backend.kube.env.VECLIB_MAXIMUM_THREADS: '14'
-      config.opts.backend.kube.env.NUMBA_NUM_THREADS: '14'
-      config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '14'
-      config.opts.backend.kube.env.LD_LIBRARY_PATH: '/usr/local/lib'
+    sara:
+      backend:
+        kube:
+          enable: true
+          job_pod:  # This is where the main application runs.
+            type: fat
+            memory_limit: "185Gi"
+            cpu:
+              request: 90
+          dask_cluster:  # no Dask cluster.
+            enable: false
+          always_pull_images: true
 
-  pull_model:
-
-
-cabs:
-  model_from_s3:
-    command: aws s3 cp 's3://rarg-test-binface/ESO137/'
+    # pull_model:
+    #   cab: s3tolocal
+    #   params:
+    #     source: s3://path
+    #     dest: /local/path

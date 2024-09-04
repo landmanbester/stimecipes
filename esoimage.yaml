@@ -6,7 +6,9 @@ opts:
     dir: logs
     nest: 2
   backend:
-    select: native
+    native:
+      enable: true
+
 
 
 esoimage:
@@ -116,6 +118,7 @@ esoimage:
         bda-decorr: =recipe.bda-decorr
         freq-range: =recipe.freq-range
         overwrite: =recipe.overwrite
+      tags: [init]
 
     grid:
       cab: pfb.grid
@@ -127,6 +130,7 @@ esoimage:
         robustness: =recipe.robustness
         nthreads: 7
         nworkers: 10
+      tags: [image]
 
     sara:
       cab: pfb.sara
@@ -147,12 +151,7 @@ esoimage:
         epsfactor: 1.0
         positivity: 1
         nthreads: 64
-
-    pull_model:
-      cab: s3tolocal
-      params:
-        source: s3://path
-        dest: /local/path
+      tags: [image]
 
     restore:
       cab: pfb.restore
@@ -162,5 +161,6 @@ esoimage:
         nworkers: 10
         nthreads: 5
         outputs: mMrRiI
+      tags: [final]
 
 
