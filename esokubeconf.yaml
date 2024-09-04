@@ -66,7 +66,8 @@ esoimage:
           enable: true
           job_pod:  # This is where the main application runs.
             type: pudgy
-            memory_limit: "60Gi"
+            memory:
+              limit: "60Gi"
             cpu:
               request: 24  # > than half available
           dask_cluster:  # Set up the Dask cluster.
