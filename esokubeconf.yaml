@@ -76,7 +76,8 @@ esoimage:
             threads_per_worker: 1
             worker_pod:
               type: pudgy
-              memory_limit: "60Gi"
+              memory:
+                limit: "60Gi"
               cpu:
                 request: 24
           always_pull_images: true
@@ -87,7 +88,8 @@ esoimage:
           enable: true
           job_pod:  # This is where the main application runs.
             type: fat
-            memory_limit: "185Gi"
+            memory:
+              limit: "185Gi"
             cpu:
               request: 90
           dask_cluster:  # no Dask cluster.
