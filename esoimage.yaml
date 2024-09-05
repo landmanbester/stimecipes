@@ -28,10 +28,6 @@ esoimage:
 
 
   inputs:
-    basedir:
-      required: true
-      info:
-        Base directory in which to place output data products.
     band:
       default: FULL
     fits-output-folder:
@@ -93,6 +89,13 @@ esoimage:
     overwrite:
       default: true
       aliases: ['*.overwrite']
+
+  outputs:
+    basedir:
+      dtype: Directory
+      required: true
+      info:
+        Base directory in which to place output data products.
 
   steps:
     init:
