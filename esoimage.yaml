@@ -8,8 +8,10 @@ opts:
   backend:
     select: singularity
     singularity:
+      rebuild: true
       bind_dirs:
         /home/bester/projects/ESO137: rw
+
 
 
 esoimage:
