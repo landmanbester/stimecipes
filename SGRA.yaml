@@ -8,44 +8,45 @@ opts:
   backend:
     select: singularity
 
-esoimage:
-  name: esoimage
-  info: ESO137 imaging recipe
-
-  assign:
-    ms: [/scratch/bester/ms1_target.zarr,/scratch/bester/ms2_target.zarr]
-    gains: ['/home/bester/projects/ESO137/output/gains/obs1/stage6_interp.qc/GJK-net',
-            '/home/bester/projects/ESO137/output/gains/obs2/stage6_interp.qc/GJK-net']
+sgraimage:
+  info: SGRA imaging recipe
 
   assign_based_on:
-    band:
-      'FULL':
-        freq-range: '882750000.0:1685041015.625'  # 883063476.5625:1684727539.0625  # averaged min and max
-      'HI':
-        freq-range: '1.295e9:1.503e9'
-      'LO':
-        freq-range: '0.961e9:1.145e9'
-
+    obs:
+      'sgra':
+        ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_SGRA.ms]
+      'gcx17':
+        ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX17.ms]
+      'gcx30':
+        ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX30.ms]
 
   inputs:
     basedir:
-      required: true
+      default: '/home/bester/projects/GC/output'
       info:
         Base directory in which to place output data products.
-    band:
-      default: FULL
+    obs:
+      default: sgra
+      choices: ['sgra','gcx17','gcx30']
+    freq-range:
+      default: '570230468.75:1009042968.75'  # clip fully flagged parts
+    output-filename:
+      default: '{recipe.basedir}/{obs}/test0'
+      aliases: ['*.output-filename']
+      info:
+        Observation specific name to place pfb outputs
     fits-output-folder:
-      dtype: str
+      default: '{recipe.basedir}/{obs}/fits'
       aliases: ['*.fits-output-folder']
       info:
         Directory to place fits files
     log-directory:
-      dtype: str
+      default: '{recipe.basedir}/{obs}/logs'
       aliases: ['*.log-directory']
       info:
         Directory in which to place logs
     channels-per-image:
-      default: 384
+      default: 69  # results in 12 bands
       info:
         Number of channels per image.
         Determines number of output bands.
@@ -55,13 +56,13 @@ esoimage:
         Number of integrations per image.
     robustness:
       dtype: float
-      default: 0.0
+      default: -0.5
       info:
         Briggs robustness level.
         Less than -2 corresponds to uniform, larger than 2 to natural.
     field-of-view:
       dtype: float
-      default: 2.0
+      default: 3.5
     super-resolution-factor:
       dtype: float
       default: 2.5
@@ -69,7 +70,7 @@ esoimage:
         How much to oversample Nyquist by at the highest frequency
     chan-average:
       dtype: int
-      default: 4
+      default: 1
       info:
         How many channels to average together
     bda-decorr:
@@ -100,8 +101,7 @@ esoimage:
       info: 'Initialise imaging data products'
       params:
         ms: =recipe.ms
-        gain-table: =recipe.gains
-        output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
+        output-filename: '{recipe.basedir}/{recipe.obs}_{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
         nthreads: 1
         nworkers: 64
         sigma-column: SIGMA_SPECTRUM
@@ -132,10 +132,10 @@ esoimage:
       params:
         output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
         niter: =recipe.niter
-        bases: 'self,db1,db2,db3'
+        bases: 'self,db1,db2,db3,db4'
         nlevels: 2
         l1-reweight-from: =recipe.l1-reweight-from
-        pd-tol: [2e-4]
+        pd-tol: [1e-4]
         pd-maxit: 450
         pd-verbose: 2
         pd-report-freq: 50
@@ -156,5 +156,3 @@ esoimage:
         nthreads: 5
         outputs: mMrRiI
       tags: [final]
-
-
