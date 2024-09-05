@@ -7,6 +7,10 @@ opts:
     nest: 2
   backend:
     select: singularity
+    singularity:
+      bind_dirs:
+        /home/bester/projects/ESO137: rw
+
 
 esoimage:
   name: esoimage

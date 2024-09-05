@@ -1,0 +1,22 @@
+
+
+cabs:
+  pfb.init:
+    management:
+      environment:
+        NUMBA_CACHE_DIR: /home/bester/projects/ESO137/numba_cache
+
+  pfb.grid:
+    management:
+      environment:
+        NUMBA_CACHE_DIR: /home/bester/projects/ESO137/numba_cache
+
+  pfb.sara:
+    management:
+      environment:
+        NUMBA_CACHE_DIR: /home/bester/projects/ESO137/numba_cache
+
+  pfb.restore:
+    management:
+      environment:
+        NUMBA_CACHE_DIR: /home/bester/projects/ESO137/numba_cache

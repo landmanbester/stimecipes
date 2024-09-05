@@ -183,9 +183,3 @@ opts:  # This section is largely just to ensure that all these fields exist.
         mf-weighting: false
         l2-reweight-dof: 2.5
         reset-cache: =recipe.reset-cache
-
-
-# useful kubectl commands
-# get namespaces -
-# switch namespace - kubectl config use-context lbester-rarg-test-eks-cluster
-# clean up - kubectl delete daskjobs.kubernetes.dask.org -n rarg-test-compute dj-deb951c0
