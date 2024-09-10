@@ -1,7 +1,6 @@
 opts:
   backend:
     kube:
-      enable: false  # we don't use kube for all steps
       dir: /mnt/data/pfb-test
       namespace: rarg-test-compute
       volumes:
@@ -52,16 +51,24 @@ esoimage:
   steps:
     init:
       backend:
-        native:  # need to configure to use singularity image
-          enable: true
+        select: singularity
+        singularity:
+          rebuild: true
+          bind_dirs:
+            /home/bester/numba_cache: rw
+          env:
+            NUMBA_CACHE_DIR: /home/bester/numba_cache
 
     grid:
       assign:
         # we need this so the workers get the right env vars
         config.opts.backend.kube.env.NUMBA_NUM_THREADS: '30'
+        config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '30'
         config.opts.backend.kube.env.JAX_ENABLE_X64: 'True'
+        config.opts.backend.kube.env.JAX_PLATFORMS: 'cpu'
         config.opts.backend.kube.env.LD_LIBRARY_PATH: '/usr/local/lib'
       backend:
+        select: kube
         kube:
           enable: true
           job_pod:  # This is where the main application runs.
@@ -85,6 +92,7 @@ esoimage:
 
     sara:
       backend:
+        select: kube
         kube:
           enable: true
           job_pod:  # This is where the main application runs.

@@ -1,0 +1,46 @@
+cabs:
+  casa.flagdata:
+    info: Uses CASA flagdata to obtain a flag summary
+    command: flagdata
+    flavour: casa-task
+    image: 
+      _use: vars.cult-cargo.images
+      name: casa
+    inputs:
+      vis: 
+        dtype: MS
+        required: true
+        writable: true
+        write_parent_dir: true
+      spw:
+        dtype: str
+        default: ""
+      mode:
+        dtype: str
+      uvrange:
+        dtype: str
+      autocorr:
+        dtype: bool
+      clipzeros:
+        dtype: bool
+      clipminmax:
+        dtype: List[float]
+      versionname:
+        dtype: str
+  casa.flagmanager:
+    info: Uses CASA flagmanager to save/load flags.
+    command: flagmanager
+    flavour: casa-task
+    image: 
+      _use: vars.cult-cargo.images
+      name: casa
+    inputs:
+      vis: 
+        dtype: MS
+        required: true
+        writable: true
+        write_parent_dir: true
+      mode:
+        dtype: str
+      versionname:
+        dtype: str
