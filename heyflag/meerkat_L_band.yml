@@ -10,7 +10,7 @@ opts:
     nest: 2
     symlink: log
   backend:
-    select: singularity
+    select: native
     rlimits:
       NOFILE: 100000  # set high limit on number of open files
 
@@ -22,35 +22,50 @@ meerkat-l-band-target-flagging:
     target data. This recipe was derived from the approach taken in oxkat
     (https://github.com/IanHeywood/oxkat).
 
-  assign:
+  assign_based_on:
+    band:
+      L:
+        CAL_1GC_FREQRANGE: '*:1300~1400MHz'
+        CAL_1GC_UVRANGE: '>150m'
 
-    CAL_1GC_FREQRANGE: '*:1300~1400MHz'
-    CAL_1GC_UVRANGE: '>150m'
+        CAL_1GC_BAD_FREQS: >-
+          *:850~900MHz,
+          *:1658~1800MHz,
+          *:1419.8~1421.3MHz
 
-    CAL_1GC_BAD_FREQS: >-
-      *:850~900MHz,
-      *:1658~1800MHz,
-      *:1419.8~1421.3MHz
+        CAL_1GC_BL_FLAG_UVRANGE: '<600'
+        CAL_1GC_BL_FREQS: >-
+          *:900MHz~915MHz,
+          *:925MHz~960MHz,
+          *:1080MHz~1095MHz,
+          *:1565MHz~1585MHz,
+          *:1217MHz~1237MHz,
+          *:1375MHz~1387MHz,
+          *:1166MHz~1186MHz,
+          *:1592MHz~1610MHz,
+          *:1242MHz~1249MHz,
+          *:1191MHz~1217MHz,
+          *:1260MHz~1300MHz,
+          *:1453MHz~1490MHz,
+          *:1616MHz~1626MHz,
+          *:1526MHz~1554MHz,
+          *:1600MHz
+      UHF:
+        CAL_1GC_FREQRANGE: '*:850~900MHz'
+        CAL_1GC_UVRANGE: '>150m'
+        CAL_1GC_0408_MODEL: ([27.907,0.0,0.0,0.0],[-1.205],'850MHz')
 
-    CAL_1GC_BL_FLAG_UVRANGE: '<600'
-    CAL_1GC_BL_FREQS: >-
-      *:900MHz~915MHz,
-      *:925MHz~960MHz,
-      *:1080MHz~1095MHz,
-      *:1565MHz~1585MHz,
-      *:1217MHz~1237MHz,
-      *:1375MHz~1387MHz,
-      *:1166MHz~1186MHz,
-      *:1592MHz~1610MHz,
-      *:1242MHz~1249MHz,
-      *:1191MHz~1217MHz,
-      *:1260MHz~1300MHz,
-      *:1453MHz~1490MHz,
-      *:1616MHz~1626MHz,
-      *:1526MHz~1554MHz,
-      *:1600MHz
+        CAL_1GC_BAD_FREQS: >-
+          *:540~570MHz,
+          *:1010~1150MHz
+
+        CAL_1GC_BL_FLAG_UVRANGE: '<600'
+        CAL_1GC_BL_FREQS: ''
 
   inputs:
+    band:
+      choices: ['L', 'UHF']
+      default: 'L'
     ms-list:
       dtype: List[MS]
     flag-version-name:
@@ -95,7 +110,7 @@ meerkat-l-band-target-flagging:
       cab: casa.flagdata
       params:
         vis: =recipe.ms-name
-        spw: =recipe.CAL_1GC_BAD_FREQS
+        spw: =recipe.CAL_1GC_BL_FREQS
         mode: 'manual'
         uvrange: =recipe.CAL_1GC_BL_FLAG_UVRANGE
 
@@ -106,7 +121,7 @@ meerkat-l-band-target-flagging:
         vis: =recipe.ms-name
         mode: 'manual'
         autocorr: true
-    
+
     flag-zeros:
       info: Flag zero data.
       cab: casa.flagdata
@@ -130,7 +145,7 @@ meerkat-l-band-target-flagging:
         config: /home/kenyon/git_packages/lightcurve-pipeline/lightcurve_pipeline/flagging_strategies/target_flagging_1_narrow.yaml  # We need a recipe.__PATH__ style construct.
         flagging-strategy: polarisation
         data-column: DATA
-    
+
     flag-save-post:
       info: |
         Create a backup of the flags on the dataset after the recipe has run.
