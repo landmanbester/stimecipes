@@ -160,11 +160,11 @@ crosscal:
       '1':
         ms_primary: msdir/ms1_primary.ms
         ms_target: /scratch/bester/ms1_target.zarr
-        ref_ant: 43
+        ref_ant: 54
       '2':
         ms_primary: msdir/ms2_primary.ms
         ms_target: /scratch/bester/ms2_target.zarr
-        ref_ant: 54
+        ref_ant: 43
 
   inputs:
     obs:
@@ -190,172 +190,6 @@ crosscal:
       default: 32
 
   steps:
-    # gkcal1:
-    #   cab: quartical
-    #   info: GK on the primary where
-    #         G = per scan time variable complex gain G(t)
-    #         K = per scan delay exp(i delta(t) nu)
-    #   params:
-    #     input_ms.path: =recipe.ms_primary
-    #     input_ms.time_chunk: '0'
-    #     input_ms.freq_chunk: '0'
-    #     input_ms.select_uv_range: [150,0]
-    #     input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
-    #     input_ms.select_corr: [0, 3]
-    #     input_model.recipe: =recipe.model_column
-    #     input_model.apply_p_jones: false
-    #     solver.terms: [G,K]
-    #     solver.iter_recipe: [100,100,50,50]
-    #     solver.propagate_flags: false
-    #     solver.robust: false
-    #     solver.threads: 8
-    #     solver.reference_antenna: =recipe.ref_ant
-    #     output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/gk1.qc'
-    #     output.log_directory: '{recipe.basedir}/logs.qc'
-    #     output.overwrite: true
-    #     output.products:
-    #     output.columns:
-    #     output.flags: false
-    #     output.apply_p_jones_inv: false
-    #     output.net_gains:
-    #     mad_flags.enable: false
-    #     dask.threads: 8
-    #     dask.scheduler: distributed
-    #     G.type: diag_complex
-    #     G.time_interval: 0
-    #     G.freq_interval: 0
-    #     K.type: delay
-    #     K.time_interval: 0
-    #     K.freq_interval: 0
-    #     K.initial_estimate: true
-
-    # bcal1:
-    #   cab: quartical
-    #   info: B on the primary where
-    #         B = global freq variable complex gain,  G(t)
-    #   params:
-    #     input_ms.path: =recipe.ms_primary
-    #     input_ms.time_chunk: 0
-    #     input_ms.freq_chunk: 128
-    #     input_ms.select_uv_range: [150,0]
-    #     input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
-    #     input_ms.select_corr: [0, 3]
-    #     input_model.recipe: =recipe.model_column
-    #     input_model.apply_p_jones: false
-    #     solver.terms: [G,K,B]
-    #     solver.iter_recipe: [0,0,250]
-    #     solver.propagate_flags: false
-    #     solver.robust: false
-    #     solver.threads: 8
-    #     solver.reference_antenna: =recipe.ref_ant
-    #     output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/b1_norob.qc'
-    #     output.log_directory: '{recipe.basedir}/logs.qc'
-    #     output.overwrite: true
-    #     output.products:
-    #     output.columns:
-    #     output.flags: false
-    #     output.apply_p_jones_inv: false
-    #     output.net_gains: []
-    #     mad_flags.enable: true
-    #     mad_flags.whitening: native
-    #     mad_flags.threshold_bl: 5.5
-    #     mad_flags.threshold_global: 0
-    #     mad_flags.max_deviation: 0
-    #     dask.threads: 8
-    #     dask.scheduler: distributed
-    #     G.type: diag_complex
-    #     G.time_interval: 0
-    #     G.freq_interval: 0
-    #     G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gk1.qc/G'
-    #     G.respect_scan_boundaries: true
-    #     G.interp_mode: ampphase
-    #     G.interp_method: 2dlinear
-    #     K.type: delay
-    #     K.time_interval: 0
-    #     K.freq_interval: 0
-    #     K.initial_estimate: false
-    #     K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gk1.qc/K'
-    #     K.respect_scan_boundaries: true
-    #     K.interp_mode: ampphase
-    #     K.interp_method: 2dlinear
-    #     B.type: diag_complex
-    #     B.time_interval: 0
-    #     B.freq_interval: 4
-    #     B.respect_scan_boundaries: false
-
-    # chi2plots_presmooth:
-    #   cab: surfchi2
-    #   info: Plot mean chisq per scan and baseline before flagging
-    #   params:
-    #     dataout: '{recipe.basedir}/{recipe.ms_primary}/presmooth'
-    #     imagesout: '{recipe.basedir}/{recipe.ms_primary}/presmooth'
-    #     wcol: SIGMA_SPECTRUM
-    #     nthreads: '{recipe.nthreads}'
-    #     ms: '{recipe.ms_primary}'
-
-    # gkb_smooth:
-    #   cab: quartical
-    #   info: Continue solve for G and K after smoothing bandpass and madflag residuals
-    #   params:
-    #     input_ms.path: '{recipe.ms_primary}'
-    #     input_ms.time_chunk: '0'
-    #     input_ms.freq_chunk: '0'
-    #     input_ms.select_uv_range: [50,0]
-    #     input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
-    #     input_ms.select_corr: [0, 3]
-    #     input_model.recipe: '{recipe.model_column}'
-    #     input_model.apply_p_jones: false
-    #     solver.terms: [G,K,B]
-    #     solver.iter_recipe: [30,30,0,20,20,0,10,10,0,5,5,0]  # both G and K can change after detrending B
-    #     solver.propagate_flags: true
-    #     solver.robust: true
-    #     solver.threads: 1
-    #     solver.reference_antenna: =recipe.ref_ant
-    #     output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/gkb_smoothed.qc/'
-    #     output.log_directory: '{recipe.basedir}/{recipe.ms_primary}/logs.qc'
-    #     output.overwrite: true
-    #     output.products: [residual]
-    #     output.columns: [RESIDUAL]
-    #     output.flags: true
-    #     output.apply_p_jones_inv: false
-    #     output.net_gains: [G,K,B]
-    #     mad_flags.enable: true
-    #     mad_flags.whitening: native
-    #     mad_flags.threshold_bl: 4.5
-    #     mad_flags.threshold_global: 0
-    #     mad_flags.max_deviation: 0
-    #     dask.threads: 64
-    #     dask.scheduler: processes
-    #     G.type: diag_complex
-    #     G.time_interval: 0
-    #     G.freq_interval: 0
-    #     G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gk1.qc/G'
-    #     G.interp_mode: ampphase
-    #     G.interp_method: 2dlinear
-    #     K.type: delay
-    #     K.time_interval: 0
-    #     K.freq_interval: 0
-    #     K.initial_estimate: false
-    #     K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gk1.qc/K'
-    #     K.interp_mode: ampphase
-    #     K.interp_method: 2dlinear
-    #     B.type: diag_complex
-    #     B.load_from: '{recipe.basedir}/{recipe.ms_primary}/b1.qc/B'
-    #     B.time_interval: 0
-    #     B.freq_interval: 1
-    #     B.interp_mode: ampphase
-    #     B.interp_method: 1dsmooth
-
-    # chi2plots_postsmooth:
-    #   cab: surfchi2
-    #   info: Plot mean chisq per scan and baseline before flagging
-    #   params:
-    #     dataout: '{recipe.basedir}/{recipe.ms_primary}/postsmooth'
-    #     imagesout: '{recipe.basedir}/{recipe.ms_primary}/svis_preflag'
-    #     wcol: SIGMA_SPECTRUM
-    #     nthreads: '{recipe.nthreads}'
-    #     ms: '{recipe.ms_primary}'
-
     gkb_per_scan:
       cab: quartical
       info: Final solve to refine B solution intervals
@@ -375,15 +209,15 @@ crosscal:
         solver.robust: true
         solver.threads: 8
         solver.reference_antenna: =recipe.ref_ant
-        output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_init_rob.qc/'
-        output.log_directory: '{recipe.basedir}/{recipe.ms_primary}/logs.qc'
+        output.gain_directory: '{recipe.basedir}/gains/obs{recipe.obs}/stage0/gkb_per_scan.qc/'
+        output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: true
-        # output.products: [residual]
-        # output.columns: [RESIDUAL]
+        output.products: [residual, corrected_residual, corrected_weight]
+        output.columns: [RESIDUAL, CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
-        # output.net_gains: [G,K,B]
-        mad_flags.enable: true
+        output.net_gains: [G,K,B]
+        mad_flags.enable: false
         mad_flags.whitening: native
         mad_flags.threshold_bl: 3.5
         mad_flags.threshold_global: 0
@@ -393,97 +227,15 @@ crosscal:
         G.type: diag_complex
         G.time_interval: 0
         G.freq_interval: 0
-        # G.load_from:   #'{recipe.basedir}/{recipe.ms_primary}/gk1.qc/G'
         G.interp_mode: ampphase
         G.interp_method: 2dlinear
         K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: true
-        # K.load_from:   #'{recipe.basedir}/{recipe.ms_primary}/gk1.qc/K'
-        # K.interp_mode: ampphase
-        # K.interp_method: 2dlinear
         B.type: diag_complex
-        # B.load_from: '{recipe.basedir}/{recipe.ms_primary}/b1_norob.qc/B'
         B.time_interval: 0
         B.freq_interval: 4
-        # B.interp_mode: ampphase
-        # B.interp_method: 2dlinear
-
-    # chi2plots_per_scan:
-    #   cab: surfchi2
-    #   info: Plot mean chisq per scan and baseline before flagging
-    #   params:
-    #     dataout: '{recipe.basedir}/{recipe.ms_primary}/per_scan'
-    #     imagesout: '{recipe.basedir}/{recipe.ms_primary}/svis_preflag'
-    #     wcol: SIGMA_SPECTRUM
-    #     nthreads: '{recipe.nthreads}'
-    #     ms: '{recipe.ms_primary}'
-
-    # gkb_per_scan_smooth:
-    #   cab: quartical
-    #   info: Final solve to refine B solution intervals
-    #   params:
-    #     input_ms.path: '{recipe.ms_primary}'
-    #     input_ms.time_chunk: '0'
-    #     input_ms.freq_chunk: '0'
-    #     input_ms.select_uv_range: [150,0]
-    #     input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
-    #     input_ms.select_corr: [0, 3]
-    #     input_model.recipe: '{recipe.model_column}'
-    #     input_model.apply_p_jones: false
-    #     solver.terms: [G,K,B]
-    #     solver.iter_recipe: [30,30,0,20,20,0,10,10,0,5,5,0]
-    #     solver.propagate_flags: true
-    #     solver.robust: true
-    #     solver.threads: 1
-    #     solver.reference_antenna: =recipe.ref_ant
-    #     output.gain_directory: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_smoothed.qc/'
-    #     output.log_directory: '{recipe.basedir}/{recipe.ms_primary}/logs.qc'
-    #     output.overwrite: true
-    #     output.products: [residual]
-    #     output.columns: [RESIDUAL]
-    #     output.flags: true
-    #     output.apply_p_jones_inv: false
-    #     output.net_gains: [G, K, B]
-    #     mad_flags.enable: true
-    #     mad_flags.whitening: native
-    #     mad_flags.threshold_bl: 3.5
-    #     mad_flags.threshold_global: 0
-    #     mad_flags.max_deviation: 0
-    #     dask.threads: 64
-    #     dask.scheduler: processes
-    #     G.type: diag_complex
-    #     G.time_interval: 0
-    #     G.freq_interval: 0
-    #     G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/G'
-    #     G.interp_mode: ampphase
-    #     G.interp_method: 2dlinear
-    #     K.type: delay
-    #     K.time_interval: 0
-    #     K.freq_interval: 0
-    #     K.initial_estimate: false
-    #     K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/K'
-    #     K.interp_mode: ampphase
-    #     K.interp_method: 2dlinear
-    #     B.type: diag_complex
-    #     B.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan.qc/B'
-    #     B.time_interval: 0
-    #     B.freq_interval: 1
-    #     B.interp_mode: ampphase
-    #     B.interp_method: 1dsmooth
-
-
-
-    # chi2plots_final:
-    #   cab: surfchi2
-    #   info: Plot mean chisq per scan and baseline before transfer
-    #   params:
-    #     dataout: '{recipe.basedir}/{recipe.ms_primary}/final'
-    #     imagesout: '{recipe.basedir}/{recipe.ms_primary}/final'
-    #     wcol: SIGMA_SPECTRUM
-    #     nthreads: '{recipe.nthreads}'
-    #     ms: '{recipe.ms_primary}'
 
     calibrator_transfer:
       cab: quartical
@@ -502,9 +254,8 @@ crosscal:
         solver.propagate_flags: false
         solver.robust: false
         solver.threads: 1
-        # solver.bypass: true
         solver.reference_antenna: =recipe.ref_ant
-        output.gain_directory: '{recipe.basedir}/{recipe.ms_target}/gkb_init.qc/'
+        output.gain_directory: '{recipe.basedir}/gains/obs{recipe.obs}/stage1/gkb_init.qc/'
         output.log_directory: '{recipe.basedir}/{recipe.ms_target}/logs.qc'
         output.overwrite: true
         output.products:
@@ -519,16 +270,16 @@ crosscal:
         G.type: diag_complex
         G.time_interval: 1
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_init_rob.qc/G'
+        G.load_from: '{recipe.basedir}/gains/obs{recipe.obs}/stage0/gkb_per_scan.qc/G'
         K.type: delay
         K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_init_rob.qc/K'
+        K.load_from: '{recipe.basedir}/gains/obs{recipe.obs}/stage0/gkb_per_scan.qc/K'
         K.interp_mode: ampphase
         K.interp_method: 2dlinear
         B.type: diag_complex
-        B.load_from: '{recipe.basedir}/{recipe.ms_primary}/gkb_per_scan_init_rob.qc/B'
+        B.load_from: '{recipe.basedir}/gains/obs{recipe.obs}/stage0/gkb_per_scan.qc/B'
         B.time_interval: 0
         B.freq_interval: 1
         B.interp_mode: ampphase
