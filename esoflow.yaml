@@ -463,11 +463,11 @@ selfcal:
         output.gain_directory: '{recipe.basedir}/stage{recipe.stage}_interp.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: =recipe.overwrite
-        output.products: [residual]
-        output.columns: [RESIDUAL]
+        # output.products: [residual]
+        # output.columns: [RESIDUAL]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [G,J,K]
+        output.net_gains: [G,K,J]
         mad_flags.enable: false
         mad_flags.whitening: native
         mad_flags.threshold_bl: 7
@@ -486,14 +486,15 @@ selfcal:
         K.interp_mode: ampphase
         K.time_interval: 1
         K.freq_interval: 1
-        K.load_from: '{recipe.basedir}/stage{recipe.stage}.qc/K'
+        K.load_from: '{recipe.basedir}/gains/obs{recipe.obs}/stage{recipe.stage}.qc/K'
+        K.initial_estimate: false
         J.type: complex
         J.interp_method: 2dlinear
         J.interp_mode: ampphase
         J.time_interval: 1
         J.freq_interval: 1
         J.initial_estimate: false
-        J.load_from: '{recipe.basedir}/stage{recipe.stage}.qc/J'
+        J.load_from: '{recipe.basedir}/gains/obs{recipe.obs}/stage{recipe.stage}.qc/J'
 
 
     selfcal3:
