@@ -292,14 +292,12 @@ apply_gains_ms:
     obs:
       '1':
         ms: msdir/ms1_target.ms
-        # netgain: /home/bester/projects/ESO137/output/scratch/bester/ms1_target.zarr/gkb_init.qc/GKB-net
-        netgain: 'output/gains/obs1/stage6_interp.qc/GJK-net'
-        ref_ant: 43
+        netgain: 'output/gains/obs1/stage1/gkb_init.qc/GJK-net'
+        ref_ant: 54
       '2':
         ms: msdir/ms2_target.ms
-        # netgain: /home/bester/projects/ESO137/output/scratch/bester/ms2_target.zarr/gkb_init.qc/GKB-net
-        netgain: 'output/gains/obs2/stage6_interp.qc/GJK-net'
-        ref_ant: 54
+        netgain: 'output/gains/obs2/stage1/gkb_init.qc/GJK-net'
+        ref_ant: 43
 
   assign:
     basedir: '/home/bester/projects/ESO137/output/gains/obs{recipe.obs}'
@@ -361,16 +359,16 @@ selfcal:
   assign_based_on:
     obs:
       '1':
-        ms: msdir/ms1_target.ms
-        netgain: 'output/gains/obs1/stage6_interp.qc/GJK-net'
-        ref_ant: 43
-      '2':
-        ms: msdir/ms2_target.ms
-        netgain: 'output/gains/obs2/stage6_interp.qc/GJK-net'
+        ms: /scratch/bester/ms1_target.zarr
+        netgain: 'output/gains/obs1/stage1/gkb_init.qc/GJK-net'
         ref_ant: 54
+      '2':
+        ms: /scratch/bester/ms2_target.zarr
+        netgain: 'output/gains/obs2/stage1/gkb_init.qc/GJK-net'
+        ref_ant: 43
 
   assign:
-    basedir: '/home/bester/projects/ESO137/output/gains/obs{recipe.obs}'
+    basedir: '/home/bester/projects/ESO137/output'
 
 
   inputs:
@@ -387,9 +385,9 @@ selfcal:
     sigma-column:
       default: SIGMA_SPECTRUM
       info: Original std of noise used to construct weights
-    # weight_column:
-    #   default: WEIGHT_SPECTRUM
-    #   info: Modified weights to be written to this column
+    weight_column:
+      default: WEIGHT_SPECTRUM
+      info: Modified weights to be written to this column
     model-column:
       dtype: str
       default: MODEL_DATA
@@ -422,16 +420,16 @@ selfcal:
         input_model.recipe: =recipe.model-column
         input_model.apply_p_jones: false
         solver.terms: [G,K]
-        solver.iter_recipe: [0,0]  #[0,50,0,30,0,20,0,10,0,5]
+        solver.iter_recipe: [0,50,0,30,0,20,0,10,0,5]
         solver.propagate_flags: true
         solver.robust: true
         solver.threads: 5
         solver.reference_antenna: =recipe.ref_ant
-        output.gain_directory: '{recipe.basedir}/stage{recipe.stage}.qc'
+        output.gain_directory: '{recipe.basedir}/gains/obs{recipe.obs}/stage{recipe.stage}.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: =recipe.overwrite
-        output.products: [residual]
-        output.columns: [RESIDUAL]
+        output.products: [residual, corrected_residual, corrected_weight]
+        output.columns: [RESIDUAL, CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [G, K]
@@ -469,17 +467,17 @@ selfcal:
         input_ms.select_corr: [0, 3]
         input_model.recipe: =recipe.model-column
         input_model.apply_p_jones: false
-        solver.terms: [G,J,K]
+        solver.terms: [G,K,J]
         solver.iter_recipe: [0,50,50,0,30,30,0,20,20,0,10,10]
         solver.propagate_flags: true
         solver.robust: true
         solver.threads: 4
         solver.reference_antenna: =recipe.ref_ant
-        output.gain_directory: '{recipe.basedir}/stage{recipe.stage}.qc'
+        output.gain_directory: '{recipe.basedir}/gains/obs{recipe.obs}/stage{recipe.stage}.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: =recipe.overwrite
-        output.products:  [residual]
-        output.columns:  [RESIDUAL]
+        output.products: [residual, corrected_residual, corrected_weight]
+        output.columns: [RESIDUAL, CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [G, J, K]
@@ -496,18 +494,18 @@ selfcal:
         G.interp_mode: ampphase
         G.time_interval: 1
         G.freq_interval: 1
-        J.type: complex
-        J.interp_method: 2dlinear
-        J.interp_mode: ampphase
-        J.time_interval: 75
-        J.freq_interval: 256
-        J.initial_estimate: false
         K.type: delay_and_offset
         K.interp_method: 2dlinear
         K.interp_mode: ampphase
         K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
+        J.type: complex
+        J.interp_method: 2dlinear
+        J.interp_mode: ampphase
+        J.time_interval: 75
+        J.freq_interval: 256
+        J.initial_estimate: false
 
     interp2:
       cab: quartical
