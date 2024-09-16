@@ -76,7 +76,7 @@ esoimage:
             memory:
               limit: "60Gi"
             cpu:
-              request: 24  # > than half available
+              request: 28  # > than half available
           dask_cluster:  # Set up the Dask cluster.
             enable: true
             num_workers: 10
@@ -87,11 +87,14 @@ esoimage:
               memory:
                 limit: "60Gi"
               cpu:
-                request: 24
+                request: 28
           always_pull_images: true
       params:
         fits-mfs: false
         fits-cubes: false
+        nworkers: 10
+        nthreads: 30
+
 
     sara:
       backend:
