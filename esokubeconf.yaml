@@ -1,23 +1,16 @@
+_include:
+  - kubeconfig.yaml
+
 opts:
   backend:
+    select: kube
     kube:
-      dir: /mnt/data/pfb-test
-      namespace: rarg-test-compute
-      volumes:
-        rarg-test-compute-efs-pvc:
-          mount: /mnt/data
-      context: 'lbester-rarg-test-eks-cluster'
       job_pod:
         memory:
           limit: 0
         cpu:
           request:
             0
-      scheduler:
-        memory:
-          limit: 0
-        cpu:
-          request: 0
       dask_cluster:
         num_workers: 1
         worker_pod:
@@ -26,46 +19,6 @@ opts:
           cpu:
             request:
               0
-
-      ## override user/group ID
-      user:
-        uid: 1000
-        gid: 1000
-
-      ## some predefined pod specs
-      predefined_pod_specs:
-        admin:
-          nodeSelector:
-            rarg/node-class: admin
-        scheduler:
-          nodeSelector:
-            rarg/node-class: compute
-            rarg/instance-type: m6i.large
-            rarg/capacity-type: ON_DEMAND
-        thin:
-          nodeSelector:
-            rarg/node-class: compute
-            rarg/instance-type: c6in.2xlarge
-            rarg/capacity-type: ON_DEMAND
-        pudgy:
-          nodeSelector:
-            rarg/node-class: compute
-            rarg/instance-type: c6in.8xlarge
-            rarg/capacity-type: ON_DEMAND
-        fat:
-          nodeSelector:
-            rarg/node-class: compute
-            rarg/instance-type: c6in.24xlarge
-            rarg/capacity-type: ON_DEMAND
-
-      env:
-        NUMBA_CACHE_DIR: /mnt/data/stimela-test
-        CONFIGURATT_CACHE_DIR: /mnt/data/stimela-test
-
-# cabs:
-#   s3tolocal:
-#     command: aws s3
-#       inputs:
 
 esoimage:
   steps:
