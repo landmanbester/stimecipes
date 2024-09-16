@@ -13,7 +13,7 @@ opts:
         cpu:
           request:
             0
-      scheduler_pod:
+      scheduler:
         memory:
           limit: 0
         cpu:
