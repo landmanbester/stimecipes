@@ -89,6 +89,9 @@ esoimage:
               cpu:
                 request: 24
           always_pull_images: true
+      params:
+        fits-mfs: false
+        fits-cubes: false
 
     sara:
       backend:
@@ -104,7 +107,9 @@ esoimage:
           dask_cluster:  # no Dask cluster.
             enable: false
           always_pull_images: true
-
+      params:
+        fits-mfs: false
+        fits-cubes: false
     # pull_model:
     #   cab: s3tolocal
     #   params:
