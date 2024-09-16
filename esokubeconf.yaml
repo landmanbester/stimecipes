@@ -13,6 +13,11 @@ opts:
         cpu:
           request:
             0
+      scheduler_pod:
+        memory:
+          limit: 0
+        cpu:
+          request: 0
       dask_cluster:
         num_workers: 1
         worker_pod:
