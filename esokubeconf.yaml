@@ -6,6 +6,21 @@ opts:
       volumes:
         rarg-test-compute-efs-pvc:
           mount: /mnt/data
+      context: 'lbester-rarg-test-eks-cluster'
+      job_pod:
+        memory:
+          limit: 0
+        cpu:
+          request:
+            0
+      dask_cluster:
+        num_workers: 1
+        worker_pod:
+          memory:
+            limit: 0
+          cpu:
+            request:
+              0
 
       ## override user/group ID
       user:
@@ -74,7 +89,7 @@ esoimage:
           job_pod:  # This is where the main application runs.
             type: pudgy
             memory:
-              limit: "60Gi"
+              limits: "60Gi"
             cpu:
               request: 28  # > than half available
           dask_cluster:  # Set up the Dask cluster.
@@ -85,7 +100,7 @@ esoimage:
             worker_pod:
               type: pudgy
               memory:
-                limit: "60Gi"
+                limits: "60Gi"
               cpu:
                 request: 28
           always_pull_images: true
@@ -104,7 +119,7 @@ esoimage:
           job_pod:  # This is where the main application runs.
             type: fat
             memory:
-              limit: "185Gi"
+              limits: "185Gi"
             cpu:
               request: 90
           dask_cluster:  # no Dask cluster.
