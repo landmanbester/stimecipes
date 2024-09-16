@@ -16,10 +16,10 @@ opts:
         scheduler_pod:
           type: scheduler
           memory:
-            limit: 0
+            limit: "3Gi"
           cpu:
             request:
-              0
+              1
         worker_pod:
           memory:
             limit: 0
