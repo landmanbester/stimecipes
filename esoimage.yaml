@@ -132,6 +132,8 @@ esoimage:
         robustness: =recipe.robustness
         nthreads: 7
         nworkers: 10
+        psf-oversize: 1.4
+        overwrite: =recipe.overwrite
       tags: [image]
 
     sara:
