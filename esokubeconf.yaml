@@ -59,7 +59,7 @@ esoimage:
               request: 28  # > than half available
           dask_cluster:  # Set up the Dask cluster.
             enable: true
-            num_workers: 10
+            num_workers: 2
             name: pfb-test-cluster
             threads_per_worker: 1
             worker_pod:
@@ -72,7 +72,7 @@ esoimage:
       params:
         fits-mfs: false
         fits-cubes: false
-        nworkers: 10
+        nworkers: 2
         nthreads: 30
 
 
