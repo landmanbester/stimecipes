@@ -93,7 +93,6 @@ esoimage:
       params:
         fits-mfs: false
         fits-cubes: false
-        nworkers: 1
         nthreads: 90
     # pull_model:
     #   cab: s3tolocal
