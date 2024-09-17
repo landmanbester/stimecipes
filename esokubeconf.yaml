@@ -84,7 +84,7 @@ esoimage:
           job_pod:  # This is where the main application runs.
             type: fat
             memory:
-              limit: "185Gi"
+              limit: "180Gi"
             cpu:
               request: 90
           dask_cluster:  # no Dask cluster.
@@ -93,6 +93,8 @@ esoimage:
       params:
         fits-mfs: false
         fits-cubes: false
+        nworkers: 1
+        nthreads: 90
     # pull_model:
     #   cab: s3tolocal
     #   params:
