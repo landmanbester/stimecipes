@@ -84,9 +84,9 @@ esoimage:
           job_pod:  # This is where the main application runs.
             type: fat
             memory:
-              limit: "180Gi"
+              limit: "170Gi"
             cpu:
-              request: 90
+              request: 50
           dask_cluster:  # no Dask cluster.
             enable: false
           always_pull_images: true
