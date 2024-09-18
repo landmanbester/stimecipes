@@ -142,7 +142,7 @@ esoimage:
       params:
         output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
         niter: =recipe.niter
-        bases: 'self,db1,db2,db3.db4'
+        bases: 'self,db1,db2,db3,db4'
         nlevels: 2
         l1-reweight-from: =recipe.l1-reweight-from
         pd-tol: [2e-4]
