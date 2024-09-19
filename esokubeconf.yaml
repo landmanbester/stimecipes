@@ -77,6 +77,13 @@ esoimage:
 
 
     sara:
+      assign:
+        # we need this so the workers get the right env vars
+        config.opts.backend.kube.env.NUMBA_NUM_THREADS: '90'
+        config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '90'
+        config.opts.backend.kube.env.JAX_ENABLE_X64: 'True'
+        config.opts.backend.kube.env.JAX_PLATFORMS: 'cpu'
+        config.opts.backend.kube.env.LD_LIBRARY_PATH: '/usr/local/lib'
       backend:
         select: kube
         kube:
