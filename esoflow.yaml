@@ -179,10 +179,10 @@ crosscal:
       default: SIGMA_SPECTRUM
       # aliases: ['*.input_ms.sigma_column']
       info: Original std of noise used to construct weights
-    weight_column:
+    weight-column:
       default: WEIGHT_SPECTRUM
       info: Modified weights to be writtent to this column
-    model_column:
+    model-column:
       dtype: str
       default: MODEL_DATA
     nthreads:
@@ -201,7 +201,7 @@ crosscal:
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_corr: [0, 3]
-        input_model.recipe: =recipe.model_column
+        input_model.recipe: =recipe.model-column
         input_model.apply_p_jones: false
         solver.terms: [G,K,B]
         solver.iter_recipe: [150,150,150,50,50,50,10,10,10]
@@ -248,7 +248,7 @@ crosscal:
         input_ms.select_uv_range: [50,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_corr: [0, 3]
-        input_model.recipe: =recipe.model_column
+        input_model.recipe: =recipe.model-column
         input_model.apply_p_jones: false
         solver.terms: [G]
         solver.iter_recipe: [150]
@@ -353,7 +353,7 @@ selfcal:
     sigma-column:
       default: SIGMA_SPECTRUM
       info: Original std of noise used to construct weights
-    weight_column:
+    weight-column:
       default: WEIGHT_SPECTRUM
       info: Modified weights to be written to this column
     model-column:
@@ -543,7 +543,7 @@ selfcal:
         input_ms.select_uv_range: [0,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
-        input_model.recipe: '{recipe.model_column}'
+        input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
         solver.terms: [G,J]
         solver.iter_recipe: [0,50,0,30,0,20,0,10,0,5]
@@ -591,7 +591,7 @@ selfcal:
 #         input_ms.select_uv_range: [50,0]
 #         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
 #         input_ms.select_corr: [0, 3]
-#         input_model.recipe: '{recipe.model_column}'
+#         input_model.recipe: '{recipe.model-column}'
 #         input_model.apply_p_jones: false
 #         solver.terms: [G,K]
 #         solver.iter_recipe: [0,0]
