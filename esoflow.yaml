@@ -572,12 +572,12 @@ selfcal:
         G.interp_mode: ampphase
         G.time_interval: 1
         G.freq_interval: 1
-        A.type: complex
-        A.interp_method: 2dlinear
-        A.interp_mode: ampphase
-        A.time_interval: 75
-        A.freq_interval: 128
-        A.initial_estimate: false
+        J.type: complex
+        J.interp_method: 2dlinear
+        J.interp_mode: ampphase
+        J.time_interval: 75
+        J.freq_interval: 128
+        J.initial_estimate: false
 
 #     interp3:
 #       cab: quartical
