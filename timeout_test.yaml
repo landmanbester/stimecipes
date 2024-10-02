@@ -32,6 +32,9 @@ opts:
 cabs:
   test:
     flavour: python-code
+    image:
+      _use: vars.cult-cargo.images
+      name: python-astro
     command: |
       from time import sleep
       while True:
@@ -47,9 +50,6 @@ timeout_test:
   steps:
     test:
       cab: test
-      image:
-        _use: vars.cult-cargo.images
-        name: python-astro
       backend:
         select: kube
         kube:
