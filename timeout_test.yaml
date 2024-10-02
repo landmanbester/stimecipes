@@ -1,0 +1,37 @@
+_include:
+  - kubeconfig.yaml
+
+
+opts:
+  log:
+    dir: logs
+    nest: 2
+
+cabs:
+  test:
+    flavour: python-code
+    command: |
+      from time import sleep
+      while True:
+        sleep(5)
+        print('Still going')
+    inputs:
+      {}
+
+    outputs:
+      {}
+
+timeout_test:
+  steps:
+    test:
+      cab: test
+      backend:
+        select: kube
+        kube:
+          enable: true
+          job_pod:  # This is where the main application runs.
+            type: tiny
+            memory:
+              limit: "4Gi"
+            cpu:
+              request: 2  # > than half available

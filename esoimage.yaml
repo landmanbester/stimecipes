@@ -29,7 +29,7 @@ esoimage:
     band:
       'FULL':
         freq-range: '882750000.0:1685041015.625'  # 883063476.5625:1684727539.0625  # averaged min and max
-        chennels-per-image: 384
+        channels-per-image: 384
       'HI':
         freq-range: '1.295e9:1.503e9'
         channels-per-image: 100
