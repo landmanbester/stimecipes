@@ -37,9 +37,10 @@ cabs:
       name: python-astro
     command: |
       from time import sleep
+      from datetime import datetime
       while True:
         sleep(5)
-        print('Still going')
+        print(datetime.now())
     inputs:
       {}
 
