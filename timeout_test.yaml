@@ -59,4 +59,4 @@ timeout_test:
             memory:
               limit: "4Gi"
             cpu:
-              request: 2  # > than half available
+              request: 1  # > than half available
