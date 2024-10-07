@@ -95,7 +95,7 @@ sgraimage:
       default: true
       aliases: ['*.overwrite']
     tmf:
-      dtype: float
+      dtype: str
       info:
         Transfer model from this component model
 
