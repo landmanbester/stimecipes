@@ -121,6 +121,7 @@ sgraimage:
         robustness: =recipe.robustness
         nthreads: 6
         nworkers: 6
+        psf-oversize: 1.4
 
     sara:
       cab: pfb.sara
