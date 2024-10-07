@@ -127,6 +127,7 @@ sgraimage:
         nworkers: 6
         psf-oversize: 1.4
         transfer-model-from: =recipe.tmf
+        overwrite: =recipe.overwrite
 
     sara:
       cab: pfb.sara
