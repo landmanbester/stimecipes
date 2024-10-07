@@ -94,6 +94,10 @@ sgraimage:
     overwrite:
       default: true
       aliases: ['*.overwrite']
+    tmf:
+      dtype: float
+      info:
+        Transfer model from this component model
 
   steps:
     init:
@@ -122,6 +126,7 @@ sgraimage:
         nthreads: 6
         nworkers: 6
         psf-oversize: 1.4
+        transfer-model-from: =recipe.tmf
 
     sara:
       cab: pfb.sara
