@@ -6,7 +6,7 @@ opts:
     dir: logs
     nest: 2
   backend:
-    select: singularity
+    select: native
 
 sgraimage:
   info: SGRA imaging recipe
