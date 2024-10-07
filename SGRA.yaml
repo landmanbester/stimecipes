@@ -21,9 +21,9 @@ sgraimage:
         ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX30.ms]
 
   assign:
-    output-filename: '{recipe.basedir}/{obs}/run0'
-    fits-output-folder: '{recipe.basedir}/{obs}/fits'
-    log-directory: '{recipe.basedir}/{obs}/logs'
+    output-filename: '{recipe.basedir}/{recipe.obs}/run0'
+    fits-output-folder: '{recipe.basedir}/{recipe.obs}/fits'
+    log-directory: '{recipe.basedir}/{recipe.obs}/logs'
 
   aliases:
     output-filename: '*.output-filename'
