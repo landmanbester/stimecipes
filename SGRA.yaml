@@ -20,6 +20,16 @@ sgraimage:
       'gcx30':
         ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX30.ms]
 
+  assign:
+    output-filename: '{recipe.basedir}/{obs}/run0'
+    fits-output-folder: '{recipe.basedir}/{obs}/fits'
+    log-directory: '{recipe.basedir}/{obs}/logs'
+
+  aliases:
+    output-filename: '*.output-filename'
+    fits-output-folder: '*.fits-output-folder'
+    log-directory: '*.log-directory'
+
   inputs:
     basedir:
       default: '/home/bester/projects/GC/output'
@@ -30,21 +40,6 @@ sgraimage:
       choices: ['sgra','gcx17','gcx30']
     freq-range:
       default: '570230468.75:1009042968.75'  # clip fully flagged parts
-    output-filename:
-      default: '{recipe.basedir}/{obs}/test0'
-      aliases: ['*.output-filename']
-      info:
-        Observation specific name to place pfb outputs
-    fits-output-folder:
-      default: '{recipe.basedir}/{obs}/fits'
-      aliases: ['*.fits-output-folder']
-      info:
-        Directory to place fits files
-    log-directory:
-      default: '{recipe.basedir}/{obs}/logs'
-      aliases: ['*.log-directory']
-      info:
-        Directory in which to place logs
     channels-per-image:
       default: 69  # results in 12 bands
       info:
@@ -56,7 +51,7 @@ sgraimage:
         Number of integrations per image.
     robustness:
       dtype: float
-      default: -0.5
+      default: -0.3
       info:
         Briggs robustness level.
         Less than -2 corresponds to uniform, larger than 2 to natural.
@@ -75,7 +70,7 @@ sgraimage:
         How many channels to average together
     bda-decorr:
       dtype: float
-      default: 0.98
+      default: 0.99
       info:
         Amount of amplitude loss that can be tolerated at edge of field
     niter:
@@ -91,6 +86,11 @@ sgraimage:
       default: 1.0
       info:
         Multiple of the rms to threshold by
+    alpha:
+      dtype: float
+      default: 4
+      info:
+        How aggressively to reweight
     overwrite:
       default: true
       aliases: ['*.overwrite']
@@ -101,9 +101,8 @@ sgraimage:
       info: 'Initialise imaging data products'
       params:
         ms: =recipe.ms
-        output-filename: '{recipe.basedir}/{recipe.obs}_{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
         nthreads: 1
-        nworkers: 64
+        nworkers: 32
         sigma-column: SIGMA_SPECTRUM
         channels-per-image: =recipe.channels-per-image
         integrations-per-image: =recipe.integrations-per-image
@@ -112,27 +111,23 @@ sgraimage:
         bda-decorr: =recipe.bda-decorr
         freq-range: =recipe.freq-range
         overwrite: =recipe.overwrite
-      tags: [init]
 
     grid:
       cab: pfb.grid
       info: 'Setup grid for imaging'
       params:
-        output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
         super-resolution-factor: =recipe.super-resolution-factor
         field-of-view: =recipe.field-of-view
         robustness: =recipe.robustness
-        nthreads: 7
-        nworkers: 10
-      tags: [image]
+        nthreads: 6
+        nworkers: 6
 
     sara:
       cab: pfb.sara
       info: Cleaning step
       params:
-        output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
         niter: =recipe.niter
-        bases: 'self,db1,db2,db3,db4'
+        bases: 'self,db1,db2,db3,db4,db5'
         nlevels: 2
         l1-reweight-from: =recipe.l1-reweight-from
         pd-tol: [1e-4]
@@ -142,17 +137,15 @@ sgraimage:
         tol: 1e-3
         gamma: 0.9
         rmsfactor: =recipe.rmsfactor
-        epsfactor: 1.0
+        eta: 1e-3
+        alpha: =recipe.alpha
         positivity: 1
-        nthreads: 64
-      tags: [image]
+        nthreads: 32
 
     restore:
       cab: pfb.restore
       info: Produce restored image.
       params:
-        output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
-        nworkers: 10
-        nthreads: 5
-        outputs: mMrRiI
-      tags: [final]
+        nworkers: 6
+        nthreads: 6
+        outputs: iI
