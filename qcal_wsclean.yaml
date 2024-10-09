@@ -10,7 +10,7 @@ opts:
 
 goqcal:
   name: goqcal
-  info: A 1+2GC recipe with QuartiCal and wsclean
+  info: Simple CASA recipe
 
   inputs:
     ms_primary:
@@ -33,10 +33,6 @@ goqcal:
     cball_model:
       dtype: str
       default: fitted.PKS1934.LBand.wsclean.cat.txt
-    ref_ant:
-      dtype: int
-      default: 21
-      info: Reference antenna for delay estimation
 
 
   steps:
@@ -82,11 +78,11 @@ goqcal:
         zarr_dir: '{recipe.basedir}/initial_flags'
         column: FLAG_ROW
 
-    # flagprim0:
-    #   cab: casa.flagdata
-    #   params:
-    #     vis: '{recipe.ms_primary}'
-    #     spw: "0:1.087~1.0915ghz"
+    flagprim0:
+      cab: casa.flagdata
+      params:
+        vis: '{recipe.ms_primary}'
+        spw: "0:1.087~1.0915ghz"
 
     init_primary_model:
       cab: crystalball
@@ -107,21 +103,20 @@ goqcal:
             B = frequency variable complex gain (bandpass)
       params:
         input_ms.path: '{recipe.ms_primary}'
-        input_ms.weight_column: WEIGHT_SPECTRUM
         input_ms.time_chunk: '0'
         input_ms.freq_chunk: '0'
-        input_ms.select_uv_range: [250,0]
+        input_ms.select_uv_range: [0,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_corr: [0, 3]
         input_model.recipe: '{recipe.model_column}'
         input_model.apply_p_jones: false
         solver.terms: [G,K,B]
-        solver.iter_recipe: [50,50,50,25,25,25,10,10,10]
+        solver.iter_recipe: [50,50,50]
         solver.propagate_flags: true
-        solver.robust: true
+        solver.robust: false
         solver.reweighting_flag_threshold: 0
         solver.threads: 8
-        solver.reference_antenna: '{recipe.ref_ant}'
+        solver.reference_antenna: 57
         output.gain_directory: '{recipe.basedir}/gkb.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
@@ -136,7 +131,7 @@ goqcal:
         G.type: complex
         G.time_interval: 0
         G.freq_interval: 0
-        K.type: pure_delay
+        K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: true
@@ -144,129 +139,86 @@ goqcal:
         B.time_interval: 0
         B.freq_interval: 1
 
-    # plotprimpball:
-    #   cab: casa.plotms
-    #   params:
-    #     vis: '{recipe.ms_primary}'
-    #     xaxis: real
-    #     yaxis: imag
-    #     correlation: XX,YY
-    #     xdatacolumn: corrected
-    #     ydatacolumn: corrected
-    #     coloraxis: corr
-    #     avgbaseline: false
-    #     uvrange: '>250m'
-    #     plotfile: '{recipe.basedir}/primary.phase.ball.png'
-    #     showgui: false
-    #     overwrite: true
+    plotprimpball:
+      cab: casa.plotms
+      params:
+        vis: '{recipe.ms_primary}'
+        xaxis: real
+        yaxis: imag
+        correlation: XX,YY
+        ydatacolumn: corrected
+        coloraxis: corr
+        avgbaseline: false
+        uvrange: '>1m'
+        plotfile: primary.phase.ball.png
+        showgui: false
+        overwrite: true
 
-    # plotprimratio:
-    #   cab: casa.plotms
-    #   params:
-    #     vis: '{recipe.ms_primary}'
-    #     xaxis: time
-    #     yaxis: amp
-    #     correlation: XX,YY
-    #     xdatacolumn: model
-    #     ydatacolumn: corrected/model
-    #     coloraxis: corr
-    #     avgbaseline: false
-    #     uvrange: '>250m'
-    #     plotfile: '{recipe.basedir}/primary.abs.ratio.png'
-    #     showgui: false
-    #     overwrite: true
 
-    # flagsec0:
-    #   cab: casa.flagdata
-    #   params:
-    #     vis: '{recipe.ms_secondary}'
-    #     spw: "0:1.087~1.0915ghz"
+    flagsec0:
+      cab: casa.flagdata
+      params:
+        vis: '{recipe.ms_secondary}'
+        spw: "0:1.087~1.0915ghz"
 
     secdp:
       cab: quartical
-      info: inactive GKB + D where D is a per scan delay + phase refinement
+      info: DP on the secondary where
+            P = time variable phase only gain,
+            D = per scan delay refinement
       params:
         input_ms.path: '{recipe.ms_secondary}'
         input_ms.time_chunk: '0'
         input_ms.freq_chunk: '0'
-        input_ms.select_uv_range: [250,0]
+        input_ms.select_uv_range: [0,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_corr: [0, 3]
+        input_model.recipe:
         input_model.apply_p_jones: false
-        solver.terms: [G,K,B,D]
-        solver.iter_recipe: [0,0,0,50,0,0,0,25,0,0,0,10]
+        solver.terms: [G,K,B,P,D]
+        solver.iter_recipe: [0,0,0,50,50]
         solver.propagate_flags: true
-        solver.robust: true
+        solver.robust: false
         solver.reweighting_flag_threshold: 0
         solver.threads: 8
-        solver.reference_antenna: '{recipe.ref_ant}'
+        solver.reference_antenna: 57
         output.gain_directory: '{recipe.basedir}/dp.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        output.products: [corrected_data, weight, residual]
-        output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM, RESIDUAL]
+        output.products: [corrected_data]
+        output.columns: [CORRECTED_DATA]
         output.flags: true
         output.apply_p_jones_inv: false
+        output.net_gains: [G,K,B,P,D]
         mad_flags.enable: false
         dask.threads: 2
         dask.scheduler: threads
         G.type: complex
-        G.time_interval: 1
+        G.time_interval: 0
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb.qc/G'
+        G.load_from: '{recipe.basedir}/gkb.qc/gains.qc/G'
         G.interp_method: 2dlinear
-        G.interp_mode: amp
-        K.type: pure_delay
+        G.interp_mode: ampphase
+        K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb.qc/K'
+        K.load_from: '{recipe.basedir}/gkb.qc/gains.qc/K'
         K.interp_method: 2dlinear
-        K.interp_mode: phase
+        K.interp_mode: ampphase
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/gkb.qc/B'
+        B.load_from: '{recipe.basedir}/gkb.qc/gains.qc/B'
         B.interp_method: 2dlinear
         B.interp_mode: ampphase
-        D.type: delay  # exp(1.0j(delay * nu + phi))
+        P.type: phase
+        P.time_interval: 0
+        P.freq_interval: 0
+        D.type: delay
         D.time_interval: 0
         D.freq_interval: 0
         D.initial_estimate: false
-
-
-    # plotsecpball:
-    #   cab: casa.plotms
-    #   params:
-    #     vis: '{recipe.ms_secondary}'
-    #     xaxis: real
-    #     yaxis: imag
-    #     correlation: XX,YY
-    #     xdatacolumn: corrected
-    #     ydatacolumn: corrected
-    #     coloraxis: corr
-    #     avgbaseline: false
-    #     uvrange: '>250m'
-    #     plotfile: '{recipe.basedir}/secondary.phase.ball.png'
-    #     showgui: false
-    #     overwrite: true
-
-    # plotsecratio:
-    #   cab: casa.plotms
-    #   params:
-    #     vis: '{recipe.ms_secondary}'
-    #     xaxis: time
-    #     yaxis: amp
-    #     correlation: XX,YY
-    #     xdatacolumn: model
-    #     ydatacolumn: corrected/model
-    #     coloraxis: corr
-    #     avgbaseline: false
-    #     uvrange: '>250m'
-    #     plotfile: '{recipe.basedir}/secondary.abs.ratio.png'
-    #     showgui: false
-    #     overwrite: true
-
 
     transfertarget:
       cab: quartical
@@ -278,15 +230,15 @@ goqcal:
         input_ms.select_uv_range: [0,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_corr: [0, 3]
-        input_ms.sigma_column: SIGMA_SPECTRUM
+        input_model.recipe: '{recipe.model_column}'
         input_model.apply_p_jones: false
-        solver.terms: [G,K,B,D]
-        solver.iter_recipe: [0,0,0,0]
-        solver.propagate_flags: false
+        solver.terms: [N]
+        solver.iter_recipe: [0]
+        solver.propagate_flags: true
         solver.robust: false
         solver.reweighting_flag_threshold: 0
-        solver.threads: 1
-        solver.reference_antenna: '{recipe.ref_ant}'
+        solver.threads: 8
+        solver.reference_antenna: 57
         output.gain_directory: '{recipe.basedir}/target.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
@@ -294,154 +246,92 @@ goqcal:
         output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [G,K,B,D]
+        output.net_gains:
         mad_flags.enable: false
-        dask.threads: 8
+        dask.threads: 2
         dask.scheduler: threads
-        G.type: complex
-        G.time_interval: 1
-        G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb.qc/G'
-        G.interp_method: 2dlinear
-        G.interp_mode: amp
-        K.type: pure_delay
-        K.time_interval: 1
-        K.freq_interval: 0
-        K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb.qc/K'
-        K.interp_method: 2dlinear
-        K.interp_mode: phase
-        B.type: complex
-        B.time_interval: 0
-        B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/gkb.qc/B'
-        B.interp_method: 2dlinear
-        B.interp_mode: ampphase
-        D.type: delay
-        D.time_interval: 1
-        D.freq_interval: 0
-        D.initial_estimate: false
-        D.load_from: '{recipe.basedir}/dp.qc/D'
-        D.interp_method: 2dlinear
-        D.interp_mode: phase
+        N.type: complex
+        N.time_interval: 1
+        N.freq_interval: 1
+        N.load_from: '{recipe.basedir}/dp.qc/gains.qc/G'
+        N.interp_method: 2dlinear
+        N.interp_mode: ampphase
 
-    # flagtarget0:
-    #   cab: casa.flagdata
-    #   params:
-    #     vis: '{recipe.ms_target}'
-    #     spw: "0:1.087~1.0915ghz"
+    flagtarget0:
+      cab: casa.flagdata
+      params:
+        vis: '{recipe.ms_target}'
+        spw: "0:1.087~1.0915ghz"
 
 
     clean0:
       cab: wsclean1
       params:
         ms: '{recipe.ms_target}'
-        name: '{recipe.basedir}/target.1GC'
-        data_column: CORRECTED_DATA
-        channels_out: 1
-        size: 8000
-        scale: 1.3asec
-        # join_channels: false
-        use_wgridder: true
+        name: RXCJ1638.2-6420.1GC
+        column: CORRECTED_DATA
+        nband: 2
+        size: 4096
+        scale: 2.2asec
+        join-channels: true
+        use-wgridder: true
         weight: briggs 0.0
-        j: 16
-        mgain: 0.8
-        gain: 0.1
-        niter: 100000
-        auto_threshold: 5
-        nmiter: 10
+        niter: 5000
+        nmiter: 5
+        sigma: 7
 
     mask0:
       cab: breizorro
       params:
-        restored_image: '{recipe.basedir}/target.1GC-image.fits'
-        outfile: '{recipe.basedir}/target.1GC-mask.fits'
-        threshold: 10.5
+        restored_image: RXCJ1638.2-6420.1GC.image.fits
+        outfile: RXCJ1638.2-6420.1GC.FITSMASK.fits
 
     clean1:
-      cab: wsclean1
+      cab: wsclean
       params:
         ms: '{recipe.ms_target}'
-        name: '{recipe.basedir}/target.1GC.masked'
-        data_column: CORRECTED_DATA
-        channels_out: 1
-        size: 8192
-        scale: 1.5asec
-        # join_channels: true
-        use_wgridder: true
+        name: RXCJ1638.2-6420.1GC
+        column: CORRECTED_DATA
+        nband: 2
+        size: 4096
+        scale: 2.2asec
+        join-channels: true
+        use-gridder: true
         weight: briggs 0.0
-        j: 16
-        mgain: 0.8
-        gain: 0.1
-        niter: 1000000
-        auto_threshold: 1.5
+        niter: 5000
         nmiter: 10
-        fits_mask: '{recipe.basedir}/target.1GC-mask.fits'
+        sigma: 3
+        fits-mask: RXCJ1638.2-6420.1GC.FITSMASK.fits
 
-    selfcal0:
-      cab: quartical
-      info: GN on the target where
-            G = delay + offset,
-            N = net gain
+    selfcaltarget0:
+      cab: casa.gaincal
       params:
-        input_ms.path: '{recipe.ms_target}'
-        input_ms.time_chunk: '0'
-        input_ms.freq_chunk: '0'
-        input_ms.select_uv_range: [100,0]
-        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
-        input_ms.select_corr: [0, 3]
-        input_ms.sigma_column: SIGMA_SPECTRUM
-        input_model.apply_p_jones: false
-        input_model.recipe: '{recipe.model_column}'
-        solver.terms: [G, N]
-        solver.iter_recipe: [50,0,25,0,10,0,10,0,10,0]
-        solver.propagate_flags: false
-        solver.robust: true
-        solver.reweighting_flag_threshold: 0
-        solver.threads: 4
-        solver.reference_antenna: 57
-        output.gain_directory: '{recipe.basedir}/selfcal.qc'
-        output.log_directory: '{recipe.basedir}/'
-        output.overwrite: true
-        output.products: [corrected_data]
-        output.columns: [CORRECTED_DATA]
-        output.flags: false
-        output.apply_p_jones_inv: false
-        output.net_gains: [G,N]
-        mad_flags.enable: false
-        dask.threads: 6
-        dask.scheduler: threads
-        G.type: delay
-        G.time_interval: 8
-        G.freq_interval: 0
-        G.initial_estimate: false
-        N.type: complex
-        N.time_interval: 1
-        N.freq_interval: 1
-        N.load_from: '{recipe.basedir}/target.qc/GKBD-net'
-        N.interp_method: 2dlinear
-        N.interp_mode: ampphase
-        N.initial_estimate: false
+        vis: '{recipe.ms_target}'
+        field: RXCJ1638.2-6420
+        caltable: target.G0
+        gaintype: G
+        calmode: p
+        refant: m000
+        interp: [linear, linear, nearest]
+        gaintable: [prim.B0, prim.F0, sec.K0]
+        gainfield: [J1939-6342, J1939-6342, J1859-6615]
+        solint: 48s
 
 
     clean2:
-      cab: wsclean1
+      cab: wsclean
       params:
         ms: '{recipe.ms_target}'
-        name: '{recipe.basedir}/target.selfcal0'
-        data_column: CORRECTED_DATA
-        channels_out: 2
-        size: 8192
-        scale: 1.5asec
-        join_channels: true
-        use_wgridder: true
+        name: RXCJ1638.2-6420.1GC
+        column: CORRECTED_DATA
+        nband: 2
+        size: 4096
+        scale: 2.2asec
+        join-channels: true
+        use-gridder: true
         weight: briggs 0.0
-        j: 16
-        mgain: 0.8
-        gain: 0.1
-        niter: 1000000
-        auto_threshold: 1.5
-        fits_mask: '{recipe.basedir}/target.1GC-mask.fits'
-        save_source_list: true
-        fit_spectral_pol: 2
+        niter: 5000
+        nmiter: 5
+        sigma: 5
+        fits-mask: RXCJ1638.2-6420.1GC.FITSMASK.fits
 

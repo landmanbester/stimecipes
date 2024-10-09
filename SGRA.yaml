@@ -142,12 +142,12 @@ sgraimage:
         pd-verbose: 2
         pd-report-freq: 50
         tol: 1e-3
-        gamma: 0.9
+        gamma: 0.99
         rmsfactor: =recipe.rmsfactor
         eta: 1e-3
         alpha: =recipe.alpha
         positivity: 1
-        nthreads: 32
+        nthreads: 36
 
     restore:
       cab: pfb.restore
