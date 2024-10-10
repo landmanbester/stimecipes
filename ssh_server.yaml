@@ -34,8 +34,8 @@ spec:
     rarg/capacity-type: ON_DEMAND
   containers:
   - name: ssh-server
-    # image: jskenyon/ssh-server:latest
-    image: quay.io/stimela2/pfb-imaging:cc0.1.3
+    image: jskenyon/ssh-server:latest
+    # image: quay.io/stimela2/pfb-imaging:cc0.1.3
     imagePullPolicy: IfNotPresent
     ports:
       - containerPort: 22
