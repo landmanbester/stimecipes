@@ -46,6 +46,10 @@ spec:
     - mountPath: /mnt/data
       name: home-directory
 
+  user:
+    uid: 1000
+    gid: 1000
+
   # Mounts the ConfigMap
   volumes:
   - name: ssh-volume
