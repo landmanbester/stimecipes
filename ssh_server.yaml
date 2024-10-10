@@ -43,12 +43,18 @@ spec:
     - mountPath: /root/.ssh/authorized_keys
       subPath: authorized_keys
       name: ssh-volume
+    - mountPath: /mnt/data
+      name: home-directory
+
   # Mounts the ConfigMap
   volumes:
   - name: ssh-volume
     configMap:
       name: ssh-config
       defaultMode: 384  # 0600 octal
+  - name: home-directory
+    persistentVolumeClaim:
+      claimName: rarg-test-compute-efs-pvc
 # Faster to just kubectl port-forward
 # ---
 # apiVersion: v1
