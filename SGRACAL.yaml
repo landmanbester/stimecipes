@@ -16,11 +16,11 @@ selfcal:
   assign_based_on:
     obs:
       'sgra':
-        ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_SGRA.ms]
+        ms: /home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_SGRA.ms
       'gcx17':
-        ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX17.ms]
+        ms: /home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX17.ms
       'gcx30':
-        ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX30.ms]
+        ms: /home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX30.ms
 
   inputs:
     obs:
