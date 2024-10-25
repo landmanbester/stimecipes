@@ -12,36 +12,43 @@ esoimage:
   name: esoimage
   info: ESO137 imaging recipe
 
-  assign:
-    ms: [/home/bester/projects/ESO137/msdir/ms1_target_ave4chan_bdafov2d98.ms,
-         /home/bester/projects/ESO137/msdir/ms2_target_ave4chan_bdafov2d98.ms]
+  assign-based-on:
+    obs:
+      eso:
+        ms: [/home/bester/projects/ESO137/msdir/ms1_target_ave4chan_bdafov2d98.ms,
+            /home/bester/projects/ESO137/msdir/ms2_target_ave4chan_bdafov2d98.ms]
+        basedir: /home/bester/projects/ESO137/output/wsclean
+        prefix: eso137_run1
+        channel-range: [32, 991]
+        column: DATA
+        size: 7690
+        scale: 0.953795asec
+        nchan: 20
+        multiscale-max-scales: 6
+        multiscale-scales: =UNSET
+
+
+      sgra:
+        ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_SGRA.ms]
+        basedir: /home/bester/projects/GC/output/sgra/wsclean
+        prefix: sgra_run1
+        channel-range: [51, 876]
+        column: CORRECTED_DATA
+        scale: 1.40436asec
+        nchan: 12
+        multiscale-max-scales: =UNSET
+        multiscale-scales: [0,10,15,20,25]
 
   inputs:
-    basedir:
-      required: true
-      info:
-        Base directory in which to place output data products.
-    prefix:
-      required: true
-      info:
-        Prefix to use for output images.
-    size:
-      dtype: Union[int, Tuple[int, int]]
-      required: true
-    scale:
-      dtype: Union[str, float]
-      required: true
+    obs:
+      info: Which observation to process
+      default: eso
+      choices:
+        - eso
+        - sgra
     nthreads:
       dtype: int
       required: true
-    column:
-      default: DATA
-    nchan:
-      dtype: int
-      default: 10
-    channel-range:
-      dtype: List[int]
-      default: [32, 991]
     weight:
       dtype: Tuple[str, float]
       default: [briggs,-0.3]
@@ -61,15 +68,17 @@ esoimage:
         threads: =recipe.nthreads
         weight: =recipe.weight
         multiscale: true
-        multiscale-max-scales: 8
+        multiscale-max-scales: =IFSET(recipe.multiscale-max-scales)
+        multiscale-scales: =IFSET(recipe.multiscale-scales)
         multiscale-gain: 0.15
         niter: 1000000
         nmiter: 10
         auto-threshold: 1
-        auto-mask: 4.0
+        auto-mask: 3.5
         gain: 0.1
         mgain: 0.85
         join-channels: true
+        fit-spectral-pol: 4
         padding: 2.0
         use-wgridder: true
         no-update-model-required: true
