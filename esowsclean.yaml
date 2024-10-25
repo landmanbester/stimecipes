@@ -34,6 +34,7 @@ esoimage:
         prefix: sgra_run1
         channel-range: [51, 876]
         column: CORRECTED_DATA
+        size: 9000
         scale: 1.40436asec
         nchan: 12
         multiscale-max-scales: =UNSET
