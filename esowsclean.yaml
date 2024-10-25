@@ -6,7 +6,7 @@ opts:
     dir: logs
     nest: 2
   backend:
-    select: native
+    select: singularity
 
 esoimage:
   name: esoimage
