@@ -12,7 +12,7 @@ esoimage:
   name: esoimage
   info: ESO137 imaging recipe
 
-  assign-based-on:
+  assign_based_on:
     obs:
       eso:
         ms: [/home/bester/projects/ESO137/msdir/ms1_target_ave4chan_bdafov2d98.ms,
