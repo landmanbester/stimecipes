@@ -118,6 +118,7 @@ image:
         max-field-of-view: =recipe.field-of-view
         bda-decorr: =recipe.bda-decorr
         freq-range: =recipe.freq-range
+        overwrite: =recipe.overwrite
       tags: [init]
 
     grid:
