@@ -110,7 +110,6 @@ image:
       params:
         ms: =recipe.ms
         gain-table: =recipe.gains
-        output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
         nthreads: 1
         nworkers: 64
         sigma-column: SIGMA_SPECTRUM
@@ -126,7 +125,6 @@ image:
       cab: pfb.grid
       info: 'Setup grid for imaging'
       params:
-        output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
         super-resolution-factor: =recipe.super-resolution-factor
         field-of-view: =recipe.field-of-view
         robustness: =recipe.robustness
@@ -140,12 +138,11 @@ image:
       cab: pfb.sara
       info: Cleaning step
       params:
-        output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
         niter: =recipe.niter
         bases: 'self,db1,db2,db3,db4'
         nlevels: 2
         l1-reweight-from: =recipe.l1-reweight-from
-        pd-tol: [2e-4]
+        pd-tol: [1e-4]
         pd-maxit: 450
         pd-verbose: 2
         pd-report-freq: 50
@@ -161,7 +158,6 @@ image:
       cab: pfb.restore
       info: Produce restored image.
       params:
-        output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
         nworkers: 10
         nthreads: 5
         outputs: iI
