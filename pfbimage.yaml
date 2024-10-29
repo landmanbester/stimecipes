@@ -42,7 +42,7 @@ image:
         channels-per-image: 69
 
   assign:
-    output-filename: '{recipe.basedir}/{recipe.obs}/run0'
+    output-filename: '{recipe.basedir}/{recipe.obs}/stage0'
     fits-output-folder: '{recipe.basedir}/{recipe.obs}/fits'
     log-directory: '{recipe.basedir}/{recipe.obs}/logs'
 
