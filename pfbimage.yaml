@@ -109,12 +109,11 @@ image:
       info: 'Initialise imaging data products'
       params:
         ms: =recipe.ms
-        gain-table: =recipe.gains
+        gain-table: =IFSET(recipe.gains)
         nthreads: 1
         nworkers: 64
         sigma-column: SIGMA_SPECTRUM
         channels-per-image: =recipe.channels-per-image
-        integrations-per-image: =recipe.integrations-per-image
         chan-average: =recipe.chan-average
         max-field-of-view: =recipe.field-of-view
         bda-decorr: =recipe.bda-decorr
