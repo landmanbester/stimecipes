@@ -18,48 +18,53 @@ opts:
 
 
 
-esoimage:
-  name: esoimage
-  info: ESO137 imaging recipe
-
-  assign:
-    ms: [/scratch/bester/ms1_target.zarr,/scratch/bester/ms2_target.zarr]
-    gains: ['/home/bester/projects/ESO137/output/gains/obs1/stage6_interp.qc/GJK-net',
-            '/home/bester/projects/ESO137/output/gains/obs2/stage6_interp.qc/GJK-net']
+image:
+  name: pfb-image
+  info: Example imaging recipe using pfb-imaging with stimela2
 
   assign_based_on:
-    band:
-      'FULL':
+    obs:
+      'esofull':
+        ms: [/scratch/bester/ms1_target.zarr,/scratch/bester/ms2_target.zarr]
+        gains: ['/home/bester/projects/ESO137/output/gains/obs1/stage6_interp.qc/GJK-net',
+                '/home/bester/projects/ESO137/output/gains/obs2/stage6_interp.qc/GJK-net']
         freq-range: '882750000.0:1685041015.625'  # 883063476.5625:1684727539.0625  # averaged min and max
-        channels-per-image: 384
-      'HI':
+        channels-per-image: 192
+      'esohi':
+        ms: [/scratch/bester/ms1_target.zarr,/scratch/bester/ms2_target.zarr]
+        gains: ['/home/bester/projects/ESO137/output/gains/obs1/stage6_interp.qc/GJK-net',
+                '/home/bester/projects/ESO137/output/gains/obs2/stage6_interp.qc/GJK-net']
         freq-range: '1.295e9:1.503e9'
-        channels-per-image: 100
-      'LO':
-        freq-range: '0.961e9:1.145e9'
-        channels-per-image: 100
+        channels-per-image: 96
+      'sgra':
+        ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_SGRA.ms]
+        freq-range: '570230468.75:1009042968.75'
+        channels-per-image: 69
 
+  assign:
+    output-filename: '{recipe.basedir}/{recipe.obs}/run0'
+    fits-output-folder: '{recipe.basedir}/{recipe.obs}/fits'
+    log-directory: '{recipe.basedir}/{recipe.obs}/logs'
+
+  aliases:
+    output-filename: '*.output-filename'
+    fits-output-folder: '*.fits-output-folder'
+    log-directory: '*.log-directory'
 
   inputs:
-    band:
-      default: FULL
-    fits-output-folder:
-      dtype: str
-      aliases: ['*.fits-output-folder']
+    obs:
+      default: esofull
+      choices: [esofull, esohi, sgra]
       info:
-        Directory to place fits files
-    log-directory:
-      dtype: str
-      aliases: ['*.log-directory']
+        Which observation to process
+    basedir:
+      dtype: Directory
+      required: true
       info:
-        Directory in which to place logs
-    integrations-per-image:
-      default: -1
-      info:
-        Number of integrations per image.
+        Base directory in which to place output data products.
     robustness:
       dtype: float
-      default: 0.0
+      default: -0.3
       info:
         Briggs robustness level.
         Less than -2 corresponds to uniform, larger than 2 to natural.
@@ -97,13 +102,6 @@ esoimage:
     overwrite:
       default: true
       aliases: ['*.overwrite']
-
-  outputs:
-    basedir:
-      dtype: Directory
-      required: true
-      info:
-        Base directory in which to place output data products.
 
   steps:
     init:
@@ -166,7 +164,7 @@ esoimage:
         output-filename: '{recipe.basedir}/{recipe.band}_bda{recipe.bda-decorr}_fov{recipe.field-of-view}'
         nworkers: 10
         nthreads: 5
-        outputs: mMrRiI
+        outputs: iI
       tags: [final]
 
 

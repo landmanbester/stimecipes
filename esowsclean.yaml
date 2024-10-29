@@ -25,7 +25,6 @@ esoimage:
         scale: 0.953795asec
         nchan: 20
         multiscale-max-scales: 6
-        multiscale-scales: =UNSET
 
 
       sgra:
@@ -37,7 +36,6 @@ esoimage:
         size: 9000
         scale: 1.40436asec
         nchan: 12
-        multiscale-max-scales: =UNSET
         multiscale-scales: [0,10,15,20,25]
 
   inputs:
