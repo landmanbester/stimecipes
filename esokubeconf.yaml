@@ -101,8 +101,69 @@ esoimage:
         fits-mfs: false
         fits-cubes: false
         nthreads: 90
-    # pull_model:
-    #   cab: s3tolocal
-    #   params:
-    #     source: s3://path
-    #     dest: /local/path
+
+    pull_model:
+      cab: s3tolocal
+      params:
+        source: s3://ratt-public-data/ESO137/stage1_HI_I.mds
+        dest: /home/bester/projects/ESO137/output/aws/
+
+
+cabs:
+  s3tolocal:
+    name: s3tolocal
+    command: aws s3 cp
+    policies:
+      positional: true
+    inputs:
+      source:
+        info: The location to fetch the model from
+        dtype: URI
+        required: true
+
+    outputs:
+      dest:
+        info: The location to place the model
+        required: true
+        dtype: Directory
+        mkdir: true
+
+  compare_models:
+    name: compare_models
+    flavour: python-code
+    backend:
+      select: native
+      native:
+        virtualenv: ~/.venv/pfb
+    command: |
+      import numpy as np
+      import xarray as xr
+      import sympy as sm
+      from pfb.utils.misc import model_from_mds
+
+      mds1 = xr.open_zarr(model_local, chunks=None)
+      mds2 = xr.open_zarr(model_remote, chunks=None)
+
+      model1 = model_from_mds(mds1)
+      model2 = model_from_mds(mds2)
+      diff = model1 - model2
+      try:
+        assert np.allclose(1 + diff, atol=eps, rtol=eps)
+      except:
+        raise ValueError("Models don't match")
+
+    inputs:
+      model-local:
+        info: Model obtained by executing locally
+        required: true
+        dtype: str
+      model-remote:
+        info: Model obtained by executing remotely
+        required: true
+        dtype: str
+      epsilon:
+        info: Precision with which to compare models
+        default: 1e-7
+        dtype: float
+    outputs:
+      {}

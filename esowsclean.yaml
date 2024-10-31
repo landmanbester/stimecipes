@@ -32,11 +32,12 @@ esoimage:
         basedir: /home/bester/projects/GC/output/sgra/wsclean
         prefix: sgra_run1
         channel-range: [51, 876]
-        column: CORRECTED_DATA
+        column: DATA
         size: 9000
-        scale: 1.40436asec
+        scale: 1.68524asec
         nchan: 12
-        multiscale-scales: [0,10,15,20,25]
+        multiscale-max-scales: 6
+        # multiscale-scales: [0,10,15,20,25]
 
   inputs:
     obs:
