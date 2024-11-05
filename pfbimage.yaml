@@ -28,7 +28,7 @@ image:
         ms: [/scratch/bester/ms1_target.zarr,/scratch/bester/ms2_target.zarr]
         gains: ['/home/bester/projects/ESO137/output/gains/obs1/stage6_interp.qc/GJK-net',
                 '/home/bester/projects/ESO137/output/gains/obs2/stage6_interp.qc/GJK-net']
-        freq-range: '882750000.0:1685041015.625'  # 883063476.5625:1684727539.0625  # averaged min and max
+        freq-range: '882750000.0:1685041015.625'
         channels-per-image: 192
       'esohi':
         ms: [/scratch/bester/ms1_target.zarr,/scratch/bester/ms2_target.zarr]

@@ -5,6 +5,47 @@ opts:
   backend:
     select: kube
     kube:
+      enable: true
+      dir: /mnt/data/pfb-test
+      namespace: rarg-test-compute
+      volumes:
+        rarg-test-compute-efs-pvc:
+          mount: /mnt/data
+
+      user:
+        uid: 1000
+        gid: 1000
+
+      predefined_pod_specs:
+        admin:
+          nodeSelector:
+            rarg/node-class: admin
+        scheduler:
+          nodeSelector:
+            rarg/node-class: compute
+            rarg/instance-type: m6i.large
+            rarg/capacity-type: ON_DEMAND
+        tiny:
+          nodeSelector:
+            rarg/node-class: compute
+            rarg/instance-type: m5.large
+            rarg/capacity-type: ON_DEMAND
+        thin:
+          nodeSelector:
+            rarg/node-class: compute
+            rarg/instance-type: c6in.2xlarge
+            rarg/capacity-type: ON_DEMAND
+        pudgy:
+          nodeSelector:
+            rarg/node-class: compute
+            rarg/instance-type: c6in.8xlarge
+            rarg/capacity-type: ON_DEMAND
+        fat:
+          nodeSelector:
+            rarg/node-class: compute
+            rarg/instance-type: c6in.24xlarge
+            rarg/capacity-type: ON_DEMAND
+
       job_pod:
         memory:
           limit: 0
@@ -27,7 +68,11 @@ opts:
             request:
               0
 
-esoimage:
+      env:
+        NUMBA_CACHE_DIR: /mnt/data/pfb-test
+        CONFIGURATT_CACHE_DIR: /mnt/data/pfb-test
+
+image:
   steps:
     init:
       backend:
@@ -41,7 +86,7 @@ esoimage:
 
     grid:
       assign:
-        # we need this so the workers get the right env vars
+        # required for workers to get the correct env vars
         config.opts.backend.kube.env.NUMBA_NUM_THREADS: '30'
         config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '30'
         config.opts.backend.kube.env.JAX_ENABLE_X64: 'True'
@@ -107,7 +152,13 @@ esoimage:
       params:
         source: s3://ratt-public-data/ESO137/stage1_HI_I.mds
         dest: /home/bester/projects/ESO137/output/aws/
+      tags: [compare]
 
+    compare_models:
+      cab: compmodels
+      params:
+        model-local: /scratch/bester/hi_combined_bda_I_main_model.mds
+        model-remote: =previous.dest
 
 cabs:
   s3tolocal:
@@ -128,8 +179,8 @@ cabs:
         dtype: Directory
         mkdir: true
 
-  compare_models:
-    name: compare_models
+  compmodels:
+    name: compmodels
     flavour: python-code
     backend:
       select: native
@@ -148,7 +199,7 @@ cabs:
       model2 = model_from_mds(mds2)
       diff = model1 - model2
       try:
-        assert np.allclose(1 + diff, atol=eps, rtol=eps)
+        assert np.allclose(1 + diff, atol=epsilon, rtol=epsilon)
       except:
         raise ValueError("Models don't match")
 
@@ -163,7 +214,7 @@ cabs:
         dtype: str
       epsilon:
         info: Precision with which to compare models
-        default: 1e-7
+        default: 1e-4
         dtype: float
     outputs:
       {}

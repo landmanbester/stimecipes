@@ -8,9 +8,9 @@ opts:
   backend:
     select: singularity
 
-esoimage:
-  name: esoimage
-  info: ESO137 imaging recipe
+image:
+  name: wsclean image
+  info: wsclean imaging recipe
 
   assign_based_on:
     obs:
@@ -37,7 +37,6 @@ esoimage:
         scale: 1.68524asec
         nchan: 12
         multiscale-max-scales: 6
-        # multiscale-scales: [0,10,15,20,25]
 
   inputs:
     obs:
