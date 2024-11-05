@@ -33,7 +33,7 @@ esoimage:
         prefix: sgra_run1
         channel-range: [51, 876]
         column: DATA
-        size: 9000
+        size: 7500
         scale: 1.68524asec
         nchan: 12
         multiscale-max-scales: 6

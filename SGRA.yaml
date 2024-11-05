@@ -51,7 +51,7 @@ sgraimage:
         Number of integrations per image.
     robustness:
       dtype: float
-      default: -0.3
+      default: -1.0  # -1, -0.3, 0.0
       info:
         Briggs robustness level.
         Less than -2 corresponds to uniform, larger than 2 to natural.
@@ -63,6 +63,10 @@ sgraimage:
       default: 2.5
       info:
         How much to oversample Nyquist by at the highest frequency
+    # npix:
+    #   dtype: int
+    # cell-size:
+    #   dtype: float
     chan-average:
       dtype: int
       default: 1
@@ -70,7 +74,7 @@ sgraimage:
         How many channels to average together
     bda-decorr:
       dtype: float
-      default: 0.99
+      default: 0.95
       info:
         Amount of amplitude loss that can be tolerated at edge of field
     niter:
@@ -83,7 +87,7 @@ sgraimage:
       default: 7
     rmsfactor:
       dtype: float
-      default: 1.0
+      default: 1.0  # 3 -> just after cal transfer, 0.5 -> minimum before getting crap in the model
       info:
         Multiple of the rms to threshold by
     alpha:
@@ -106,7 +110,7 @@ sgraimage:
       params:
         ms: =recipe.ms
         nthreads: 1
-        nworkers: 32
+        nworkers: 16
         sigma-column: SIGMA_SPECTRUM
         channels-per-image: =recipe.channels-per-image
         integrations-per-image: =recipe.integrations-per-image
@@ -120,11 +124,12 @@ sgraimage:
       cab: pfb.grid
       info: 'Setup grid for imaging'
       params:
-        super-resolution-factor: =recipe.super-resolution-factor
-        field-of-view: =recipe.field-of-view
+        super-resolution-factor: =IFSET(recipe.super-resolution-factor)
+        field-of-view: =IFSET(recipe.field-of-view)
         robustness: =recipe.robustness
+        # will use nworkers * nthreads cpus
         nthreads: 6
-        nworkers: 6
+        nworkers: 6  # nband//2
         psf-oversize: 1.4
         transfer-model-from: =recipe.tmf
         overwrite: =recipe.overwrite
@@ -134,7 +139,7 @@ sgraimage:
       info: Cleaning step
       params:
         niter: =recipe.niter
-        bases: 'self,db1,db2,db3,db4,db5'
+        bases: 'self,db1,db2,db3'
         nlevels: 2
         l1-reweight-from: =recipe.l1-reweight-from
         pd-tol: [1e-4]
@@ -147,7 +152,7 @@ sgraimage:
         eta: 1e-3
         alpha: =recipe.alpha
         positivity: 1
-        nthreads: 36
+        nthreads: 36  # nthreads_per_basis = floor(nthreads//nband)
 
     restore:
       cab: pfb.restore
