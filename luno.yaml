@@ -40,7 +40,7 @@ kgb:
         input_ms.freq_chunk: '0'
         input_ms.select_uv_range: [0,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
-        input_ms.select_field: [1]
+        input_ms.select_fields: [1]
         # input_ms.select_corr: [0, 3]
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
