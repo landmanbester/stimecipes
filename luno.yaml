@@ -35,7 +35,7 @@ kgb:
             K = per scan delay
             B = frequency variable complex gain (bandpass)
       params:
-        input_ms.path: recipe.ms
+        input_ms.path: =recipe.ms
         input_ms.time_chunk: '0'
         input_ms.freq_chunk: '0'
         input_ms.select_uv_range: [0,0]
