@@ -1,0 +1,35 @@
+_include:
+  - (cultcargo)tricolour.yml
+
+flag:
+  name: flag
+  info: Flag using cult-cargo tricolour version
+
+  inputs:
+    ms:
+      dtype: MS
+      required: true
+    config:
+      dtype: File
+      required: true
+    fs:
+      dtype: str
+      default: polarisation
+    dc:
+      dtype: str
+      default: DATA
+    nthreads:
+      dtype: int
+      default: 32
+
+  steps:
+    go:
+      cab: tricolour
+      params:
+        ms: =recipe.ms
+        config: =recipe.config
+        ignore_flags: false
+        flagging-strategy: =recipe.fs
+        nworkers: =recipe.nthreads
+        data-column: =recipe.dc
+
