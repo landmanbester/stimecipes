@@ -1,6 +1,19 @@
 _include:
   - (cultcargo)tricolour.yml
 
+opts:
+  log:
+    dir: logs
+    nest: 2
+  backend:
+    select: singularity
+    singularity:
+      rebuild: true
+      bind_dirs:
+        /home/bester/numba_cache: rw
+      env:
+        NUMBA_CACHE_DIR: /home/bester/numba_cache
+
 flag:
   name: flag
   info: Flag using cult-cargo tricolour version
@@ -28,7 +41,7 @@ flag:
       params:
         ms: =recipe.ms
         config: =recipe.config
-        ignore_flags: false
+        ignore-flags: false
         flagging-strategy: =recipe.fs
         nworkers: =recipe.nthreads
         data-column: =recipe.dc
