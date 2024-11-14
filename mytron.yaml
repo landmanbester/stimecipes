@@ -1,0 +1,76 @@
+
+
+opts:
+  log:
+    dir: logs/log-{config.run.datetime}
+    nest: 2
+  backend:
+    select: native
+
+# common band settings
+vars:
+  bands:
+    UHF:
+      primary-beam-band: UHF
+      htc.field-of-view: 1.5
+      htc.super-resolution-factor: 1.2
+      htc.robustness: 0.0
+      lightcurves-within: 1deg
+      breifast.max-distance: 2
+      breifast.candidate-threshold: 6
+      breifast.detection-threshold: 7
+      flag-cube.flag-excess-rms: 1.5
+      breifast.reject-flux-threshold: 0.1
+      breifast.reject-mean-threshold: 0.1
+      # breifast.render.drop-pos-neg: false
+      lightcurves.primary-beam: MeerKAT_U_band_primary_beam
+
+    L:
+      primary-beam-band: L
+      htc.field-of-view: 1.0
+      htc.super-resolution-factor: 1.2
+      htc.robustness: 0.0
+      lightcurves-within: 1deg
+      breifast.max-distance: 1
+      breifast.candidate-threshold: 6
+      breifast.detection-threshold: 7
+      flag-cube.flag-excess-rms: 1.5
+      breifast.reject-flux-threshold: 0.1
+      breifast.reject-mean-threshold: 0.1
+      breifast.procres.detect-stokes-p: true
+      lightcurves.interesting-regions: {'parrot': interesting-sources.reg}
+
+tron:
+  name: tron with custom selections
+
+  assign:
+    # some more default directory assignments
+    dirs:
+      ms: ../msdir       # MSs live here
+      temp: ./tmp        # "{config.run.env.HOME}/tmp"   # temp files go here
+      cubes: '{recipe.dir-out}/cubes'
+
+  assign_based_on:
+    obs:
+      SGRA:
+        _use: vars.bands.UHF
+        ms: msdir/1590089458_sdp_l0_1024ch_SGRA.ms
+        dir-out: output/sgra/tron
+        band: UHF
+        deep-image: output/sgra/fits/stage0_I_main_image_mfs.fits
+        column.data: DATA-MODEL_DATA_PFB # CORRECTED_DATA - MODEL_DATA
+        column.weight: WEIGHT_SPECTRUM
+
+      ESO137:
+        _use: vars.bands.L
+        ms: /scratch/bester/ms1_target.zarr
+        dir-out: output/eso137/tron
+        band: L
+        deep-image: output/fits/stage9/stage9_combined_bda_I_main_image_mfs.fits
+        column.data: DATA
+        column.weight: WEIGHT_SPECTRUM
+
+  inputs:
+    obs:
+      info: observation label
+      required: true

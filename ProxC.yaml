@@ -1,0 +1,159 @@
+_include:
+  - (pfb)stimela_cabs.yml
+
+opts:
+  log:
+    dir: logs
+    nest: 2
+  backend:
+    select: native
+
+sgraimage:
+  info: SGRA imaging recipe
+
+  assign_based_on:
+    obs:
+      'proxc':
+        ms: [msdir/1618080207_sdp_l0_1024ch_ProxCen.ms]
+
+  assign:
+    output-filename: '{recipe.basedir}/{recipe.obs}/run1'
+    fits-output-folder: '{recipe.basedir}/{recipe.obs}/fits'
+    log-directory: '{recipe.basedir}/{recipe.obs}/logs'
+
+  aliases:
+    output-filename: '*.output-filename'
+    fits-output-folder: '*.fits-output-folder'
+    log-directory: '*.log-directory'
+
+  inputs:
+    basedir:
+      default: '/home/bester/projects/ProxCenUHF/output'
+      info:
+        Base directory in which to place output data products.
+    obs:
+      default: proxc
+      choices: ['proxc']
+    freq-range:
+      dtype: str
+      info:
+        Frequency range to image (if different from full band)
+    channels-per-image:
+      default: 128
+      info:
+        Number of channels per image.
+        Determines number of output bands.
+    integrations-per-image:
+      default: -1
+      info:
+        Number of integrations per image.
+    robustness:
+      dtype: float
+      default: -1.0  # -1, -0.3, 0.0
+      info:
+        Briggs robustness level.
+        Less than -2 corresponds to uniform, larger than 2 to natural.
+    field-of-view:
+      dtype: float
+      default: 4.5
+    super-resolution-factor:
+      dtype: float
+      default: 2.5
+      info:
+        How much to oversample Nyquist by at the highest frequency
+    chan-average:
+      dtype: int
+      default: 1
+      info:
+        How many channels to average together
+    bda-decorr:
+      dtype: float
+      default: 0.98
+      info:
+        Amount of amplitude loss that can be tolerated at edge of field
+    niter:
+      dtype: int
+      default: 15
+      info:
+        Number of major cycles
+    l1-reweight-from:
+      dtype: int
+      default: 7
+    rmsfactor:
+      dtype: float
+      default: 2.0
+      info:
+        Multiple of the rms to threshold by
+    alpha:
+      dtype: float
+      default: 4
+      info:
+        How aggressively to reweight
+    overwrite:
+      default: true
+      aliases: ['*.overwrite']
+    tmf:
+      dtype: str
+      info:
+        Transfer model from this component model
+
+  steps:
+    init:
+      cab: pfb.init
+      info: 'Initialise imaging data products'
+      params:
+        ms: =recipe.ms
+        nthreads: 1
+        nworkers: 16
+        sigma-column: SIGMA_SPECTRUM
+        channels-per-image: =recipe.channels-per-image
+        integrations-per-image: =recipe.integrations-per-image
+        chan-average: =recipe.chan-average
+        max-field-of-view: =recipe.field-of-view
+        bda-decorr: =recipe.bda-decorr
+        freq-range: =IFSET(recipe.freq-range)
+        overwrite: =recipe.overwrite
+
+    grid:
+      cab: pfb.grid
+      info: 'Setup grid for imaging'
+      params:
+        super-resolution-factor: =IFSET(recipe.super-resolution-factor)
+        field-of-view: =IFSET(recipe.field-of-view)
+        robustness: =recipe.robustness
+        # will use nworkers * nthreads cpus
+        nthreads: 6
+        nworkers: 6  # nband//2
+        psf-oversize: 1.4
+        transfer-model-from: =IFSET(recipe.tmf)
+        overwrite: =recipe.overwrite
+
+    sara:
+      cab: pfb.sara
+      info: Cleaning step
+      params:
+        niter: =recipe.niter
+        bases: 'self,db1,db2'
+        nlevels: 2
+        l1-reweight-from: =recipe.l1-reweight-from
+        pd-tol: [2e-4]
+        pd-maxit: 450
+        pd-verbose: 2
+        pd-report-freq: 50
+        tol: 1e-3
+        gamma: 0.99
+        rmsfactor: =recipe.rmsfactor
+        eta: 1e-3
+        alpha: =recipe.alpha
+        positivity: 2
+        nthreads: 36
+
+    restore:
+      cab: pfb.restore
+      info: Produce restored image.
+      params:
+        nworkers: 6
+        nthreads: 6
+        outputs: iI
+
+
