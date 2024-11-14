@@ -56,7 +56,7 @@ selfcal:
         # input_ms.sigma_column:   #=recipe.sigma-column
         input_ms.time_chunk: 28
         input_ms.freq_chunk: 0
-        input_ms.select_uv_range: [0,0]
+        input_ms.select_uv_range: [150,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
         input_model.recipe: =recipe.model-column
