@@ -38,6 +38,17 @@ image:
         nchan: 12
         multiscale-max-scales: 6
 
+      smc:
+        ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_SGRA.ms]
+        basedir: /home/bester/projects/GC/output/sgra/wsclean
+        prefix: sgra_run1
+        channel-range: [51, 876]
+        column: DATA
+        size: 7500
+        scale: 1.68524asec
+        nchan: 12
+        multiscale-max-scales: 6
+
   inputs:
     obs:
       info: Which observation to process
@@ -45,6 +56,7 @@ image:
       choices:
         - eso
         - sgra
+        - smc
     nthreads:
       dtype: int
       required: true

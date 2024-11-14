@@ -72,6 +72,9 @@ kgb:
         B.time_interval: 0
         B.freq_interval: 1
 
+    phaseball:
+
+
 
 selfcal:
   name: Lunocal

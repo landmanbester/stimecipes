@@ -38,6 +38,14 @@ sgraimage:
     obs:
       default: sgra
       choices: ['sgra','gcx17','gcx30']
+    data-column:
+      default: DATA
+      info:
+        Data column to image
+    model-column:
+      default: MODEL_DATA
+      info:
+        Column to write model visibilities to
     freq-range:
       default: '570230468.75:1009042968.75'  # clip fully flagged parts
     channels-per-image:
@@ -102,6 +110,11 @@ sgraimage:
       dtype: str
       info:
         Transfer model from this component model
+    bases:
+      dtype: str
+      default: 'self,db1,db2'
+      info:
+        Bases to use for Psi dictionary
 
   steps:
     init:
@@ -111,6 +124,7 @@ sgraimage:
         ms: =recipe.ms
         nthreads: 1
         nworkers: 16
+        data-column: =recipe.data-column
         sigma-column: SIGMA_SPECTRUM
         channels-per-image: =recipe.channels-per-image
         integrations-per-image: =recipe.integrations-per-image
@@ -127,9 +141,8 @@ sgraimage:
         super-resolution-factor: =IFSET(recipe.super-resolution-factor)
         field-of-view: =IFSET(recipe.field-of-view)
         robustness: =recipe.robustness
-        # will use nworkers * nthreads cpus
         nthreads: 6
-        nworkers: 6  # nband//2
+        nworkers: 6
         psf-oversize: 1.4
         transfer-model-from: =IFSET(recipe.tmf)
         overwrite: =recipe.overwrite
@@ -139,7 +152,7 @@ sgraimage:
       info: Cleaning step
       params:
         niter: =recipe.niter
-        bases: 'self,db1,db2,db3'
+        bases: =recipe.bases
         nlevels: 2
         l1-reweight-from: =recipe.l1-reweight-from
         pd-tol: [1e-4]
@@ -161,3 +174,14 @@ sgraimage:
         nworkers: 6
         nthreads: 6
         outputs: iI
+
+    degrid:
+      cab: pfb.degrid
+      info: Render model to visibilities
+      params:
+        ms: =recipe.ms
+        model-column: =recipe.model-column
+        nworkers: 2
+        nthreads: 16
+        freq-range: =IFSET(recipe.freq-range)
+
