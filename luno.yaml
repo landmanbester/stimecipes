@@ -11,9 +11,9 @@ opts:
     select: native
 
 
-kgb:
-  name: kgb
-  info: KGB calibration
+1GC:
+  name: 1gc
+  info: First generation calibration using QuartiCal
 
   assign:
     ms: /home/lbester/projects/MOON/l.ms
@@ -28,7 +28,7 @@ kgb:
 
 
   steps:
-    primkgb:
+    kgb:
       cab: quartical
       info: GKB on the primary where
             G = time variable complex gain,
@@ -57,7 +57,7 @@ kgb:
         output.columns: [CORRECTED_DATA_QCAL]
         output.flags: false
         output.apply_p_jones_inv: false
-        output.net_gains: [[G,K,B]]
+        output.net_gains: [G,K,B]
         mad_flags.enable: false
         dask.threads: 2
         dask.scheduler: threads
@@ -72,8 +72,53 @@ kgb:
         B.time_interval: 0
         B.freq_interval: 1
 
-    phaseball:
-
+    phasecal:
+      cab: quartical
+      info: Delay and offset on the secondary
+      params:
+        input_ms.path: =recipe.ms
+        input_ms.time_chunk: '0'
+        input_ms.freq_chunk: '0'
+        input_ms.select_uv_range: [0,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+        input_ms.select_fields: [2]
+        # input_ms.select_corr: [0, 3]
+        input_model.recipe: '{recipe.model-column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G, K, B, D]
+        solver.iter_recipe: [100]
+        solver.propagate_flags: false
+        solver.robust: false
+        solver.threads: 16
+        solver.reference_antenna: 4
+        output.gain_directory: '{recipe.basedir}/gk.qc'
+        output.log_directory: '{recipe.basedir}/'
+        output.overwrite: true
+        output.products: [corrected_data]
+        output.columns: [CORRECTED_DATA_QCAL]
+        output.flags: false
+        output.apply_p_jones_inv: false
+        output.net_gains: [G,K,B,D]
+        mad_flags.enable: false
+        dask.threads: 2
+        dask.scheduler: threads
+        G.type: diag_complex
+        G.time_interval: 0
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/gkb.qc/G'
+        K.type: delay
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/gkb.qc/K'
+        B.type: diag_complex
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.load_from: '{recipe.basedir}/gkb.qc/B'
+        D.type: delay_and_offset
+        D.time_interval: 0
+        D.freq_interval: 0
+        D.initial_estimate: true
 
 
 selfcal:
