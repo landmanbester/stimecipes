@@ -44,8 +44,8 @@ opts:
         # input_ms.select_corr: [0, 3]
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
-        solver.terms: [G,K,B]
-        solver.iter_recipe: [50,50,50,25,25,25]
+        solver.terms: [G,K,B,P]
+        solver.iter_recipe: [50,50,50,0,25,25,25,0]
         solver.propagate_flags: false
         solver.robust: false
         solver.threads: 16
@@ -57,7 +57,7 @@ opts:
         output.columns: [CORRECTED_DATA_QCAL]
         output.flags: false
         output.apply_p_jones_inv: false
-        output.net_gains: [G,K,B]
+        output.net_gains: [[G,K,B],[G,K,B,P]]
         mad_flags.enable: false
         dask.threads: 2
         dask.scheduler: threads
@@ -71,6 +71,9 @@ opts:
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
+        P.type: paralactic_angle
+        P.time_interval: 1
+        P.freq_interval: 0
 
     phasecal:
       cab: quartical
