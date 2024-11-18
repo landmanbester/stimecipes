@@ -68,7 +68,7 @@ opts:
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: true
-        B.type: diag_complex
+        B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
 
