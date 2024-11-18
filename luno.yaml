@@ -71,7 +71,7 @@ opts:
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
-        P.type: paralactic_angle
+        P.type: parallactic_angle
         P.time_interval: 1
         P.freq_interval: 0
 
