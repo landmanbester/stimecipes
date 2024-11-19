@@ -39,18 +39,18 @@ opts:
         input_ms.time_chunk: '0'
         input_ms.freq_chunk: '0'
         input_ms.select_uv_range: [0,0]
-        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_fields: [1]
         # input_ms.select_corr: [0, 3]
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
         solver.terms: [G,K,B,P]
-        solver.iter_recipe: [50,50,50,0,25,25,25,0]
+        solver.iter_recipe: [50,50,50,0,25,25,25,0,15,15,15,0,5,5,5,0]
         solver.propagate_flags: false
-        solver.robust: false
+        solver.robust: true
         solver.threads: 16
         solver.reference_antenna: 4
-        output.gain_directory: '{recipe.basedir}/gkb.qc'
+        output.gain_directory: '{recipe.basedir}/gkb_coarse_binf.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
         output.products: [corrected_data]
@@ -70,7 +70,8 @@ opts:
         K.initial_estimate: true
         B.type: complex
         B.time_interval: 0
-        B.freq_interval: 1
+        B.freq_interval: 8
+        B.respect_scan_boundaries: false
         P.type: parallactic_angle
         P.time_interval: 1
         P.freq_interval: 0
