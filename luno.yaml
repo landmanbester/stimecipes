@@ -109,16 +109,16 @@ opts:
         G.type: diag_complex
         G.time_interval: 0
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb_course_binf.qc/G'
+        G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/G'
         K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb_course_binf.qc/K'
+        K.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/K'
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/gkb_course_binf.qc/B'
+        B.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/B'
         D.type: delay_and_offset
         D.time_interval: 0
         D.freq_interval: 0
@@ -159,12 +159,12 @@ opts:
         G.type: diag_complex
         G.time_interval: 0
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb_course_binf.qc/G'
+        G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/G'
         K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb_course_binf.qc/K'
+        K.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/K'
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
