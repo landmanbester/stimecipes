@@ -89,40 +89,98 @@ opts:
         # input_ms.select_corr: [0, 3]
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
-        solver.terms: [G, K, B, D]
-        solver.iter_recipe: [0, 0, 0, 100]
+        solver.terms: [G, K, B, D, P]
+        solver.iter_recipe: [0, 0, 0, 100, 0]
         solver.propagate_flags: false
         solver.robust: false
         solver.threads: 16
         solver.reference_antenna: 4
-        output.gain_directory: '{recipe.basedir}/gk.qc'
+        output.gain_directory: '{recipe.basedir}/delay_and_offset.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
         output.products: [corrected_data]
         output.columns: [CORRECTED_DATA_QCAL]
         output.flags: false
         output.apply_p_jones_inv: false
-        output.net_gains: [G,K,B,D]
+        output.net_gains: [[G,K,B,D,P],[G,K,B,D]]
         mad_flags.enable: false
         dask.threads: 2
         dask.scheduler: threads
         G.type: diag_complex
         G.time_interval: 0
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb.qc/G'
+        G.load_from: '{recipe.basedir}/gkb_course_binf.qc/G'
         K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb.qc/K'
-        B.type: diag_complex
+        K.load_from: '{recipe.basedir}/gkb_course_binf.qc/K'
+        B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/gkb.qc/B'
+        B.load_from: '{recipe.basedir}/gkb_course_binf.qc/B'
         D.type: delay_and_offset
         D.time_interval: 0
         D.freq_interval: 0
-        D.initial_estimate: true
+        D.initial_estimate: false
+        P.type: parallactic_angle
+        P.time_interval: 1
+        P.freq_interval: 0
+
+    crosshand_phase:
+      cab: quartical
+      info: Crosshand phase on the polcal
+      params:
+        input_ms.path: =recipe.ms
+        input_ms.time_chunk: '0'
+        input_ms.freq_chunk: '0'
+        input_ms.select_uv_range: [0,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+        input_ms.select_fields: [0]
+        input_model.recipe: '{recipe.model-column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G, K, B, D, C, P]
+        solver.iter_recipe: [0, 0, 0, 0, 100, 0]
+        solver.propagate_flags: false
+        solver.robust: false
+        solver.threads: 16
+        solver.reference_antenna: 4
+        output.gain_directory: '{recipe.basedir}/crosshand_phase.qc'
+        output.log_directory: '{recipe.basedir}/'
+        output.overwrite: true
+        output.products: [corrected_data]
+        output.columns: [CORRECTED_DATA_QCAL]
+        output.flags: false
+        output.apply_p_jones_inv: false
+        output.net_gains: [[G,K,B,D,P],[G,K,B,D]]
+        mad_flags.enable: false
+        dask.threads: 2
+        dask.scheduler: threads
+        G.type: diag_complex
+        G.time_interval: 0
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/gkb_course_binf.qc/G'
+        K.type: delay
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/gkb_course_binf.qc/K'
+        B.type: complex
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.load_from: '{recipe.basedir}/delay_and_offset.qc/B'
+        D.type: delay_and_offset
+        D.time_interval: 0
+        D.freq_interval: 0
+        D.initial_estimate: false
+        D.load_from: '{recipe.basedir}/delay_and_offset.qc/D'
+        C.type: crosshand_phase_null_v
+        C.solve_per: array
+        C.time_interval: 0
+        C.freq_interval: 1
+        P.type: parallactic_angle
+        P.time_interval: 1
+        P.freq_interval: 0
 
 
 selfcal:
