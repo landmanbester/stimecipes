@@ -48,7 +48,7 @@ opts:
         solver.iter_recipe: [50,50,50,0,25,25,25,0,15,15,15,0,5,5,5,0]
         solver.propagate_flags: false
         solver.robust: true
-        solver.threads: 16
+        solver.threads: 32
         solver.reference_antenna: 2
         output.gain_directory: '{recipe.basedir}/gkb_coarse_binf.qc'
         output.log_directory: '{recipe.basedir}/'
