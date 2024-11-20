@@ -192,9 +192,9 @@ selfcal:
   assign_based_on:
     obs:
       'cals':
-        ms: /home/lbester/projects/MOON/l.ms
+        ms: /home/bester/projects/MOON/l.ms
       'luno':
-        ms: /home/lbester/projects/MOON/l_moon.ms
+        ms: /home/bester/projects/MOON/l_moon.ms
 
   inputs:
     obs:
