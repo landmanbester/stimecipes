@@ -182,8 +182,8 @@ opts:
         P.time_interval: 1
         P.freq_interval: 0
 
-    transfer:
-      # K(prim) Gphase(sec) B(prim) C(pol) P
+    # transfer:
+    #   # K(prim) Gphase(sec) B(prim) C(pol) P
 
 selfcal:
   name: Lunocal
