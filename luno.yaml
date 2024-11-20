@@ -46,7 +46,7 @@ opts:
         input_model.apply_p_jones: false
         solver.terms: [G,K,B,P]
         solver.iter_recipe: [50,50,50,0,25,25,25,0,15,15,15,0,5,5,5,0]
-        solver.propagate_flags: false
+        solver.propagate_flags: true
         solver.robust: true
         solver.threads: 32
         solver.reference_antenna: 2
@@ -55,7 +55,7 @@ opts:
         output.overwrite: true
         output.products: [corrected_data]
         output.columns: [CORRECTED_DATA_QCAL]
-        output.flags: false
+        output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [[G,K,B],[G,K,B,P]]
         mad_flags.enable: true
