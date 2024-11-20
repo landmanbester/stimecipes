@@ -84,7 +84,7 @@ opts:
         input_ms.time_chunk: '0'
         input_ms.freq_chunk: '0'
         input_ms.select_uv_range: [0,0]
-        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_fields: [0]
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
@@ -105,7 +105,7 @@ opts:
         mad_flags.enable: false
         dask.threads: 2
         dask.scheduler: threads
-        G.type: diag_complex
+        G.type: diag_complex  # amp
         G.time_interval: 0
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/G'
@@ -125,7 +125,8 @@ opts:
         C.type: crosshand_phase_null_v
         C.solve_per: array
         C.time_interval: 0
-        C.freq_interval: 1
+        C.freq_interval: 128
+        C.respect_scan_boundaries: false
         P.type: parallactic_angle
         P.time_interval: 1
         P.freq_interval: 0
@@ -143,7 +144,7 @@ opts:
         # input_ms.select_corr: [0, 3]
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
-        solver.terms: [G, K, B, D, P]
+        solver.terms: [G, K, B, C, D, P]
         solver.iter_recipe: [0, 0, 0, 100, 0]
         solver.propagate_flags: false
         solver.robust: false
@@ -160,7 +161,7 @@ opts:
         mad_flags.enable: false
         dask.threads: 2
         dask.scheduler: threads
-        G.type: diag_complex
+        G.type: diag_complex  #amp
         G.time_interval: 0
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/G'
@@ -173,7 +174,7 @@ opts:
         B.time_interval: 0
         B.freq_interval: 1
         B.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/B'
-        D.type: delay_and_offset
+        D.type: delay_and_offset  # phase to target
         D.time_interval: 0
         D.freq_interval: 0
         D.initial_estimate: false
@@ -181,6 +182,8 @@ opts:
         P.time_interval: 1
         P.freq_interval: 0
 
+    transfer:
+      # K(prim) Gphase(sec) B(prim) C(pol) P
 
 selfcal:
   name: Lunocal
