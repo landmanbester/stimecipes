@@ -16,7 +16,8 @@ opts:
   info: First generation calibration using QuartiCal
 
   assign:
-    ms: /home/bester/projects/MOON/msdir/l.ms
+    ms_cals: /home/bester/projects/MOON/msdir/l.ms
+    ms_target: /home/bester/projects/MOON/msdir/l.ms
 
   inputs:
     basedir:
@@ -35,13 +36,12 @@ opts:
             K = per scan delay
             B = frequency variable complex gain (bandpass)
       params:
-        input_ms.path: =recipe.ms
-        input_ms.time_chunk: '0'
-        input_ms.freq_chunk: '0'
+        input_ms.path: =recipe.ms_cals
+        input_ms.time_chunk: 0
+        input_ms.freq_chunk: 0
         input_ms.select_uv_range: [0,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_fields: [1]
-        # input_ms.select_corr: [0, 3]
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
         solver.terms: [G,K,B,P]
@@ -49,7 +49,7 @@ opts:
         solver.propagate_flags: false
         solver.robust: true
         solver.threads: 16
-        solver.reference_antenna: 4
+        solver.reference_antenna: 2
         output.gain_directory: '{recipe.basedir}/gkb_coarse_binf.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
@@ -58,7 +58,10 @@ opts:
         output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains: [[G,K,B],[G,K,B,P]]
-        mad_flags.enable: false
+        mad_flags.enable: true
+        mad_flags.threshold_bl: 5.5
+        mad_flags.threshold_global: 0
+        mad_flags.max_deviation: 0
         dask.threads: 2
         dask.scheduler: threads
         G.type: diag_complex
@@ -80,9 +83,9 @@ opts:
       cab: quartical
       info: Crosshand phase on the polcal
       params:
-        input_ms.path: =recipe.ms
-        input_ms.time_chunk: '0'
-        input_ms.freq_chunk: '0'
+        input_ms.path: =recipe.ms_cals
+        input_ms.time_chunk: 0
+        input_ms.freq_chunk: 0
         input_ms.select_uv_range: [0,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_fields: [0]
@@ -93,7 +96,7 @@ opts:
         solver.propagate_flags: false
         solver.robust: false
         solver.threads: 16
-        solver.reference_antenna: 4
+        solver.reference_antenna: 2
         output.gain_directory: '{recipe.basedir}/crosshand_phase.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
@@ -135,21 +138,21 @@ opts:
       cab: quartical
       info: Delay and offset on the secondary
       params:
-        input_ms.path: =recipe.ms
-        input_ms.time_chunk: '0'
-        input_ms.freq_chunk: '0'
+        input_ms.path: =recipe.ms_cals
+        input_ms.time_chunk: 0
+        input_ms.freq_chunk: 0
         input_ms.select_uv_range: [0,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_fields: [2]
         # input_ms.select_corr: [0, 3]
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
-        solver.terms: [G, K, B, C, D, P]
+        solver.terms: [G, K, B, D, P]
         solver.iter_recipe: [0, 0, 0, 100, 0]
         solver.propagate_flags: false
         solver.robust: false
         solver.threads: 16
-        solver.reference_antenna: 4
+        solver.reference_antenna: 2
         output.gain_directory: '{recipe.basedir}/delay_and_offset.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
@@ -182,8 +185,61 @@ opts:
         P.time_interval: 1
         P.freq_interval: 0
 
-    # transfer:
-    #   # K(prim) Gphase(sec) B(prim) C(pol) P
+    transfer:
+      cab: quartical
+      info: Transfer solutions to target field
+      params:
+        input_ms.path: =recipe.ms_target
+        input_ms.time_chunk: 0
+        input_ms.freq_chunk: 256
+        input_ms.select_uv_range: [0,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+        input_ms.select_fields: [0]
+        input_model.recipe: '{recipe.model-column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G, K, B, C, D, P]
+        solver.iter_recipe: [0, 0, 0, 0, 0, 0]
+        solver.propagate_flags: false
+        solver.robust: false
+        solver.threads: 2
+        solver.reference_antenna: 2
+        output.gain_directory: '{recipe.basedir}/target_init.qc'
+        output.log_directory: '{recipe.basedir}/'
+        output.overwrite: true
+        output.products: [corrected_data]
+        output.columns: [CORRECTED_DATA_QCAL]
+        output.flags: false
+        output.apply_p_jones_inv: false
+        output.net_gains: [[G,K,B,D,P],[G,K,B,D]]
+        mad_flags.enable: false
+        dask.threads: 16
+        dask.scheduler: threads
+        G.type: diag_complex  #amp
+        G.time_interval: 0
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/G'
+        K.type: delay
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/K'
+        B.type: complex
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/B'
+        C.type: crosshand_phase_null_v
+        C.time_interval: 0
+        C.freq_interval: 1
+        C.load_from: '{recipe.basedir}/crosshand_phase.qc/C'
+        D.type: delay_and_offset  # phase to target
+        D.time_interval: 0
+        D.freq_interval: 0
+        D.initial_estimate: false
+        D.load_from: '{recipe.basedir}/delay_and_offset.qc/D'
+        P.type: parallactic_angle
+        P.time_interval: 1
+        P.freq_interval: 0
+
 
 selfcal:
   name: Lunocal
@@ -240,7 +296,7 @@ selfcal:
         solver.propagate_flags: true
         solver.robust: true
         solver.threads: 2
-        solver.reference_antenna: 56
+        solver.reference_antenna: 2
         output.gain_directory: 'output/gains/{recipe.obs}/stage1.qc'
         output.log_directory: 'output/{recipe.obs}/logs.qc'
         output.overwrite: =recipe.overwrite
