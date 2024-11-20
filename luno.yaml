@@ -62,10 +62,10 @@ opts:
         dask.threads: 2
         dask.scheduler: threads
         G.type: diag_complex
-        G.time_interval: 0
+        G.time_interval: 5
         G.freq_interval: 0
         K.type: delay
-        K.time_interval: 0
+        K.time_interval: 5
         K.freq_interval: 0
         K.initial_estimate: true
         B.type: complex
