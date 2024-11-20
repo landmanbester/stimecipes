@@ -16,7 +16,7 @@ opts:
   info: First generation calibration using QuartiCal
 
   assign:
-    ms: /home/lbester/projects/MOON/l.ms
+    ms: /home/lbester/projects/MOON/msdir/l.ms
 
   inputs:
     basedir:
