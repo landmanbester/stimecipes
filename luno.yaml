@@ -198,7 +198,6 @@ opts:
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_fields: [0]
         input_ms.sigma_column: SIGMA_SPECTRUM
-        input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
         solver.terms: [G, K, B, C, D, P]
         solver.iter_recipe: [0, 0, 0, 0, 0, 0]
