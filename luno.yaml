@@ -53,8 +53,8 @@ opts:
         output.gain_directory: '{recipe.basedir}/gkb_coarse_binf.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        output.products: [corrected_data]
-        output.columns: [CORRECTED_DATA_QCAL]
+        output.products: [corrected_data, corrected_weight]
+        output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [[G,K,B],[G,K,B,P]]
@@ -100,8 +100,8 @@ opts:
         output.gain_directory: '{recipe.basedir}/crosshand_phase.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        output.products: [corrected_data]
-        output.columns: [CORRECTED_DATA_QCAL]
+        output.products: [corrected_data, corrected_weight]
+        output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains: [[G,K,B,D,P],[G,K,B,D]]
@@ -147,7 +147,6 @@ opts:
         input_ms.select_uv_range: [0,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_fields: [2]
-        # input_ms.select_corr: [0, 3]
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
         solver.terms: [G, K, B, D, P]
@@ -159,8 +158,8 @@ opts:
         output.gain_directory: '{recipe.basedir}/delay_and_offset.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        output.products: [corrected_data]
-        output.columns: [CORRECTED_DATA_QCAL]
+        output.products: [corrected_data, corrected_weight]
+        output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains: [[G,K,B,D,P],[G,K,B,D]]
@@ -198,6 +197,7 @@ opts:
         input_ms.select_uv_range: [0,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_fields: [0]
+        input_ms.sigma_column: SIGMA_SPECTRUM
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
         solver.terms: [G, K, B, C, D, P]
@@ -209,8 +209,8 @@ opts:
         output.gain_directory: '{recipe.basedir}/target_init.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        output.products: [corrected_data]
-        output.columns: [CORRECTED_DATA_QCAL]
+        output.products: [corrected_data, corrected_weight]
+        output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains: [[G,K,B,D,P],[G,K,B,D]]
