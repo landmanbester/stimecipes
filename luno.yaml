@@ -17,7 +17,7 @@ opts:
 
   assign:
     ms_cals: /home/bester/projects/MOON/msdir/l.ms
-    ms_target: /home/bester/projects/MOON/msdir/l.ms
+    ms_target: /home/bester/projects/MOON/msdir/l_moon.ms
 
   inputs:
     basedir:
