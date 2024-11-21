@@ -70,14 +70,14 @@ selfcal:
         output.gain_directory: 'output/gains/{recipe.obs}/stage1.qc'
         output.log_directory: 'output/{recipe.obs}/logs.qc'
         output.overwrite: =recipe.overwrite
-        output.products: [residual]
-        output.columns: [RESIDUAL]
+        output.products: [corrected_data]
+        output.columns: [CORRECTED_DATA]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [K]
         mad_flags.enable: true
         mad_flags.whitening: native
-        mad_flags.threshold_bl: 5.5
+        mad_flags.threshold_bl: 7.5
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
         dask.threads: 24
