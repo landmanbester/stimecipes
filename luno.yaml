@@ -102,7 +102,7 @@ opts:
         output.overwrite: true
         output.products: [corrected_data]
         output.columns: [CORRECTED_DATA_QCAL]
-        output.flags: true
+        output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains: [[G,K,B,D,P],[G,K,B,D]]
         mad_flags.enable: true
@@ -154,7 +154,7 @@ opts:
         solver.iter_recipe: [0, 0, 0, 100, 0]
         solver.propagate_flags: false
         solver.robust: false
-        solver.threads: 16
+        solver.threads: 2
         solver.reference_antenna: 2
         output.gain_directory: '{recipe.basedir}/delay_and_offset.qc'
         output.log_directory: '{recipe.basedir}/'
@@ -165,7 +165,7 @@ opts:
         output.apply_p_jones_inv: false
         output.net_gains: [[G,K,B,D,P],[G,K,B,D]]
         mad_flags.enable: false
-        dask.threads: 2
+        dask.threads: 16
         dask.scheduler: threads
         G.type: diag_complex  #amp
         G.time_interval: 0
