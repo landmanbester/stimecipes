@@ -170,7 +170,7 @@ opts:
         G.type: diag_complex  #amp
         G.time_interval: 1
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/G'
+        G.load_from: '{recipe.basedir}/absg.qc/G'
         G.interp_mode: amp
         K.type: delay
         K.time_interval: 1
@@ -201,8 +201,8 @@ opts:
         input_ms.select_fields: [0]
         input_ms.sigma_column: SIGMA_SPECTRUM
         input_model.apply_p_jones: false
-        solver.terms: [G, K, B, C, D, P]
-        solver.iter_recipe: [0, 0, 0, 0, 0, 0]
+        solver.terms: [G, K, B, D, P]
+        solver.iter_recipe: [0, 0, 0, 0, 0]
         solver.propagate_flags: false
         solver.robust: false
         solver.threads: 2
@@ -221,7 +221,8 @@ opts:
         G.type: diag_complex  #amp
         G.time_interval: 0
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/G'
+        G.load_from: '{recipe.basedir}/absg.qc/G'
+        G.interp_mode: amp
         K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
@@ -231,10 +232,10 @@ opts:
         B.time_interval: 0
         B.freq_interval: 1
         B.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/B'
-        C.type: crosshand_phase_null_v
-        C.time_interval: 0
-        C.freq_interval: 1
-        C.load_from: '{recipe.basedir}/crosshand_phase.qc/C'
+        # C.type: crosshand_phase_null_v
+        # C.time_interval: 0
+        # C.freq_interval: 1
+        # C.load_from: '{recipe.basedir}/crosshand_phase.qc/C'
         D.type: delay_and_offset  # phase to target
         D.time_interval: 0
         D.freq_interval: 0
