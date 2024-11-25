@@ -59,21 +59,21 @@ opts:
         output.apply_p_jones_inv: false
         output.net_gains: [[G,K,B],[G,K,B,P]]
         mad_flags.enable: true
-        mad_flags.threshold_bl: 5.5
+        mad_flags.threshold_bl: 7.5
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
         dask.threads: 2
         dask.scheduler: threads
         G.type: diag_complex
-        G.time_interval: 15
+        G.time_interval: 0
         G.freq_interval: 0
         K.type: delay
-        K.time_interval: 15
+        K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: true
         B.type: complex
         B.time_interval: 0
-        B.freq_interval: 16
+        B.freq_interval: 8
         B.respect_scan_boundaries: false
         P.type: parallactic_angle
         P.time_interval: 1
@@ -112,11 +112,12 @@ opts:
         dask.threads: 2
         dask.scheduler: threads
         G.type: diag_complex  # amp
-        G.time_interval: 0
+        G.time_interval: 1
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/G'
+        G.interp_mode: amp
         K.type: delay
-        K.time_interval: 0
+        K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
         K.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/K'
@@ -131,7 +132,7 @@ opts:
         C.type: crosshand_phase_null_v
         C.solve_per: array
         C.time_interval: 0
-        C.freq_interval: 128
+        C.freq_interval: 256
         C.respect_scan_boundaries: false
         P.type: parallactic_angle
         P.time_interval: 1
@@ -167,11 +168,12 @@ opts:
         dask.threads: 16
         dask.scheduler: threads
         G.type: diag_complex  #amp
-        G.time_interval: 0
+        G.time_interval: 1
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/G'
+        G.interp_mode: amp
         K.type: delay
-        K.time_interval: 0
+        K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
         K.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/K'
