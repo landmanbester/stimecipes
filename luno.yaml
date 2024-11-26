@@ -246,6 +246,110 @@ opts:
         P.freq_interval: 0
 
 
+# movie:
+#   name: movie
+#   info: Make movies of the calibrated data
+
+#   assign:
+#     output-filename: '{recipe.basedir}/{recipe.obs}/stage0'
+#     fits-output-folder: '{recipe.basedir}/{recipe.obs}/fits'
+#     log-directory: '{recipe.basedir}/{recipe.obs}/logs'
+
+#   aliases:
+#     output-filename: '*.output-filename'
+#     fits-output-folder: '*.fits-output-folder'
+#     log-directory: '*.log-directory'
+#     nworkers: '*.nworkers'
+#     nthreads: '*.nthreads'
+
+#   inputs:
+#     ms:
+#       dtype: URI
+#       required: true
+#       info:
+#         Path to MS
+#     gain-table:
+#       dtype: URI
+#       info:
+#         Path to QuartiCal gain table
+#     product:
+#       dtype: str
+#       default: I
+#       info:
+#         Stokes parameter to image
+#     integrations-per-image:
+#       dtype: int
+#       default: 1
+#       info:
+#         Number of time integrations per image
+#     channels-per-image:
+#       dtype: int
+#       default: -1
+#       info:
+#         Number of frequency channels per image
+#     data-column:
+#       dtype: str
+#       default: DATA
+#       info:
+#         Name of column to image
+#     robustness:
+#       dtype: float
+#       default: -1.5
+#       info:
+#         Robustness value of Briggs weighting scheme
+#     output-format:
+#       dtype: float
+#       default: zarr
+#       info:
+#         Output images as fits or zarr
+#     field-of-view:
+#       dtype: float
+#       default: 1.2
+#       info:
+#         Field of view to image
+#     super-resolution-factor:
+#       dtype: float
+#       default: 1.2
+#       info:
+#         Factor to over-sample Nyquist by
+#     overwrite:
+#       dtype: bool
+#       default: false
+#       info:
+#         Allow overwriting output 
+#     fps:
+#       dtype: int
+#       default: 8
+#       info:
+#         Number of frames per second
+#     nworkers:
+#       dtype: int
+#       default: 4
+#       info:
+#         Number of Dask workers
+#     nthreads:
+#       dtype: int
+#       default: 8
+#       info:
+#         Number of threads per Dask worker
+
+#   steps:
+#     image:
+#       cab: pfb.hci
+#       info: Make high cadence images
+#       params:
+#         ms: =recipe.ms
+#         product: =recipe.product
+#         output-format: =recipe.output-format
+    
+#     movie:
+#       cab: pfb.smoovie
+#       info: Render images to movie
+#       params:
+#         product: =recipe.product
+#         fps: =recipe.fps
+
+
 selfcal:
   name: Lunocal
   info: Self-calibration
