@@ -4,7 +4,7 @@
 # 2. $ kubectl apply -f ssh-server.yaml
 # 3. $ kubectl -n rarg-test-compute port-forward ssh-server 2222:22
 # 4. $ ssh -p 2222 root@localhost
-# 5. $ kubectl delete -f ssh-server
+# 5. $ kubectl delete -f ssh-server.yaml
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -14,8 +14,10 @@ metadata:
 data:
   # Insert your public keys here. For example.
   # $ cat ~/.ssh/id_rsa.pub
+  # ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDaZn93eTXEo7m4a4djLWWrs+AggphSHu7R/87XUa40hGC0UBdjxM+wOeTeEAFAh9rQR9/Ioq4cRlqDAgf2Gt/XsMa1shtYNyYHHIJh7ml7AGc+IolQASrCMNWI3t4ZJT15bydge424y5aNpT3PPqvQUFdBcfj+PcCaBc9OQJ3eHbpMBd8QaA9XmAXforNMoVWW9K5pSH7rJcsu9KlP1XKwDOHR4ihhYUjyqF2oWWi5HnrQmDwWelkyxLPxH/GsIKnF+aYHl7nOq3n6hTXf/Dy2lhMXfGgd64X5wussKM+vZ1xbaOX+wqIGiFF2fy5YIgvP9sTvQiQInoiEqNser0mf landman@LAPTOP-ED4N50Q2
   authorized_keys: |
-    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDaZn93eTXEo7m4a4djLWWrs+AggphSHu7R/87XUa40hGC0UBdjxM+wOeTeEAFAh9rQR9/Ioq4cRlqDAgf2Gt/XsMa1shtYNyYHHIJh7ml7AGc+IolQASrCMNWI3t4ZJT15bydge424y5aNpT3PPqvQUFdBcfj+PcCaBc9OQJ3eHbpMBd8QaA9XmAXforNMoVWW9K5pSH7rJcsu9KlP1XKwDOHR4ihhYUjyqF2oWWi5HnrQmDwWelkyxLPxH/GsIKnF+aYHl7nOq3n6hTXf/Dy2lhMXfGgd64X5wussKM+vZ1xbaOX+wqIGiFF2fy5YIgvP9sTvQiQInoiEqNser0mf landman@LAPTOP-ED4N50Q2
+    ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAEHqMyKhM5IppUQph6pzj4VLojIHWyDc0F7DG7ldb6ZSggJZWzNafVWaJsBetYs1zh2Wj603q/7CPRdZP83f1w/3QEtpCy7pLT863a3fnND17Q6lYcWTp/Lski1zPy8a32zdnC4AOOW2rxlgGBzk1hL90O3ZNudI9J8cCue9KvanAvWiA== bester@landmanp16v
+
 ---
 apiVersion: v1
 kind: Pod
@@ -56,9 +58,9 @@ spec:
     configMap:
       name: ssh-config
       defaultMode: 384  # 0600 octal
-  - name: home-directory
-    persistentVolumeClaim:
-      claimName: rarg-test-compute-efs-pvc
+  # - name: home-directory
+  #   persistentVolumeClaim:
+  #     claimName: rarg-test-compute-efs-pvc
 # Faster to just kubectl port-forward
 # ---
 # apiVersion: v1
