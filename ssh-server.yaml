@@ -45,8 +45,8 @@ spec:
     - mountPath: /root/.ssh/authorized_keys
       subPath: authorized_keys
       name: ssh-volume
-    - mountPath: /mnt/data
-      name: home-directory
+    # - mountPath: /mnt/data
+    #   name: home-directory
 
   # user:
   #   uid: 1000

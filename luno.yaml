@@ -1,5 +1,6 @@
 _include:
   - (quartical)stimela_cabs.yaml
+  # - (pfb)stimela_cabs.yaml
 
 
 
@@ -40,7 +41,7 @@ opts:
         input_ms.time_chunk: 0
         input_ms.freq_chunk: 0
         input_ms.select_uv_range: [0,0]
-        input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID]  # with and without SCAN_NUMBER
         input_ms.select_fields: [1]
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
@@ -53,8 +54,8 @@ opts:
         output.gain_directory: '{recipe.basedir}/gkb_coarse_binf.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        output.products: [corrected_data, corrected_weight]
-        output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
+        # output.products: [corrected_data, corrected_weight]
+        # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [[G,K,B],[G,K,B,P]]
@@ -79,6 +80,13 @@ opts:
         P.time_interval: 1
         P.freq_interval: 0
 
+    # convert G to abs
+    g_to_abs:
+      cab: G2abs
+      info: Replace G with abs(G) since we won't need the phase again
+      params:
+        source: '{recipe.basedir}/gkb_coarse_binf.qc/G'
+
     crosshand_phase:
       cab: quartical
       info: Crosshand phase on the polcal
@@ -89,7 +97,7 @@ opts:
         input_ms.select_uv_range: [0,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_fields: [0]
-        input_model.recipe: '{recipe.model-column}'
+        input_model.recipe: '{recipe.model-column}'  # double check what's in here
         input_model.apply_p_jones: false
         solver.terms: [G, K, B, D, C, P]
         solver.iter_recipe: [0, 0, 0, 100, 100, 0]
@@ -100,12 +108,12 @@ opts:
         output.gain_directory: '{recipe.basedir}/crosshand_phase.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        output.products: [corrected_data, corrected_weight]
-        output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
+        # output.products: [corrected_data, corrected_weight]
+        # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains: [[G,K,B,D,P],[G,K,B,D]]
-        mad_flags.enable: true
+        mad_flags.enable: false
         mad_flags.threshold_bl: 5.5
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
@@ -159,8 +167,8 @@ opts:
         output.gain_directory: '{recipe.basedir}/delay_and_offset.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        output.products: [corrected_data, corrected_weight]
-        output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
+        # output.products: [corrected_data, corrected_weight]
+        # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains: [[G,K,B,D,P],[G,K,B,D]]
@@ -171,7 +179,6 @@ opts:
         G.time_interval: 1
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/absg.qc/G'
-        G.interp_mode: amp
         K.type: delay
         K.time_interval: 1
         K.freq_interval: 0
@@ -219,12 +226,12 @@ opts:
         dask.threads: 16
         dask.scheduler: threads
         G.type: diag_complex  #amp
-        G.time_interval: 0
+        G.time_interval: 1
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/absg.qc/G'
         G.interp_mode: amp
         K.type: delay
-        K.time_interval: 0
+        K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
         K.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/K'
@@ -232,16 +239,16 @@ opts:
         B.time_interval: 0
         B.freq_interval: 1
         B.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/B'
-        # C.type: crosshand_phase_null_v
-        # C.time_interval: 0
-        # C.freq_interval: 1
-        # C.load_from: '{recipe.basedir}/crosshand_phase.qc/C'
+        C.type: crosshand_phase_null_v
+        C.time_interval: 0
+        C.freq_interval: 1
+        C.load_from: '{recipe.basedir}/crosshand_phase.qc/C'
         D.type: delay_and_offset  # phase to target
-        D.time_interval: 0
+        D.time_interval: 1
         D.freq_interval: 0
         D.initial_estimate: false
         D.load_from: '{recipe.basedir}/delay_and_offset.qc/D'
-        P.type: parallactic_angle
+        P.type: parallactic_angle  # not tracking non-sidereal source
         P.time_interval: 1
         P.freq_interval: 0
 
@@ -427,3 +434,73 @@ selfcal:
         K.time_interval: =recipe.tint
         K.freq_interval: 0
         K.initial_estimate: false
+
+
+
+cabs:
+  G2abs:
+    name: G2abs
+    flavour: python-code
+    backend:
+      select: native
+      native:
+        virtualenv: ~/.venv/pfbn
+    command: |
+      import dask
+      import dask.array as da
+      from daskms.experimental.zarr import xds_to_zarr, xds_from_zarr
+      gain_table = '::'.join(source.rsplit('/', 1))
+      G = xds_from_zarr(gain_table)
+      for g in G:
+        g['gains'] = (g.gains.dims, da.abs(g.gains.data))
+      writes = xds_to_zarr(gain_table)
+      dask.compute(writes)
+      
+    inputs:
+      source:
+        info: The location to fetch G term from
+        dtype: URI
+        required: true
+
+    outputs:
+      {}
+
+  compmodels:
+    name: compmodels
+    flavour: python-code
+    backend:
+      select: native
+      native:
+        virtualenv: ~/.venv/pfb
+    command: |
+      import numpy as np
+      import xarray as xr
+      import sympy as sm
+      from pfb.utils.misc import model_from_mds
+
+      mds1 = xr.open_zarr(model_local, chunks=None)
+      mds2 = xr.open_zarr(model_remote, chunks=None)
+
+      model1 = model_from_mds(mds1)
+      model2 = model_from_mds(mds2)
+      diff = model1 - model2
+      try:
+        assert np.allclose(1 + diff, atol=epsilon, rtol=epsilon)
+      except:
+        raise ValueError("Models don't match")
+
+    inputs:
+      model-local:
+        info: Model obtained by executing locally
+        required: true
+        dtype: str
+      model-remote:
+        info: Model obtained by executing remotely
+        required: true
+        dtype: str
+      epsilon:
+        info: Precision with which to compare models
+        default: 1e-4
+        dtype: float
+    outputs:
+      {}
