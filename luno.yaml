@@ -444,7 +444,7 @@ cabs:
     backend:
       select: native
       native:
-        virtualenv: ~/.venv/pfbn
+        virtual_env: ~/.venv/pfbn
     command: |
       import dask
       import dask.array as da
@@ -463,45 +463,5 @@ cabs:
         dtype: URI
         required: true
 
-    outputs:
-      {}
-
-  compmodels:
-    name: compmodels
-    flavour: python-code
-    backend:
-      select: native
-      native:
-        virtual_env: ~/.venv/qcal
-    command: |
-      import numpy as np
-      import xarray as xr
-      import sympy as sm
-      from pfb.utils.misc import model_from_mds
-
-      mds1 = xr.open_zarr(model_local, chunks=None)
-      mds2 = xr.open_zarr(model_remote, chunks=None)
-
-      model1 = model_from_mds(mds1)
-      model2 = model_from_mds(mds2)
-      diff = model1 - model2
-      try:
-        assert np.allclose(1 + diff, atol=epsilon, rtol=epsilon)
-      except:
-        raise ValueError("Models don't match")
-
-    inputs:
-      model-local:
-        info: Model obtained by executing locally
-        required: true
-        dtype: str
-      model-remote:
-        info: Model obtained by executing remotely
-        required: true
-        dtype: str
-      epsilon:
-        info: Precision with which to compare models
-        default: 1e-4
-        dtype: float
     outputs:
       {}
