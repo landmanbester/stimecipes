@@ -454,9 +454,11 @@ cabs:
       for g in G:
         g['gains'] = (g.gains.dims, da.abs(g.gains.data))
       abs_gain_table = gain_table.rstrip('G') + 'Ga'
-      print(gain_table, abs_gain_table)
-      writes = xds_to_zarr(abs_gain_table)
+      print(f'Writing to {abs_gain_table}')
+      writes = xds_to_zarr(G, abs_gain_table)
       dask.compute(writes)
+      print('Done')
+
       
     inputs:
       source:
