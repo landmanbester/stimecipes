@@ -472,7 +472,7 @@ cabs:
     backend:
       select: native
       native:
-        virtualenv: ~/.venv/pfb
+        virtualenv: ~/.venv/qcal
     command: |
       import numpy as np
       import xarray as xr
