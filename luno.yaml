@@ -112,7 +112,7 @@ opts:
         # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: false
         output.apply_p_jones_inv: false
-        output.net_gains: [[G,K,B,D,P],[G,K,B,D]]
+        output.net_gains: [[G,K,B,D,C,P],[G,K,B,D,C]]
         mad_flags.enable: false
         mad_flags.threshold_bl: 5.5
         mad_flags.threshold_global: 0
@@ -208,8 +208,8 @@ opts:
         input_ms.select_fields: [0]
         input_ms.sigma_column: SIGMA_SPECTRUM
         input_model.apply_p_jones: false
-        solver.terms: [G, K, B, D, P]
-        solver.iter_recipe: [0, 0, 0, 0, 0]
+        solver.terms: [G, K, B, D, C, P]
+        solver.iter_recipe: [0, 0, 0, 0, 0, 0]
         solver.propagate_flags: false
         solver.robust: false
         solver.threads: 2
