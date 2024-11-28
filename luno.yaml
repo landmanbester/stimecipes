@@ -119,10 +119,10 @@ opts:
         mad_flags.max_deviation: 0
         dask.threads: 2
         dask.scheduler: threads
-        G.type: diag_complex  # amp
+        G.type: diag_complex
         G.time_interval: 1
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/G'
+        G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/Ga'
         G.interp_mode: amp
         K.type: delay
         K.time_interval: 1
@@ -178,7 +178,7 @@ opts:
         G.type: diag_complex  #amp
         G.time_interval: 1
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/absg.qc/G'
+        G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/Ga'
         K.type: delay
         K.time_interval: 1
         K.freq_interval: 0
@@ -228,7 +228,7 @@ opts:
         G.type: diag_complex  #amp
         G.time_interval: 1
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/absg.qc/G'
+        G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/Ga'
         G.interp_mode: amp
         K.type: delay
         K.time_interval: 1
