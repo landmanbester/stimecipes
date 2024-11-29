@@ -1,0 +1,120 @@
+vars:
+  cult-cargo:
+    images:
+      registry: quay.io/stimela2
+      version: cc0.1.3
+
+opts:
+  log:
+    dir: logs
+    nest: 2
+  backend:
+    kube:
+      enable: true
+      dir: /mnt/data/
+      namespace: admin
+      volumes:
+        admin-efs-pvc:
+          mount: /mnt/data
+
+      ## override user/group ID
+      user:
+        uid: 1000
+        gid: 1000
+
+      predefined_pod_specs:
+        tiny:
+          nodeSelector:
+            rarg/node-class: compute
+            rarg/instance-type: m5.large
+            rarg/capacity-type: ON_DEMAND
+
+      job_pod:
+        memory:
+          limit: 0
+        cpu:
+          request:
+            0
+      dask_cluster:
+        num_workers: 1
+        scheduler_pod:
+          type: tiny
+          memory:
+            limit: "3Gi"
+          cpu:
+            request:
+              1
+        worker_pod:
+          memory:
+            limit: 0
+          cpu:
+            request:
+              0
+
+      env:
+        NUMBA_CACHE_DIR: /mnt/data/dask-test
+        CONFIGURATT_CACHE_DIR: /mnt/data/dask-test
+
+cabs:
+  test:
+    flavour: python-code
+    image:
+      _use: vars.cult-cargo.images
+      name: QuartiCal
+    
+    command: |
+      import os
+      import dask
+      from distributed import Client
+      host_address = os.environ.get("DASK_SCHEDULER_ADDRESS")
+      client = Client(host_address)
+      client.wait_for_workers(nworkers)
+      
+      x = da.ones((10000, nworkers), chunks=(10000, 1))
+
+      xsum = da.sum(x)
+
+      print(xsum)
+
+      with open('/mnt/data/test.txt', 'w') as file:
+        file.write(str(xsum))
+
+      with open('/mnt/data/test.txt', 'r') as file:
+        xsumr = file.content()
+
+      print(xsumr)
+
+    inputs:
+      nworkers:
+        dtype: int
+        default: 4
+
+    outputs:
+      {}
+
+timeout_test:
+  steps:
+    test:
+      cab: test
+      backend:
+        select: kube
+        kube:
+          enable: true
+          job_pod:  # This is where the main application runs.
+            type: tiny
+            memory:
+              limit: "3Gi"
+            cpu:
+              request: 2  # > than half available
+          dask_cluster:  # Set up the Dask cluster.
+            enable: true
+            num_workers: 4
+            name: dask-test-cluster
+            threads_per_worker: 1
+            worker_pod:
+              type: tiny
+              memory:
+                limit: "3Gi"
+              cpu:
+                request: 2
+          always_pull_images: true
