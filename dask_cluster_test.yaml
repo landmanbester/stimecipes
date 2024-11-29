@@ -27,7 +27,7 @@ opts:
           nodeSelector:
             rarg/node-class: compute
             rarg/instance-type: m5.large
-            rarg/capacity-type: ON_DEMAND
+            rarg/capacity-type: SPOT
 
       job_pod:
         memory:
@@ -60,11 +60,12 @@ cabs:
     flavour: python-code
     image:
       _use: vars.cult-cargo.images
-      name: QuartiCal
+      name: quartical
     
     command: |
       import os
       import dask
+      import dask.array as da
       from distributed import Client
       host_address = os.environ.get("DASK_SCHEDULER_ADDRESS")
       client = Client(host_address)
@@ -105,7 +106,7 @@ timeout_test:
             memory:
               limit: "3Gi"
             cpu:
-              request: 2  # > than half available
+              request: 1  # > than half available
           dask_cluster:  # Set up the Dask cluster.
             enable: true
             num_workers: 4
@@ -116,5 +117,5 @@ timeout_test:
               memory:
                 limit: "3Gi"
               cpu:
-                request: 2
-          always_pull_images: true
+                request: 1
+          always_pull_images: false
