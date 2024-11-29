@@ -73,7 +73,7 @@ cabs:
       
       x = da.ones((10000, nworkers), chunks=(10000, 1))
 
-      xsum = da.sum(x)
+      xsum = da.sum(x).compute()
 
       print(xsum)
 
