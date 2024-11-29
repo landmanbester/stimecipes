@@ -13,6 +13,7 @@ opts:
       enable: true
       dir: /mnt/data/
       namespace: admin
+      # serviceAccountName: compute-runner
       volumes:
         admin-efs-pvc:
           mount: /mnt/data
@@ -77,11 +78,15 @@ cabs:
 
       print(xsum)
 
+      # from time import sleep
+      # while True:
+      #   sleep(5)
+
       with open('/mnt/data/test.txt', 'w') as file:
         file.write(str(xsum))
 
       with open('/mnt/data/test.txt', 'r') as file:
-        xsumr = file.content()
+        xsumr = file.read()
 
       print(xsumr)
 
