@@ -2,7 +2,7 @@
 # USAGE:
 # 1. Add your public keys to the authorized_keys entry in the ConfigMap below
 # 2. $ kubectl apply -f ssh-server.yaml
-# 3. $ kubectl -n rarg-test-compute port-forward ssh-server 2222:22
+# 3. $ kubectl -n admin port-forward ssh-server 2222:22
 # 4. $ ssh -p 2222 root@localhost
 # 5. $ kubectl delete -f ssh-server.yaml
 ---
