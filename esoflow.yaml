@@ -296,12 +296,12 @@ selfcal:
     obs:
       '1':
         ms: /scratch/bester/ms1_target.zarr
-        netgain: 'output/gains/obs1/stage1/gkb_init.qc/GKB-net'
+        netgain: 'output/gains/obs1/stage1/gkb_init.qc/GKBP-net'
         # netgain: 'output/gains/obs1/stage2.qc/GKJ-net'
         ref_ant: 2
       '2':
         ms: /scratch/bester/ms2_target.zarr
-        netgain: 'output/gains/obs2/stage1/gkb_init.qc/GKB-net'
+        netgain: 'output/gains/obs2/stage1/gkb_init.qc/GKBP-net'
         ref_ant: 2
 
   assign:
