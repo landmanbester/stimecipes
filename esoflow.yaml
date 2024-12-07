@@ -298,11 +298,11 @@ selfcal:
         ms: /scratch/bester/ms1_target.zarr
         netgain: 'output/gains/obs1/stage1/gkb_init.qc/GKB-net'
         # netgain: 'output/gains/obs1/stage2.qc/GKJ-net'
-        ref_ant: 54
+        ref_ant: 2
       '2':
         ms: /scratch/bester/ms2_target.zarr
         netgain: 'output/gains/obs2/stage1/gkb_init.qc/GKB-net'
-        ref_ant: 43
+        ref_ant: 2
 
   assign:
     basedir: '/home/bester/projects/ESO137/output'
@@ -339,6 +339,11 @@ selfcal:
       default: 1
       info:
         Time solution interval for delay_and_offset
+    fint:
+      dtype: int
+      default: 1024
+      info:
+        Freq solution interval for delay_and_offset
 
 
   steps:
@@ -348,7 +353,7 @@ selfcal:
       params:
         input_ms.path: '{recipe.ms}'
         input_ms.data_column: =recipe.data-column
-        input_ms.sigma_column: =recipe.sigma-column
+        # input_ms.sigma_column: =recipe.sigma-column
         input_ms.time_chunk: 25
         input_ms.freq_chunk: 0
         input_ms.select_uv_range: [150,0]
@@ -379,15 +384,11 @@ selfcal:
         dask.scheduler: threads
         G.type: complex
         G.load_from: =recipe.netgain
-        G.interp_method: 2dlinear
-        G.interp_mode: ampphase
         G.time_interval: 1
         G.freq_interval: 1
         K.type: delay_and_offset
-        K.interp_method: 2dlinear
-        K.interp_mode: ampphase
         K.time_interval: =recipe.tint
-        K.freq_interval: 0
+        K.freq_interval: =recipe.fint
         K.initial_estimate: false
 
     selfcal2:
