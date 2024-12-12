@@ -23,14 +23,14 @@ image:
     obs:
       'esofull':
         ms: [/scratch/bester/ms1_target.zarr,/scratch/bester/ms2_target.zarr]
-        gains: ['/home/bester/projects/ESO137/output/gains/obs1/stage6_interp.qc/GJK-net',
-                '/home/bester/projects/ESO137/output/gains/obs2/stage6_interp.qc/GJK-net']
+        gains: ['/home/bester/projects/ESO137/output_old/gains/obs1/stage6_interp.qc/GJK-net',
+                '/home/bester/projects/ESO137/output_old/gains/obs2/stage6_interp.qc/GJK-net']
         freq-range: '882750000.0:1685041015.625'
         channels-per-image: 192
       'esohi':
         ms: [/scratch/bester/ms1_target.zarr,/scratch/bester/ms2_target.zarr]
-        gains: ['/home/bester/projects/ESO137/output/gains/obs1/stage6_interp.qc/GJK-net',
-                '/home/bester/projects/ESO137/output/gains/obs2/stage6_interp.qc/GJK-net']
+        gains: ['/home/bester/projects/ESO137/output_old/gains/obs1/stage6_interp.qc/GJK-net',
+                '/home/bester/projects/ESO137/output_old/gains/obs2/stage6_interp.qc/GJK-net']
         freq-range: '1.295e9:1.503e9'
         channels-per-image: 96
       'sgra':
