@@ -265,7 +265,7 @@ crosscal:
         output.columns:
         output.flags: false
         output.apply_p_jones_inv: false
-        output.net_gains: [G, K, B, P]
+        output.net_gains: [[G,K,B,P], [G,K,B]]  # need both because P does not commute
         mad_flags.enable: false
         dask.threads: 64
         # dask.workers: 1
@@ -296,12 +296,12 @@ selfcal:
     obs:
       '1':
         ms: /scratch/bester/ms1_target.zarr
-        netgain: 'output/gains/obs1/stage1/gkb_init.qc/GKBP-net'
+        netgain: 'output/gains/obs1/stage1/gkb_init.qc/GKB-net'
         # netgain: 'output/gains/obs1/stage2.qc/GKJ-net'
         ref_ant: 2
       '2':
         ms: /scratch/bester/ms2_target.zarr
-        netgain: 'output/gains/obs2/stage1/gkb_init.qc/GKBP-net'
+        netgain: 'output/gains/obs2/stage1/gkb_init.qc/GKB-net'
         ref_ant: 2
 
   assign:
@@ -361,8 +361,8 @@ selfcal:
         input_ms.select_corr: [0, 3]
         input_model.recipe: =recipe.model-column
         input_model.apply_p_jones: false
-        solver.terms: [G,K]
-        solver.iter_recipe: [0,50,0,30,0,20,0,10,0,5]
+        solver.terms: [G,K,P]
+        solver.iter_recipe: [0,50,0,0,30,0,0,20,0,0,10,0,0,5]
         solver.propagate_flags: true
         solver.robust: true
         solver.threads: 5
@@ -370,11 +370,11 @@ selfcal:
         output.gain_directory: '{recipe.basedir}/gains/obs{recipe.obs}/stage{recipe.stage}.qc'
         output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: =recipe.overwrite
-        output.products: [residual, corrected_residual, corrected_weight]
-        output.columns: [RESIDUAL, CORRECTED_DATA, WEIGHT_SPECTRUM]
+        # output.products: [residual, corrected_residual, corrected_weight]
+        # output.columns: [RESIDUAL, CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [G, K]
+        output.net_gains: [[G, K, P], [G, K]]
         mad_flags.enable: true
         mad_flags.whitening: native
         mad_flags.threshold_bl: 5.5
@@ -390,6 +390,9 @@ selfcal:
         K.time_interval: =recipe.tint
         K.freq_interval: =recipe.fint
         K.initial_estimate: false
+        P.type: parallactic_angle
+        P.time_interval: 1
+        P.freq_interval: 0
 
     selfcal2:
       cab: quartical

@@ -1,6 +1,5 @@
 _include:
-  # - (cultcargo)pfb-imaging.yml
-  - (pfb)stimela_cabs.yml
+  - (cultcargo)pfb-imaging.yml
 
 opts:
   log:
@@ -15,8 +14,6 @@ opts:
     #     /home/bester/numba_cache: rw
     #   env:
     #     NUMBA_CACHE_DIR: /home/bester/numba_cache
-
-
 
 image:
   name: pfb-image
@@ -119,7 +116,6 @@ image:
         bda-decorr: =recipe.bda-decorr
         freq-range: =recipe.freq-range
         overwrite: =recipe.overwrite
-      tags: [init]
 
     grid:
       cab: pfb.grid
@@ -132,7 +128,6 @@ image:
         nworkers: 10
         psf-oversize: 1.4
         overwrite: =recipe.overwrite
-      tags: [image]
 
     sara:
       cab: pfb.sara
@@ -152,7 +147,6 @@ image:
         eta: 1e-3
         positivity: 1
         nthreads: 64
-      tags: [image]
 
     restore:
       cab: pfb.restore
@@ -161,6 +155,5 @@ image:
         nworkers: 10
         nthreads: 5
         outputs: iI
-      tags: [final]
 
 

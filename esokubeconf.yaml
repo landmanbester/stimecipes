@@ -1,6 +1,3 @@
-_include:
-  - kubeconfig.yaml
-
 opts:
   backend:
     select: kube
@@ -25,22 +22,17 @@ opts:
             rarg/node-class: compute
             rarg/instance-type: m6i.large
             rarg/capacity-type: ON_DEMAND
-        tiny:
-          nodeSelector:
-            rarg/node-class: compute
-            rarg/instance-type: m5.large
-            rarg/capacity-type: ON_DEMAND
-        thin:
+        small:
           nodeSelector:
             rarg/node-class: compute
             rarg/instance-type: c6in.2xlarge
             rarg/capacity-type: ON_DEMAND
-        pudgy:
+        medium:
           nodeSelector:
             rarg/node-class: compute
             rarg/instance-type: c6in.8xlarge
             rarg/capacity-type: ON_DEMAND
-        fat:
+        large:
           nodeSelector:
             rarg/node-class: compute
             rarg/instance-type: c6in.24xlarge
@@ -71,6 +63,9 @@ opts:
       env:
         NUMBA_CACHE_DIR: /mnt/data/pfb-test
         CONFIGURATT_CACHE_DIR: /mnt/data/pfb-test
+        JAX_ENABLE_X64: 'True'
+        JAX_PLATFORMS: 'cpu'
+        LD_LIBRARY_PATH: '/usr/local/lib'
 
 image:
   steps:
@@ -85,35 +80,29 @@ image:
             NUMBA_CACHE_DIR: /home/bester/numba_cache
 
     grid:
-      assign:
-        # required for workers to get the correct env vars
-        config.opts.backend.kube.env.NUMBA_NUM_THREADS: '30'
-        config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '30'
-        config.opts.backend.kube.env.JAX_ENABLE_X64: 'True'
-        config.opts.backend.kube.env.JAX_PLATFORMS: 'cpu'
-        config.opts.backend.kube.env.LD_LIBRARY_PATH: '/usr/local/lib'
       backend:
         select: kube
         kube:
           enable: true
-          job_pod:  # This is where the main application runs.
-            type: pudgy
+          env:
+            NUMBA_NUM_THREADS: '30'
+          job_pod:
+            type: medium
             memory:
               limit: "27Gi"
             cpu:
-              request: 28  # > than half available
-          dask_cluster:  # Set up the Dask cluster.
+              request: 28
+          dask_cluster:
             enable: true
             num_workers: 2
             name: pfb-test-cluster
             threads_per_worker: 1
             worker_pod:
-              type: pudgy
+              type: medium
               memory:
                 limit: "27Gi"
               cpu:
                 request: 28
-          always_pull_images: true
       params:
         fits-mfs: false
         fits-cubes: false
@@ -122,26 +111,21 @@ image:
 
 
     sara:
-      assign:
-        # we need this so the workers get the right env vars
-        config.opts.backend.kube.env.NUMBA_NUM_THREADS: '90'
-        config.opts.backend.kube.env.NUMEXPR_NUM_THREADS: '90'
-        config.opts.backend.kube.env.JAX_ENABLE_X64: 'True'
-        config.opts.backend.kube.env.JAX_PLATFORMS: 'cpu'
-        config.opts.backend.kube.env.LD_LIBRARY_PATH: '/usr/local/lib'
       backend:
         select: kube
         kube:
           enable: true
-          job_pod:  # This is where the main application runs.
-            type: fat
+          env:
+            NUMBA_NUM_THREADS: '90'
+            NUMEXPR_NUM_THREADS: '90'
+          job_pod:
+            type: large
             memory:
               limit: "170Gi"
             cpu:
               request: 50
-          dask_cluster:  # no Dask cluster.
+          dask_cluster:
             enable: false
-          always_pull_images: true
       params:
         fits-mfs: false
         fits-cubes: false
@@ -149,21 +133,26 @@ image:
 
     pull_model:
       cab: s3tolocal
+      backend:
+        select: native
       params:
-        source: s3://ratt-public-data/ESO137/stage1_HI_I.mds
-        dest: /home/bester/projects/ESO137/output/aws/
-      tags: [compare]
+        source: s3://rarg-test-data/hi_combined_bda_I_main_model.mds
+        dest: /home/bester/projects/ESO137/from_aws/hi_combined_bda_I_main_model.mds
 
     compare_models:
       cab: compmodels
+      backend:
+        select: native
+        native:
+          virtual_env: ~/.venv/pfb
       params:
-        model-local: /scratch/bester/hi_combined_bda_I_main_model.mds
-        model-remote: =previous.dest
+        model_local: /scratch/bester/hi_combined_bda_I_main_model.mds
+        model_remote: =previous.dest
 
 cabs:
   s3tolocal:
     name: s3tolocal
-    command: aws s3 cp
+    command: aws s3 cp --recursive
     policies:
       positional: true
     inputs:
@@ -182,33 +171,28 @@ cabs:
   compmodels:
     name: compmodels
     flavour: python-code
-    backend:
-      select: native
-      native:
-        virtualenv: ~/.venv/pfb
     command: |
       import numpy as np
       import xarray as xr
-      import sympy as sm
       from pfb.utils.misc import model_from_mds
 
-      mds1 = xr.open_zarr(model_local, chunks=None)
-      mds2 = xr.open_zarr(model_remote, chunks=None)
-
-      model1 = model_from_mds(mds1)
-      model2 = model_from_mds(mds2)
-      diff = model1 - model2
+      model1 = model_from_mds(model_local)
+      model2 = model_from_mds(model_remote)
+      model1 -= model2  # diff
+      model1 += 1.0     # for relative tolerance
       try:
-        assert np.allclose(1 + diff, atol=epsilon, rtol=epsilon)
+        assert np.allclose(model1, 1.0, atol=epsilon, rtol=epsilon)
       except:
         raise ValueError("Models don't match")
 
+      print('Success!')
+
     inputs:
-      model-local:
+      model_local:
         info: Model obtained by executing locally
         required: true
         dtype: str
-      model-remote:
+      model_remote:
         info: Model obtained by executing remotely
         required: true
         dtype: str
