@@ -1,6 +1,7 @@
 opts:
   backend:
     select: kube
+    # set up global kubernetes config 
     kube:
       enable: true
       dir: /mnt/data/pfb-test
@@ -13,6 +14,7 @@ opts:
         uid: 1000
         gid: 1000
 
+      # Some predefined pod specs to be utilised in the recipe
       predefined_pod_specs:
         admin:
           nodeSelector:
@@ -21,11 +23,6 @@ opts:
           nodeSelector:
             rarg/node-class: compute
             rarg/instance-type: m6i.large
-            rarg/capacity-type: ON_DEMAND
-        small:
-          nodeSelector:
-            rarg/node-class: compute
-            rarg/instance-type: c6in.2xlarge
             rarg/capacity-type: ON_DEMAND
         medium:
           nodeSelector:
@@ -38,28 +35,7 @@ opts:
             rarg/instance-type: c6in.24xlarge
             rarg/capacity-type: ON_DEMAND
 
-      job_pod:
-        memory:
-          limit: 0
-        cpu:
-          request:
-            0
-      dask_cluster:
-        num_workers: 1
-        scheduler_pod:
-          type: scheduler
-          memory:
-            limit: "3Gi"
-          cpu:
-            request:
-              1
-        worker_pod:
-          memory:
-            limit: 0
-          cpu:
-            request:
-              0
-
+      # common environment variables for worker nodes
       env:
         NUMBA_CACHE_DIR: /mnt/data/pfb-test
         CONFIGURATT_CACHE_DIR: /mnt/data/pfb-test
@@ -68,56 +44,73 @@ opts:
         LD_LIBRARY_PATH: '/usr/local/lib'
 
 image:
+  info:
+    This file augments the stimela config in the main imaging recipe.
+    It demonstrates the use of multiple backends, including the kubernetes
+    backend which enables processing some of the steps on AWS instances. 
   steps:
     init:
+      info: 
+        Reads data from local storage and writes the averaged
+        Stokes visibility products, potentially to an S3 bucket
+        associated with an AWS account.
       backend:
         select: singularity
         singularity:
           rebuild: true
           bind_dirs:
+            # These need to be mounted inside the singularity image
+            # Substitute $USER for bester here
             /home/bester/numba_cache: rw
+            /home/bester/.aws: rw
           env:
             NUMBA_CACHE_DIR: /home/bester/numba_cache
 
     grid:
+      info:
+        Sets up a Dask cluster that distributes gridding tasks per band. 
       backend:
         select: kube
         kube:
           enable: true
-          env:
-            NUMBA_NUM_THREADS: '30'
+          # The main application runs on the job_pod
           job_pod:
             type: medium
             memory:
-              limit: "27Gi"
+              limit: "54Gi"
             cpu:
-              request: 28
+              # request more than half the available cores
+              # to utilize the full instance per pod
+              request: 20
+          # Spawns Dask cluster with 6 worker nodes 
           dask_cluster:
             enable: true
-            num_workers: 2
+            num_workers: 6
             name: pfb-test-cluster
             threads_per_worker: 1
             worker_pod:
               type: medium
               memory:
-                limit: "27Gi"
+                limit: "55Gi"
               cpu:
-                request: 28
+                request: 20
+          # Environment variables can be adjusted per step
+          env:
+            NUMBA_NUM_THREADS: '32'
       params:
         fits-mfs: false
         fits-cubes: false
-        nworkers: 2
-        nthreads: 30
+        nworkers: 6
+        nthreads: 32
 
 
     sara:
+      info:
+        The main deconvolution application runs on a single large node.
       backend:
         select: kube
         kube:
           enable: true
-          env:
-            NUMBA_NUM_THREADS: '90'
-            NUMEXPR_NUM_THREADS: '90'
           job_pod:
             type: large
             memory:
@@ -127,12 +120,18 @@ image:
           dask_cluster:
             enable: false
       params:
+        # FITS files could be written to EFS but not S3.
+        # They are not required for the test we perform below.
         fits-mfs: false
         fits-cubes: false
-        nthreads: 90
+        nworkers: 1
+        nthreads: 96
 
     pull_model:
+      info:
+        Transfer component model from S3 to local storage for testing 
       cab: s3tolocal
+      # binary command is executed on the native backend
       backend:
         select: native
       params:
@@ -140,7 +139,12 @@ image:
         dest: /home/bester/projects/ESO137/from_aws/hi_combined_bda_I_main_model.mds
 
     compare_models:
+      info:
+        Ensure that the model produced on AWS infrastructure is compatible
+        with the model produced locally up to deconvolution tolerance.
       cab: compmodels
+      # python script executed on the native backend in a
+      # virtual environment that has pfb-imaging installed
       backend:
         select: native
         native:
@@ -148,10 +152,13 @@ image:
       params:
         model_local: /scratch/bester/hi_combined_bda_I_main_model.mds
         model_remote: =previous.dest
+        epsilon: =recipe.steps.sara.tol
 
 cabs:
   s3tolocal:
     name: s3tolocal
+    info: 
+      Runs a binary command to transfer data from AWS S3 to local storage. 
     command: aws s3 cp --recursive
     policies:
       positional: true
@@ -170,6 +177,9 @@ cabs:
 
   compmodels:
     name: compmodels
+    info: 
+      Runs a python script to test whether two component model are
+      compatible up to a tolerance specified by epsilon. 
     flavour: python-code
     command: |
       import numpy as np
@@ -200,5 +210,3 @@ cabs:
         info: Precision with which to compare models
         default: 1e-4
         dtype: float
-    outputs:
-      {}
