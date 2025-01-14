@@ -150,7 +150,7 @@ image:
         gamma: 0.99
         rmsfactor: =recipe.rmsfactor
         eta: 1e-3
-        positivity: =IF(recipe.stokes=I, 1, 0)
+        positivity: =IF( recipe.stokes == 'I', 1, 0)
         nthreads: 64
         product: =recipe.stokes
 
