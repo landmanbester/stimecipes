@@ -19,7 +19,7 @@ image:
     Example imaging recipe using pfb-imaging with stimela2
 
   assign:
-    output-filename: '{recipe.basedir}/{recipe.basename}'
+    output-filename: '{recipe.basedir}/{recipe.imagename}'
     fits-output-folder: '{recipe.basedir}/fits'
     log-directory: '{recipe.basedir}/logs'
 
@@ -45,11 +45,21 @@ image:
       required: true
       info:
         Base directory in which to place output data products.
-    basename:
+    imagename:
       dtype: str
       default: pfb_sara
       info:
         A descriptive name for the outputs to be placed in basedir.
+    data-column:
+      dtype: str
+      default: DATA
+      info:
+        Column to image
+    weight-column:
+      dtype: str
+      default: WEIGHT_SPECTRUM
+      info:
+        Weightcolumn
     robustness:
       dtype: float
       default: -0.3
@@ -76,7 +86,7 @@ image:
         Number of time integrations per dataset
     chan-average:
       dtype: int
-      default: 2
+      default: 1
       info:
         How many channels to average together
     bda-decorr:
@@ -108,9 +118,10 @@ image:
       params:
         ms: =recipe.ms
         gain-table: =IFSET(recipe.gains)
-        nthreads: 1
-        nworkers: 64
-        sigma-column: SIGMA_SPECTRUM
+        nthreads: 2
+        nworkers: 32
+        data-column: =recipe.data-column
+        weight-column: =recipe.weight-column
         channels-per-image: =recipe.channels-per-image
         integrations-per-image: =recipe.integrations-per-image
         chan-average: =recipe.chan-average
@@ -128,8 +139,8 @@ image:
         super-resolution-factor: =recipe.super-resolution-factor
         field-of-view: =recipe.field-of-view
         robustness: =recipe.robustness
-        nthreads: 7
-        nworkers: 10
+        nthreads: 8
+        nworkers: 8
         psf-oversize: 1.4
         overwrite: =recipe.overwrite
         product: =recipe.stokes
@@ -139,7 +150,7 @@ image:
       info: Cleaning step
       params:
         niter: =recipe.niter
-        bases: 'self,db1,db2,db3,db4'
+        bases: 'self,db1,db2,db3'
         nlevels: 2
         l1-reweight-from: =recipe.l1-reweight-from
         pd-tol: [1e-4]
@@ -158,8 +169,8 @@ image:
       cab: pfb.restore
       info: Produce restored image.
       params:
-        nworkers: 10
-        nthreads: 5
+        nworkers: 8
+        nthreads: 8
         outputs: iI
         product: =recipe.stokes
 
