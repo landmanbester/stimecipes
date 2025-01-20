@@ -111,18 +111,16 @@ image:
     basedir:
       dtype: Directory
       required: true
+      mkdir: true
       info:
         Base directory in which to place output data products.
     output-filename:
-      dtype: str
       default: '{current.basedir}/{current.imagename}'
       alias: ['*.output-filename']
     fits-output-folder:
-      dtype: str
       default: '{current.basedir}/fits'
       alias: ['*.fits-output-folder']
     log-directory:
-      dtype: str
       default: '*.{current.basedir}/logs'
       alias: ['*.log-directory']
 
