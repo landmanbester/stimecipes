@@ -1,17 +1,18 @@
 _include:
-  - (cultcargo)pfb-imaging.yml
+  # - (cultcargo)pfb-imaging.yml
+  - (pfb)stimela_cabs.yml
 
 opts:
   log:
     dir: logs
     nest: 2
   backend:
-    select: singularity
-    singularity:
-      bind_dirs:
-        /home/bester/numba_cache: rw
-      env:
-        NUMBA_CACHE_DIR: /home/bester/numba_cache
+    select: native
+    # singularity:
+    #   bind_dirs:
+    #     /home/bester/numba_cache: rw
+    #   env:
+    #     NUMBA_CACHE_DIR: /home/bester/numba_cache
 
 image:
   name: pfb-image
