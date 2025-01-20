@@ -107,7 +107,7 @@ image:
       default: false
       aliases: ['*.overwrite']
   
-  outputs:
+  # outputs:
     basedir:
       dtype: Directory
       required: true
@@ -115,13 +115,13 @@ image:
       info:
         Base directory in which to place output data products.
     output-filename:
-      default: '{current.basedir}/{current.imagename}'
+      default: '{recipe.basedir}/{recipe.imagename}'
       alias: ['*.output-filename']
     fits-output-folder:
-      default: '{current.basedir}/fits'
+      default: '{recipe.basedir}/fits'
       alias: ['*.fits-output-folder']
     log-directory:
-      default: '*.{current.basedir}/logs'
+      default: '*.{recipe.basedir}/logs'
       alias: ['*.log-directory']
 
   steps:
