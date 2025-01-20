@@ -115,15 +115,15 @@ image:
         Base directory in which to place output data products.
     output-filename:
       dtype: str
-      default: '{recipe.basedir}/{recipe.imagename}'
+      default: '{current.basedir}/{current.imagename}'
       alias: ['*.output-filename']
     fits-output-folder:
       dtype: str
-      default: '{recipe.basedir}/fits'
+      default: '{current.basedir}/fits'
       alias: ['*.fits-output-folder']
     log-directory:
       dtype: str
-      default: '*.{recipe.basedir}/logs'
+      default: '*.{current.basedir}/logs'
       alias: ['*.log-directory']
 
   steps:
