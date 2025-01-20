@@ -40,11 +40,6 @@ image:
     ms:
       dtype: List[URI]
       required: true
-    basedir:
-      dtype: Directory
-      required: true
-      info:
-        Base directory in which to place output data products.
     imagename:
       dtype: str
       default: pfb_sara
@@ -68,7 +63,7 @@ image:
         Less than -2 corresponds to uniform, larger than 2 or None to natural.
     field-of-view:
       dtype: float
-      default: 2.0
+      default: 1.3
     super-resolution-factor:
       dtype: float
       default: 1.7
@@ -110,6 +105,13 @@ image:
     overwrite:
       default: false
       aliases: ['*.overwrite']
+  
+  outputs:
+    basedir:
+      dtype: Directory
+      required: true
+      info:
+        Base directory in which to place output data products.
     output-filename:
       dtype: str
       default: '{recipe.basedir}/{recipe.imagename}'
