@@ -15,10 +15,13 @@ sgraimage:
     obs:
       'sgra':
         ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_SGRA.ms]
+        data-column: CORRECTED_DATA
       'gcx17':
         ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX17.ms]
+        data-column: CORRECTED_DATA+MODEL_DATA
       'gcx30':
         ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX30.ms]
+        data-column: CORRECTED_DATA+MODEL_DATA
 
   assign:
     output-filename: '{recipe.basedir}/{recipe.obs}/run0'
@@ -38,18 +41,15 @@ sgraimage:
     obs:
       default: sgra
       choices: ['sgra','gcx17','gcx30']
-    data-column:
-      default: DATA
-      info:
-        Data column to image
     model-column:
       default: MODEL_DATA
       info:
         Column to write model visibilities to
     freq-range:
-      default: '570230468.75:1009042968.75'  # clip fully flagged parts
+      info:
+        Subset of frequencies to image specified in Hertz
     channels-per-image:
-      default: 69  # results in 12 bands
+      default: 128  # results in 8 bands
       info:
         Number of channels per image.
         Determines number of output bands.
@@ -59,7 +59,7 @@ sgraimage:
         Number of integrations per image.
     robustness:
       dtype: float
-      default: -1.0  # -1, -0.3, 0.0
+      default: -0.3
       info:
         Briggs robustness level.
         Less than -2 corresponds to uniform, larger than 2 to natural.
@@ -68,13 +68,9 @@ sgraimage:
       default: 3.5
     super-resolution-factor:
       dtype: float
-      default: 2.5
+      default: 1.7
       info:
         How much to oversample Nyquist by at the highest frequency
-    # npix:
-    #   dtype: int
-    # cell-size:
-    #   dtype: float
     chan-average:
       dtype: int
       default: 1
@@ -82,7 +78,7 @@ sgraimage:
         How many channels to average together
     bda-decorr:
       dtype: float
-      default: 0.95
+      default: 0.98
       info:
         Amount of amplitude loss that can be tolerated at edge of field
     niter:
@@ -93,6 +89,8 @@ sgraimage:
     l1-reweight-from:
       dtype: int
       default: 7
+    l2-reweight-dof:
+      dtype: int
     rmsfactor:
       dtype: float
       default: 1.0  # 3 -> just after cal transfer, 0.5 -> minimum before getting crap in the model
@@ -112,7 +110,7 @@ sgraimage:
         Transfer model from this component model
     bases:
       dtype: str
-      default: 'self,db1,db2'
+      default: 'self,db1,db2,db3,db4,db5'
       info:
         Bases to use for Psi dictionary
 
@@ -131,7 +129,7 @@ sgraimage:
         chan-average: =recipe.chan-average
         max-field-of-view: =recipe.field-of-view
         bda-decorr: =recipe.bda-decorr
-        freq-range: =recipe.freq-range
+        freq-range: =IFSET(recipe.freq-range)
         overwrite: =recipe.overwrite
 
     grid:
@@ -143,9 +141,10 @@ sgraimage:
         robustness: =recipe.robustness
         nthreads: 6
         nworkers: 6
-        psf-oversize: 1.4
+        psf-oversize: 1.6
         transfer-model-from: =IFSET(recipe.tmf)
         overwrite: =recipe.overwrite
+        l2-reweight-dof: =IFSET(recipe.l2-rewight-dof)
 
     sara:
       cab: pfb.sara
@@ -153,7 +152,7 @@ sgraimage:
       params:
         niter: =recipe.niter
         bases: =recipe.bases
-        nlevels: 2
+        nlevels: 3
         l1-reweight-from: =recipe.l1-reweight-from
         pd-tol: [1e-4]
         pd-maxit: 450
@@ -165,7 +164,7 @@ sgraimage:
         eta: 1e-3
         alpha: =recipe.alpha
         positivity: 1
-        nthreads: 36  # nthreads_per_basis = floor(nthreads//nband)
+        nthreads: 48  # nthreads_per_basis = floor(nthreads//nband)
 
     restore:
       cab: pfb.restore
