@@ -98,6 +98,8 @@ image:
     l1-reweight-from:
       dtype: int
       default: 7
+    l2-reweight-dof:
+      dtype: float
     rmsfactor:
       dtype: float
       default: 1.0
@@ -155,6 +157,7 @@ image:
         psf-oversize: 1.4
         overwrite: =recipe.overwrite
         product: =recipe.stokes
+        l2-reweight-dof: =IFSET(recipe.2-reweight-dof)
 
     sara:
       cab: pfb.sara
