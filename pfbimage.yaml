@@ -157,7 +157,7 @@ image:
         psf-oversize: 1.4
         overwrite: =recipe.overwrite
         product: =recipe.stokes
-        l2-reweight-dof: =IFSET(recipe.2-reweight-dof)
+        l2-reweight-dof: =IFSET(recipe.l2-reweight-dof)
 
     sara:
       cab: pfb.sara
