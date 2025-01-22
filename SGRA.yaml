@@ -154,14 +154,14 @@ sgraimage:
         bases: =recipe.bases
         nlevels: 3
         l1-reweight-from: =recipe.l1-reweight-from
-        pd-tol: [1e-4]
+        pd-tol: [5e-5]
         pd-maxit: 450
         pd-verbose: 2
         pd-report-freq: 50
         tol: 1e-3
         gamma: 0.99
         rmsfactor: =recipe.rmsfactor
-        eta: 1e-3
+        eta: 5e-4
         alpha: =recipe.alpha
         positivity: 1
         nthreads: 48  # nthreads_per_basis = floor(nthreads//nband)
