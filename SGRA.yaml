@@ -101,6 +101,11 @@ sgraimage:
       default: 4
       info:
         How aggressively to reweight
+    pd-tol:
+      dtype: List[float]
+      default: [2e-4]
+      info:
+        List of floats used for primal dual tolerance.
     overwrite:
       default: true
       aliases: ['*.overwrite']
@@ -154,7 +159,7 @@ sgraimage:
         bases: =recipe.bases
         nlevels: 3
         l1-reweight-from: =recipe.l1-reweight-from
-        pd-tol: [5e-5]
+        pd-tol: =recipe.pd-tol
         pd-maxit: 450
         pd-verbose: 2
         pd-report-freq: 50
