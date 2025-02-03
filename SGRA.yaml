@@ -154,7 +154,7 @@ sgraimage:
         psf-oversize: 1.6
         transfer-model-from: =IFSET(recipe.tmf)
         overwrite: =recipe.overwrite
-        l2-reweight-dof: =IFSET(recipe.l2-rewight-dof)
+        l2-reweight-dof: =IFSET(recipe.l2-reweight-dof)
 
     sara:
       cab: pfb.sara
