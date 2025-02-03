@@ -118,6 +118,11 @@ sgraimage:
       default: 'self,db1,db2,db3,db4,db5'
       info:
         Bases to use for Psi dictionary
+    diverge-count:
+      dtype: int
+      default: 5
+      info:
+        Number of iterations the residual can increase for before terminating
 
   steps:
     init:
@@ -170,6 +175,7 @@ sgraimage:
         alpha: =recipe.alpha
         positivity: 1
         nthreads: 48  # nthreads_per_basis = floor(nthreads//nband)
+        diverge-count: =recipe.diverge-count
 
     restore:
       cab: pfb.restore
