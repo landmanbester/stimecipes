@@ -19,16 +19,6 @@ image:
   info:
     Example imaging recipe using pfb-imaging with stimela2
 
-  assign:
-    output-filename: '{recipe.basedir}/{recipe.imagename}'
-    fits-output-folder: '{recipe.basedir}/fits'
-    log-directory: '{recipe.basedir}/logs'
-
-  aliases:
-    output-filename: '*.output-filename'
-    fits-output-folder: '*.fits-output-folder'
-    log-directory: '*.log-directory'
-
   for_loop:
     var: stokes
     over: stokes-list  # can refer to any input by name here
@@ -114,15 +104,15 @@ image:
       mkdir: true
       info:
         Base directory in which to place output data products.
-    # output-filename:
-    #   default: '{recipe.basedir}/{recipe.imagename}'
-    #   alias: ['*.output-filename']
-    # fits-output-folder:
-    #   default: '{recipe.basedir}/fits'
-    #   alias: ['*.fits-output-folder']
-    # log-directory:
-    #   default: '*.{recipe.basedir}/logs'
-    #   alias: ['*.log-directory']
+    output-filename:
+      default: '{recipe.basedir}/{recipe.imagename}'
+      aliases: ['*.output-filename']
+    fits-output-folder:
+      default: '{recipe.basedir}/fits'
+      aliases: ['*.fits-output-folder']
+    log-directory:
+      default: '*.{recipe.basedir}/logs'
+      aliases: ['*.log-directory']
 
   steps:
     init:

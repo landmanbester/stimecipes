@@ -17,10 +17,13 @@ selfcal:
     obs:
       'sgra':
         ms: /home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_SGRA.ms
+        data-column: 'CORRECTED_DATA'
       'gcx17':
         ms: /home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX17.ms
+        data-column: 'RESTORED_DATA'
       'gcx30':
         ms: /home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX30.ms
+        data-column: 'RESTORED_DATA'
 
   inputs:
     obs:
@@ -42,7 +45,7 @@ selfcal:
       default: false
     tint:
       dtype: int
-      default: 1
+      default: 4
       info:
         Time solution interval for delay_and_offset
 
@@ -53,10 +56,10 @@ selfcal:
       params:
         input_ms.path: '{recipe.ms}'
         input_ms.data_column: =recipe.data-column
-        # input_ms.sigma_column:   #=recipe.sigma-column
+        input_ms.sigma_column: =recipe.sigma-column
         input_ms.time_chunk: 28
-        input_ms.freq_chunk: 0
-        input_ms.select_uv_range: [150,0]
+        input_ms.freq_chunk: 512
+        input_ms.select_uv_range: [100,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
         input_model.recipe: =recipe.model-column
@@ -71,13 +74,13 @@ selfcal:
         output.log_directory: 'output/{recipe.obs}/logs.qc'
         output.overwrite: =recipe.overwrite
         output.products: [corrected_data]
-        output.columns: [CORRECTED_DATA]
+        output.columns: [CORRECTED_DATA_PFB]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [K]
         mad_flags.enable: true
         mad_flags.whitening: native
-        mad_flags.threshold_bl: 7.5
+        mad_flags.threshold_bl: 8.5
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
         dask.threads: 24

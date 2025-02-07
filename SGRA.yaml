@@ -65,7 +65,7 @@ sgraimage:
         Less than -2 corresponds to uniform, larger than 2 to natural.
     field-of-view:
       dtype: float
-      default: 3.5
+      default: 5.5
     super-resolution-factor:
       dtype: float
       default: 1.7
