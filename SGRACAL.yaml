@@ -73,8 +73,8 @@ selfcal:
         output.gain_directory: 'output/gains/{recipe.obs}/stage1.qc'
         output.log_directory: 'output/{recipe.obs}/logs.qc'
         output.overwrite: =recipe.overwrite
-        output.products: [corrected_data]
-        output.columns: [CORRECTED_DATA_PFB]
+        output.products: [corrected_data, corrected_residual]
+        output.columns: [CORRECTED_DATA_PFB, RESIDUAL]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [K]

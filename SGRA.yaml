@@ -16,15 +16,18 @@ sgraimage:
       'sgra':
         ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_SGRA.ms]
         data-column: CORRECTED_DATA
+        tmf: /home/bester/projects/GC/output/sgra/run0_I_main_model.mds
       'gcx17':
         ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX17.ms]
         data-column: CORRECTED_DATA+MODEL_DATA
+        tmf: /home/bester/projects/GC/output/gcx17/run0_I_main_model.mds
       'gcx30':
         ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX30.ms]
-        data-column: CORRECTED_DATA+MODEL_DATA
+        data-column: CORRECTED_DATA_PFB
+        tmf: /home/bester/projects/GC/output/gcx30/run0_I_main_model.mds
 
   assign:
-    output-filename: '{recipe.basedir}/{recipe.obs}/run0'
+    output-filename: '{recipe.basedir}/{recipe.obs}/run1'
     fits-output-folder: '{recipe.basedir}/{recipe.obs}/fits'
     log-directory: '{recipe.basedir}/{recipe.obs}/logs'
 
@@ -59,16 +62,16 @@ sgraimage:
         Number of integrations per image.
     robustness:
       dtype: float
-      default: -0.3
+      default: -0.75
       info:
         Briggs robustness level.
         Less than -2 corresponds to uniform, larger than 2 to natural.
     field-of-view:
       dtype: float
-      default: 5.5
+      default: 4.5
     super-resolution-factor:
       dtype: float
-      default: 1.7
+      default: 2.5
       info:
         How much to oversample Nyquist by at the highest frequency
     chan-average:
@@ -131,7 +134,7 @@ sgraimage:
       params:
         ms: =recipe.ms
         nthreads: 1
-        nworkers: 16
+        nworkers: 32
         data-column: =recipe.data-column
         sigma-column: SIGMA_SPECTRUM
         channels-per-image: =recipe.channels-per-image
