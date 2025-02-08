@@ -16,25 +16,15 @@ sgraimage:
       'sgra':
         ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_SGRA.ms]
         data-column: CORRECTED_DATA
-        tmf: /home/bester/projects/GC/output/sgra/run0_I_main_model.mds
+        # tmf: /home/bester/projects/GC/output/sgra/run0_I_main_model.mds
       'gcx17':
         ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX17.ms]
         data-column: CORRECTED_DATA+MODEL_DATA
-        tmf: /home/bester/projects/GC/output/gcx17/run0_I_main_model.mds
+        # tmf: /home/bester/projects/GC/output/gcx17/run0_I_main_model.mds
       'gcx30':
         ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_GCX30.ms]
         data-column: CORRECTED_DATA_PFB
-        tmf: /home/bester/projects/GC/output/gcx30/run0_I_main_model.mds
-
-  assign:
-    output-filename: '{recipe.basedir}/{recipe.obs}/run1'
-    fits-output-folder: '{recipe.basedir}/{recipe.obs}/fits'
-    log-directory: '{recipe.basedir}/{recipe.obs}/logs'
-
-  aliases:
-    output-filename: '*.output-filename'
-    fits-output-folder: '*.fits-output-folder'
-    log-directory: '*.log-directory'
+        # tmf: /home/bester/projects/GC/output/gcx30/run0_I_main_model.mds
 
   inputs:
     basedir:
@@ -44,6 +34,10 @@ sgraimage:
     obs:
       default: sgra
       choices: ['sgra','gcx17','gcx30']
+    imagename:
+      default: run1
+      info:
+        Image will be named 
     model-column:
       default: MODEL_DATA
       info:
@@ -126,6 +120,15 @@ sgraimage:
       default: 5
       info:
         Number of iterations the residual can increase for before terminating
+    output-filename:
+      default: '{recipe.basedir}/{recipe.obs}/{recipe.imagename}'
+      aliases: ['*.output-filename']
+    fits-output-folder:
+      default: '{recipe.basedir}/{recipe.obs}/fits'
+      aliases: ['*.fits-output-folder']
+    log-directory:
+      default: '*.{recipe.basedir}/{recipe.obs}/logs'
+      aliases: ['*.log-directory']
 
   steps:
     init:
