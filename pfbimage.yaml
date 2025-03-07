@@ -43,7 +43,7 @@ image:
         Column to image
     weight-column:
       dtype: str
-      default: WEIGHT_SPECTRUM
+      # default: WEIGHT_SPECTRUM
       info:
         Weightcolumn
     robustness:
@@ -124,7 +124,7 @@ image:
         nthreads: 2
         nworkers: 32
         data-column: =recipe.data-column
-        weight-column: =recipe.weight-column
+        weight-column: =IFSET(recipe.weight-column)
         channels-per-image: =recipe.channels-per-image
         integrations-per-image: =recipe.integrations-per-image
         chan-average: =recipe.chan-average
