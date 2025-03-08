@@ -34,6 +34,9 @@ flag:
     nthreads:
       dtype: int
       default: 32
+    field-names:
+      dtype: str
+
 
   steps:
     go:
@@ -45,4 +48,5 @@ flag:
         flagging-strategy: =recipe.fs
         nworkers: =recipe.nthreads
         data-column: =recipe.dc
+        field-names: =IFSET(recipe.field-names)
 
