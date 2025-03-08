@@ -12,7 +12,7 @@ opts:
       bind_dirs:
         /home/bester/numba_cache: rw
       env:
-        NUMBA_CACHE_DIR: /home/bester/numba_cache
+        NUMBA_CACHE_DIR: /home/lbester/numba_cache
 
 flag:
   name: flag
