@@ -1,0 +1,286 @@
+_include:
+  - (cultcargo)quartical.yml
+
+opts:
+  log:
+    dir: logs
+    nest: 2
+  backend:
+    select: singularity
+
+first-gen:
+  name: 1gc
+  info: First generation KGB calibration using QuartiCal
+
+  assign:
+    ms_cals: moon_uhf_calibrators.ms
+    ms_target: moon_uhf.ms
+
+  inputs:
+    basedir:
+      dtype: str
+      info: Location to write gain table
+    model-column:
+      dtype: str
+      default: MODEL_DATA
+
+  steps:
+    # Setjy done outside.
+    kgbd:
+      cab: quartical
+      info: GKB on the primary where
+            G = time variable complex gain,
+            K = per scan delay
+            B = frequency variable complex gain (bandpass)
+      params:
+        input_ms.path: =recipe.ms_cals
+        input_ms.time_chunk: 0
+        input_ms.freq_chunk: 0
+        input_ms.select_uv_range: [0,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]  # with and without SCAN_NUMBER
+        input_ms.select_fields: [1]
+        input_ms.select_corr: [0, 1, 2, 3]
+        input_model.recipe: '{recipe.model-column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G,K,B,D]
+        solver.iter_recipe: [150,150,150,150]
+        solver.propagate_flags: false
+        solver.robust: false
+        solver.threads: 8
+        solver.reference_antenna: 2
+        output.gain_directory: '{recipe.basedir}/gkb.qc'
+        output.log_directory: '{recipe.basedir}/'
+        output.overwrite: true
+        # output.products: [corrected_data, corrected_weight]
+        # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
+        output.flags: false
+        output.apply_p_jones_inv: false
+        # output.net_gains: [G,K,B]
+        mad_flags.enable: false
+        dask.threads: 2
+        dask.scheduler: threads
+        G.type: diag_complex
+        G.time_interval: 0
+        G.freq_interval: 0
+        K.type: delay
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: true
+        B.type: diag_complex
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.respect_scan_boundaries: false
+        D.type: complex
+        D.time_interval: 0
+        D.freq_interval: 1
+        D.initial_estimate: false
+        D.respect_scan_boundaries: false
+
+    # convert G to abs
+    g_to_abs:
+      cab: G2abs
+      info: Replace G with abs(G) since we won't need the phase again
+      params:
+        source: '{recipe.basedir}/gkb.qc/G'
+
+    secondary-phases:
+      cab: quartical
+      info: Delay and offset on the secondary
+      params:
+        input_ms.path: =recipe.ms_cals
+        input_ms.time_chunk: 0
+        input_ms.freq_chunk: 0
+        input_ms.select_uv_range: [0,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+        input_ms.select_fields: [2]
+        input_model.recipe: #'{recipe.model-column}'
+        input_model.apply_p_jones: true
+        solver.terms: [G, F, K, B, D]
+        solver.iter_recipe: [0, 150, 0, 0, 0]
+        solver.propagate_flags: false
+        solver.robust: false
+        solver.threads: 8
+        solver.reference_antenna: 2
+        output.gain_directory: '{recipe.basedir}/gfkbd.qc'
+        output.log_directory: '{recipe.basedir}/'
+        output.overwrite: true
+        output.products: [corrected_data, corrected_weight]
+        output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
+        output.flags: false
+        output.apply_p_jones_inv: true
+        output.net_gains: [G,K,B,D]
+        mad_flags.enable: false
+        dask.threads: 4
+        dask.scheduler: threads
+        G.type: diag_complex  #amp
+        G.time_interval: 1
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/gkb.qc/Ga'
+        F.type: delay_and_offset
+        F.time_interval: 0
+        F.freq_interval: 0
+        K.type: delay
+        K.time_interval: 1
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/gkb.qc/K'
+        B.type: diag_complex
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.load_from: '{recipe.basedir}/gkb.qc/B'
+        D.type: complex
+        D.load_from: '{recipe.basedir}/gkb.qc/D'
+        D.time_interval: 0
+        D.freq_interval: 1
+        D.respect_scan_boundaries: false
+
+    crosshand-phases:
+      cab: quartical
+      info: Delay and offset on the secondary
+      params:
+        input_ms.path: =recipe.ms_cals
+        input_ms.time_chunk: 0
+        input_ms.freq_chunk: 0
+        input_ms.select_uv_range: [0,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID]  #,SCAN_NUMBER]
+        input_ms.select_fields: [0]
+        input_model.recipe: #'{recipe.model-column}'
+        input_model.apply_p_jones: true
+        solver.terms: [G, F, K, B, X, D]
+        solver.iter_recipe: [0, 0, 0, 0, 150, 0]
+        solver.propagate_flags: false
+        solver.robust: false
+        solver.threads: 8
+        solver.reference_antenna: 2
+        output.gain_directory: '{recipe.basedir}/gfkbxd.qc'
+        output.log_directory: '{recipe.basedir}/'
+        output.overwrite: true
+        output.products: [corrected_data, corrected_weight]
+        output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
+        output.flags: false
+        output.apply_p_jones_inv: true
+        output.net_gains: [G,K,B,D]
+        mad_flags.enable: false
+        dask.threads: 4
+        dask.scheduler: threads
+        G.type: diag_complex  #amp
+        G.time_interval: 1
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/gfkbd.qc/G'
+        F.type: delay_and_offset
+        F.time_interval: 0
+        F.freq_interval: 0
+        F.load_from: '{recipe.basedir}/gfkbd.qc/F'
+        K.type: delay
+        K.time_interval: 1
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/gfkbd.qc/K'
+        B.type: diag_complex
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.load_from: '{recipe.basedir}/gfkbd.qc/B'
+        X.type: crosshand_phase_null_v
+        X.solve_per: array
+        X.time_interval: 0
+        X.freq_interval: 1
+        X.respect_scan_boundaries: false
+        D.type: complex
+        D.load_from: '{recipe.basedir}/gfkbd.qc/D'
+        D.time_interval: 0
+        D.freq_interval: 1
+        D.respect_scan_boundaries: false
+
+    transfer:
+      cab: quartical
+      info: Delay and offset on the secondary
+      params:
+        input_ms.path: =recipe.ms_target
+        input_ms.time_chunk: 0
+        input_ms.freq_chunk: 0
+        input_ms.select_uv_range: [0,0]
+        input_ms.group_by: [FIELD_ID, DATA_DESC_ID, SCAN_NUMBER]
+        input_ms.select_fields: [0]
+        input_model.recipe: #'{recipe.model-column}'
+        input_model.apply_p_jones: true
+        solver.terms: [G, F, K, B, X, D]
+        solver.iter_recipe: [0, 0, 0, 0, 0, 0]
+        solver.propagate_flags: false
+        solver.robust: false
+        solver.threads: 2
+        solver.reference_antenna: 2
+        output.gain_directory: '{recipe.basedir}/final_transfer.qc'
+        output.log_directory: '{recipe.basedir}/'
+        output.overwrite: true
+        output.products: [corrected_data, corrected_weight]
+        output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+        output.flags: false
+        output.apply_p_jones_inv: true
+        output.net_gains: [G,K,B,D]
+        mad_flags.enable: false
+        dask.threads: 32
+        dask.scheduler: threads
+        G.type: diag_complex  #amp
+        G.time_interval: 1
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/gfkbxd.qc/G'
+        F.type: delay_and_offset
+        F.time_interval: 0
+        F.freq_interval: 0
+        F.load_from: '{recipe.basedir}/gfkbxd.qc/F'
+        K.type: delay
+        K.time_interval: 1
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/gfkbxd.qc/K'
+        B.type: diag_complex
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.load_from: '{recipe.basedir}/gfkbxd.qc/B'
+        X.type: crosshand_phase_null_v
+        X.solve_per: array
+        X.time_interval: 0
+        X.freq_interval: 1
+        X.respect_scan_boundaries: false
+        X.load_from: '{recipe.basedir}/gfkbxd.qc/X'
+        D.type: complex
+        D.load_from: '{recipe.basedir}/gfkbxd.qc/D'
+        D.time_interval: 0
+        D.freq_interval: 1
+        D.respect_scan_boundaries: false
+
+
+cabs:
+  G2abs:
+    name: G2abs
+    flavour: python-code
+    image:  # This is a bit dodgy - python-astro doesn't have zarr support.
+      name: quartical
+      version: 0.2.5-cc0.1.3
+    command: |
+      import dask
+      import dask.array as da
+      from daskms.experimental.zarr import xds_to_zarr, xds_from_zarr
+      gain_table = '::'.join(source.rsplit('/', 1))
+      G = xds_from_zarr(gain_table)
+      for g in G:
+        g['gains'] = (g.gains.dims, da.abs(g.gains.data))
+      abs_gain_table = gain_table.rstrip('G') + 'Ga'
+      print(f'Writing to {abs_gain_table}')
+      writes = xds_to_zarr(G, abs_gain_table)
+      dask.compute(writes)
+      print('Done')
+
+      
+    inputs:
+      source:
+        info: The location to fetch G term from
+        dtype: URI
+        required: true
+
+    outputs:
+      {}
+
+  quartical:
+    image:
+      version: 0.2.5-cc0.1.3  # Use latest QuartiCal release.

@@ -1,0 +1,65 @@
+test:
+  inputs:
+    kernel:
+      info: "Kernel sizes as tuples: (nu_delta (MHz), t_delta (s)) i.e. python inspect_dynspec.py --kernel 2 3 --kernel 3 4"
+      dtype: List[Tuple[float,float]]
+      required: false
+      default: [1,1]
+      policies:
+        repeat: repeat
+        format: ({0[0]},{0[1]})
+    nu-bounds:
+        dtype: List[int]
+        info: "Frequency range to consider in index units. Default: 0 -1"
+        default : [0,-1]
+        required: false
+        policies:
+          repeat: '[]'
+    t-bounds:
+        dtype: List[int]
+        info: "Time range to consider in index units. Default: 0 -1"
+        default : [0,-1]
+        required: false
+        policies:
+          repeat: '[]'
+
+  steps:
+    step1:
+      cab: cab1
+      params:
+        kernel: '{recipe.kernel}'
+        nu-bounds: '{recipe.nu-bounds}'
+        t-bounds: '{recipe.t-bounds}'
+
+cabs:
+  cab1:
+    flavour: python-code
+    backend:
+      select: native
+    command: |
+      print(kernel)
+      print(nu_bounds)
+      print(t_bounds)
+    inputs:
+      kernel:
+        info: "Kernel sizes as tuples: (nu_delta (MHz), t_delta (s)) i.e. python inspect_dynspec.py --kernel 2 3 --kernel 3 4"
+        dtype: List[Tuple[float,float]]
+        required: false
+        default: [1,1]
+        policies:
+          repeat: repeat
+          format: ({0[0]},{0[1]})
+      nu-bounds:
+          dtype: List[int]
+          info: "Frequency range to consider in index units. Default: 0 -1"
+          default : [0,-1]
+          required: false
+          policies:
+            repeat: '[]'
+      t-bounds:
+          dtype: List[int]
+          info: "Time range to consider in index units. Default: 0 -1"
+          default : [0,-1]
+          required: false
+          policies:
+            repeat: '[]'

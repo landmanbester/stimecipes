@@ -437,6 +437,31 @@ cabs:
         default: 8
 
 
+  put_sigspec:
+    flavour: python-code
+    command: |
+      import sys
+      import dask
+      import dask.array as da
+      from daskms import xds_from_ms, xds_to_table
+
+      xds = xds_from_ms(ms, chunks={'row':-1},
+                        group_cols=['FIELD_ID', 'DATA_DESC_ID', 'SCAN_NUMBER'])
+
+      out_ds = []
+      for ds in xds:
+          w = ds.WEIGHT_SPECTRUM.data
+          s = 1.0/da.sqrt(w)
+          ds = ds.assign(**{'SIGMA_SPECTRUM': (('row','chan','corr'), s)})
+          out_ds.append(ds)
+
+      writes = xds_to_table(out_ds, ms, columns=['SIGMA_SPECTRUM'])
+      dask.compute(writes)
+    inputs:
+      ms:
+        dtype: str
+        required: true
+
 
   or_flags:
     flavour: python-code

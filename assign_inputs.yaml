@@ -1,0 +1,38 @@
+test:
+  
+  # assign:
+  #   name: 'name_{recipe.stokes}'
+
+  # aliases:
+  #   name: '*.name'
+
+  inputs:
+    stokes:
+      default: I
+    test-param:
+      dtype: str
+      default: 'name_{current.stokes}'
+      aliases: ['*.name']
+
+  steps:
+    step1:
+      cab: cab1
+      params:
+        stokes: =recipe.stokes
+        # name: =recipe.test-param
+
+cabs:
+  cab1:
+    flavour: python-code
+    backend:
+      select: native
+    command: |
+      print(stokes)
+      print(name)
+    inputs:
+      stokes:
+        dtype: str
+        required: true
+      name:
+        dtype: str
+        required: true
