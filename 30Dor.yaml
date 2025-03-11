@@ -74,7 +74,7 @@ opts:
         K.initial_estimate: true
         B.type: complex
         B.time_interval: 0
-        B.freq_interval: 8
+        B.freq_interval: 32
         B.respect_scan_boundaries: false
         P.type: parallactic_angle
         P.time_interval: 1
