@@ -46,10 +46,10 @@ opts:
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
         solver.terms: [G,K,B]
-        solver.iter_recipe: [50,50,50,25,25,25,15,15,15,5,5,5]
+        solver.iter_recipe: [50,150,50,25,25,25,15,15,15,5,5,5]
         solver.propagate_flags: true
-        solver.robust: true
-        solver.threads: 32
+        solver.robust: false
+        solver.threads: 4
         solver.reference_antenna: 2
         output.gain_directory: '{recipe.basedir}/gkb_coarse_binf.qc'
         output.log_directory: '{recipe.basedir}/'
@@ -60,10 +60,10 @@ opts:
         output.apply_p_jones_inv: false
         output.net_gains: [G,K,B]
         mad_flags.enable: true
-        mad_flags.threshold_bl: 7.5
+        mad_flags.threshold_bl: 12
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
-        dask.threads: 2
+        dask.threads: 8
         dask.scheduler: threads
         G.type: diag_complex
         G.time_interval: 0
@@ -74,8 +74,8 @@ opts:
         K.initial_estimate: true
         B.type: complex
         B.time_interval: 0
-        B.freq_interval: 32
-        B.respect_scan_boundaries: false
+        B.freq_interval: 16
+        B.respect_scan_boundaries: true
         # P.type: parallactic_angle
         # P.time_interval: 1
         # P.freq_interval: 0
@@ -158,7 +158,7 @@ opts:
         input_ms.select_fields: [1]
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
-        solver.terms: [G, K, B, D, P]
+        solver.terms: [G, K, B, D]
         solver.iter_recipe: [0, 0, 0, 100, 0]
         solver.propagate_flags: false
         solver.robust: false
@@ -208,7 +208,7 @@ opts:
         input_ms.select_fields: [2]
         input_ms.sigma_column: SIGMA_SPECTRUM
         input_model.apply_p_jones: false
-        solver.terms: [G, K, B, D, P]
+        solver.terms: [G, K, B, D]
         solver.iter_recipe: [0, 0, 0, 0, 0]
         solver.propagate_flags: false
         solver.robust: false
@@ -221,7 +221,7 @@ opts:
         # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: false
         output.apply_p_jones_inv: false
-        output.net_gains: [[G,K,B,D,P],[G,K,B,D]]
+        output.net_gains: [G,K,B,D]
         mad_flags.enable: false
         dask.threads: 16
         dask.scheduler: threads
