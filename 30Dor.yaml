@@ -45,8 +45,8 @@ opts:
         input_ms.select_fields: [0]
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
-        solver.terms: [G,K,B,P]
-        solver.iter_recipe: [50,50,50,0,25,25,25,0,15,15,15,0,5,5,5,0]
+        solver.terms: [G,K,B]
+        solver.iter_recipe: [50,50,50,25,25,25,15,15,15,5,5,5]
         solver.propagate_flags: true
         solver.robust: true
         solver.threads: 32
@@ -58,7 +58,7 @@ opts:
         # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [[G,K,B],[G,K,B,P]]
+        output.net_gains: [[G,K,B]]
         mad_flags.enable: true
         mad_flags.threshold_bl: 7.5
         mad_flags.threshold_global: 0
@@ -76,9 +76,9 @@ opts:
         B.time_interval: 0
         B.freq_interval: 32
         B.respect_scan_boundaries: false
-        P.type: parallactic_angle
-        P.time_interval: 1
-        P.freq_interval: 0
+        # P.type: parallactic_angle
+        # P.time_interval: 1
+        # P.freq_interval: 0
 
     # convert G to abs
     g_to_abs:
