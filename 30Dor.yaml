@@ -395,7 +395,7 @@ selfcal:
         # input_ms.sigma_column:   #=recipe.sigma-column
         input_ms.time_chunk: 50
         input_ms.freq_chunk: 0
-        input_ms.select_uv_range: [100,0]
+        input_ms.select_uv_range: [150,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
         input_model.recipe: =recipe.model-column
@@ -404,8 +404,8 @@ selfcal:
         solver.iter_recipe: [50,30,20,10,5]
         solver.propagate_flags: true
         solver.robust: true
-        solver.threads: =recipe.ref-ant
-        solver.reference_antenna: 2
+        solver.threads: 2
+        solver.reference_antenna: =recipe.ref-ant
         output.gain_directory: 'outputs/selfcal1.qc'
         output.log_directory: 'output/logs/logs.qc'
         output.overwrite: =recipe.overwrite
