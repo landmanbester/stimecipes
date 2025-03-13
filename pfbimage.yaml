@@ -45,7 +45,11 @@ image:
       dtype: str
       # default: WEIGHT_SPECTRUM
       info:
-        Weightcolumn
+        Weight column
+    gains:
+      dtype: URI
+      info:
+        Gain table to apply
     robustness:
       dtype: float
       default: -0.3
