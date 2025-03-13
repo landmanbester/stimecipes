@@ -33,7 +33,7 @@ opts:
 
 
   steps:
-    kgb:
+    kg1:
       cab: quartical
       info: GKB on the primary where
             G = time variable complex gain,
@@ -48,25 +48,23 @@ opts:
         input_ms.select_fields: [0]
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
-        solver.terms: [G,K,B]
-        solver.iter_recipe: [50,150,50,25,25,25,15,15,15,5,5,5]
+        solver.terms: [G,K]
+        solver.iter_recipe: [50,150,25,25,15,15,5,5,5,5]
         solver.propagate_flags: false
-        solver.robust: false
-        solver.threads: 4
+        solver.robust: true
+        solver.threads: 7
         solver.reference_antenna: =recipe.ref-ant
-        output.gain_directory: '{recipe.basedir}/gkb_coarse.qc'
+        output.gain_directory: '{recipe.basedir}/kg1.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        # output.products: [corrected_data, corrected_weight]
-        # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
-        output.flags: true
+        output.flags: false
         output.apply_p_jones_inv: false
-        output.net_gains: [G,K,B]
+        output.net_gains: 
         mad_flags.enable: true
         mad_flags.threshold_bl: 12
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
-        dask.threads: 8
+        dask.threads: 9
         dask.scheduler: threads
         G.type: diag_complex
         G.time_interval: 0
@@ -75,16 +73,9 @@ opts:
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: true
-        B.type: complex
-        B.time_interval: 0
-        B.freq_interval: 16
-        B.respect_scan_boundaries: false
-        # P.type: parallactic_angle
-        # P.time_interval: 1
-        # P.freq_interval: 0
 
 
-    kgb2:
+    b1:
       cab: quartical
       info: GKB on the primary where
             G = time variable complex gain,
@@ -103,39 +94,127 @@ opts:
         solver.iter_recipe: [0,0,50,0,0,25,0,0,15,0,0,5,0,0,5]
         solver.propagate_flags: false
         solver.robust: true
-        solver.threads: 4
+        solver.threads: 2
         solver.reference_antenna: =recipe.ref-ant
-        output.gain_directory: '{recipe.basedir}/gkb_coarse_binf.qc'
+        output.gain_directory: '{recipe.basedir}/b1.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        # output.products: [corrected_data, corrected_weight]
-        # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
+        output.flags: true
+        output.apply_p_jones_inv: false
+        output.net_gains:
+        mad_flags.enable: true
+        mad_flags.threshold_bl: 12
+        mad_flags.threshold_global: 0
+        mad_flags.max_deviation: 0
+        dask.threads: 32
+        dask.scheduler: threads
+        G.type: diag_complex
+        G.time_interval: 5
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/kg1.qc/G'
+        K.type: delay
+        K.time_interval: 5
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/kg1.qc/K'
+        B.type: complex
+        B.time_interval: 0
+        B.freq_interval: 16
+        B.respect_scan_boundaries: false
+
+
+    kg2:
+      cab: quartical
+      info: GKB on the primary where
+            G = time variable complex gain,
+            K = per scan delay
+            B = frequency variable complex gain (bandpass)
+      params:
+        input_ms.path: =recipe.ms_cals
+        input_ms.time_chunk: 0
+        input_ms.freq_chunk: 0
+        input_ms.select_uv_range: [150,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID, SCAN_NUMBER]
+        input_ms.select_fields: [0]
+        input_model.recipe: '{recipe.model-column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G,K,B]
+        solver.iter_recipe: [50,150,0,25,25,0,15,15,0,5,5,0,5,5,0]
+        solver.propagate_flags: false
+        solver.robust: true
+        solver.threads: 7
+        solver.reference_antenna: =recipe.ref-ant
+        output.gain_directory: '{recipe.basedir}/kg2.qc'
+        output.log_directory: '{recipe.basedir}/'
+        output.overwrite: true
+        output.flags: true
+        output.apply_p_jones_inv: false
+        mad_flags.enable: true
+        mad_flags.threshold_bl: 8
+        mad_flags.threshold_global: 0
+        mad_flags.max_deviation: 0
+        dask.threads: 9
+        dask.scheduler: threads
+        G.type: diag_complex
+        G.time_interval: 0
+        G.freq_interval: 0
+        K.type: delay
+        K.time_interval: 0
+        K.freq_interval: 0
+        K.initial_estimate: true
+        B.type: complex
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/B'
+
+    b2:
+      cab: quartical
+      info: GKB on the primary where
+            G = time variable complex gain,
+            K = per scan delay
+            B = frequency variable complex gain (bandpass)
+      params:
+        input_ms.path: =recipe.ms_cals
+        input_ms.time_chunk: 0
+        input_ms.freq_chunk: 128
+        input_ms.select_uv_range: [150,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
+        input_ms.select_fields: [0]
+        input_model.recipe: '{recipe.model-column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G,K,B]
+        solver.iter_recipe: [0,0,50,0,0,25,0,0,15,0,0,5,0,0,5]
+        solver.propagate_flags: false
+        solver.robust: true
+        solver.threads: 2
+        solver.reference_antenna: =recipe.ref-ant
+        output.gain_directory: '{recipe.basedir}/b2.qc'
+        output.log_directory: '{recipe.basedir}/'
+        output.overwrite: true
+        output.products: [corrected_data, corrected_weight]
+        output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [G,K,B]
         mad_flags.enable: true
-        mad_flags.threshold_bl: 9
+        mad_flags.threshold_bl: 8
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
-        dask.threads: 8
+        dask.threads: 32
         dask.scheduler: threads
         G.type: diag_complex
-        G.time_interval: 1
+        G.time_interval: 5
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb_coarse.qc/G'
+        G.load_from: '{recipe.basedir}/kg2.qc/G'
         K.type: delay
-        K.time_interval: 1
+        K.time_interval: 5
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb_coarse.qc/K'
+        K.load_from: '{recipe.basedir}/kg2.qc/K'
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 8
         B.respect_scan_boundaries: false
-        # P.type: parallactic_angle
-        # P.time_interval: 1
-        # P.freq_interval: 0
-
 
 
     # convert G to abs
@@ -143,7 +222,7 @@ opts:
       cab: G2abs
       info: Replace G with abs(G) since we won't need the phase again
       params:
-        source: '{recipe.basedir}/gkb_coarse_binf.qc/G'
+        source: '{recipe.basedir}/kg2.qc/G'
 
     # crosshand_phase:
     #   cab: quartical
