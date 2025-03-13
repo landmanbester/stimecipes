@@ -372,7 +372,7 @@ selfcal:
       default: DATA
     model-column:
       dtype: str
-      default: MODEL_DATA_PFB
+      default: MODEL_DATA_MOPPED
     overwrite:
       dtype: bool
       default: false
@@ -406,11 +406,11 @@ selfcal:
         solver.robust: true
         solver.threads: 2
         solver.reference_antenna: =recipe.ref-ant
-        output.gain_directory: 'outputs/selfcal1.qc'
+        output.gain_directory: 'outputs/{recipe.data-column}_{recipe.model-column}_selfcal1.qc'
         output.log_directory: 'output/logs/logs.qc'
         output.overwrite: =recipe.overwrite
         output.products: [corrected_residual]
-        output.columns: [CORRECTED_RESIDUAL_QCAL1]
+        output.columns: [CORRECTED_RESIDUAL_MOPPED]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [K]
