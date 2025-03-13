@@ -361,51 +361,41 @@ opts:
 
 
 selfcal:
-  name: Lunocal
+  name: Tarantuala selfcal
   info: Self-calibration
 
-  assign_based_on:
-    obs:
-      'cals':
-        ms: /home/bester/projects/MOON/l.ms
-      'luno':
-        ms: /home/bester/projects/MOON/l_moon.ms
+  assign:
+    ms-target: /home/bester/projects/30Dor/msdir/Tarantula_HI_8s4ch.ms
 
   inputs:
-    obs:
-      default: sgra
-      choices: ['sgra','gcx17','gcx30']
     data-column:
       default: DATA
-    sigma-column:
-      default: SIGMA_SPECTRUM
-      info: Original std of noise used to construct weights
     model-column:
       dtype: str
       default: MODEL_DATA_PFB
-    nthreads:
-      dtype: int
-      default: 32
     overwrite:
       dtype: bool
       default: false
     tint:
       dtype: int
-      default: 1
+      default: 5
       info:
         Time solution interval for delay_and_offset
+    ref-ant:
+      dtype: int
+      default: 43
 
   steps:
     selfcal1:
       cab: quartical
       info: Perform a round of phase + delay selfcal + MAD flagging
       params:
-        input_ms.path: '{recipe.ms}'
+        input_ms.path: =recipe.ms-target
         input_ms.data_column: =recipe.data-column
         # input_ms.sigma_column:   #=recipe.sigma-column
-        input_ms.time_chunk: 28
+        input_ms.time_chunk: 50
         input_ms.freq_chunk: 0
-        input_ms.select_uv_range: [0,0]
+        input_ms.select_uv_range: [100,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
         input_model.recipe: =recipe.model-column
@@ -414,19 +404,18 @@ selfcal:
         solver.iter_recipe: [50,30,20,10,5]
         solver.propagate_flags: true
         solver.robust: true
-        solver.threads: 2
+        solver.threads: =recipe.ref-ant
         solver.reference_antenna: 2
-        output.gain_directory: 'output/gains/{recipe.obs}/stage1.qc'
-        output.log_directory: 'output/{recipe.obs}/logs.qc'
+        output.gain_directory: 'outputs/selfcal1.qc'
+        output.log_directory: 'output/logs/logs.qc'
         output.overwrite: =recipe.overwrite
-        output.products: [residual]
-        output.columns: [RESIDUAL]
+        output.products: [corrected_residual]
+        output.columns: [CORRECTED_RESIDUAL_QCAL1]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [K]
         mad_flags.enable: true
-        mad_flags.whitening: native
-        mad_flags.threshold_bl: 5.5
+        mad_flags.threshold_bl: 9.5
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
         dask.threads: 24
