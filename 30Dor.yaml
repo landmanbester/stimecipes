@@ -83,6 +83,61 @@ opts:
         # P.time_interval: 1
         # P.freq_interval: 0
 
+
+    kgb2:
+      cab: quartical
+      info: GKB on the primary where
+            G = time variable complex gain,
+            K = per scan delay
+            B = frequency variable complex gain (bandpass)
+      params:
+        input_ms.path: =recipe.ms_cals
+        input_ms.time_chunk: 0
+        input_ms.freq_chunk: 128
+        input_ms.select_uv_range: [150,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
+        input_ms.select_fields: [0]
+        input_model.recipe: '{recipe.model-column}'
+        input_model.apply_p_jones: false
+        solver.terms: [G,K,B]
+        solver.iter_recipe: [0,0,50,0,0,25,0,0,15,0,0,5,0,0,5]
+        solver.propagate_flags: false
+        solver.robust: true
+        solver.threads: 4
+        solver.reference_antenna: =recipe.ref-ant
+        output.gain_directory: '{recipe.basedir}/gkb_coarse_binf.qc'
+        output.log_directory: '{recipe.basedir}/'
+        output.overwrite: true
+        # output.products: [corrected_data, corrected_weight]
+        # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
+        output.flags: true
+        output.apply_p_jones_inv: false
+        output.net_gains: [G,K,B]
+        mad_flags.enable: true
+        mad_flags.threshold_bl: 9
+        mad_flags.threshold_global: 0
+        mad_flags.max_deviation: 0
+        dask.threads: 8
+        dask.scheduler: threads
+        G.type: diag_complex
+        G.time_interval: 1
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/G'
+        K.type: delay
+        K.time_interval: 1
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/K'
+        B.type: complex
+        B.time_interval: 0
+        B.freq_interval: 8
+        B.respect_scan_boundaries: false
+        # P.type: parallactic_angle
+        # P.time_interval: 1
+        # P.freq_interval: 0
+
+
+
     # convert G to abs
     g_to_abs:
       cab: G2abs
@@ -394,13 +449,13 @@ selfcal:
         input_ms.data_column: =recipe.data-column
         # input_ms.sigma_column:   #=recipe.sigma-column
         input_ms.time_chunk: 50
-        input_ms.freq_chunk: 0
+        input_ms.freq_chunk: 512
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_ms.select_corr: [0, 3]
         input_model.recipe: =recipe.model-column
         input_model.apply_p_jones: false
-        solver.terms: [K]
+        solver.terms: [K,G]
         solver.iter_recipe: [150,50,20,10,5]
         solver.propagate_flags: true
         solver.robust: true
@@ -425,7 +480,13 @@ selfcal:
         K.interp_mode: ampphase
         K.time_interval: =recipe.tint
         K.freq_interval: 0
-        K.initial_estimate: false
+        K.initial_estimate: true
+        G.type: diag_complex
+        G.interp_method: 2dlinear
+        G.interp_mode: ampphase
+        G.time_interval: 25
+        G.freq_interval: 128
+        G.initial_estimate: false
 
 
 
