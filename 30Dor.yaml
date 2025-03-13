@@ -54,7 +54,7 @@ opts:
         solver.robust: false
         solver.threads: 4
         solver.reference_antenna: =recipe.ref-ant
-        output.gain_directory: '{recipe.basedir}/gkb_coarse_binf.qc'
+        output.gain_directory: '{recipe.basedir}/gkb_coarse.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
         # output.products: [corrected_data, corrected_weight]
@@ -122,12 +122,12 @@ opts:
         G.type: diag_complex
         G.time_interval: 1
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/G'
+        G.load_from: '{recipe.basedir}/gkb_coarse.qc/G'
         K.type: delay
         K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/K'
+        K.load_from: '{recipe.basedir}/gkb_coarse.qc/K'
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 8
