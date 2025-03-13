@@ -401,7 +401,7 @@ selfcal:
         input_model.recipe: =recipe.model-column
         input_model.apply_p_jones: false
         solver.terms: [K]
-        solver.iter_recipe: [50,30,20,10,5]
+        solver.iter_recipe: [150,50,20,10,5]
         solver.propagate_flags: true
         solver.robust: true
         solver.threads: 2
