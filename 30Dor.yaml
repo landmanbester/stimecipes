@@ -43,7 +43,7 @@ opts:
         input_ms.path: =recipe.ms_cals
         input_ms.time_chunk: 0
         input_ms.freq_chunk: 0
-        input_ms.select_uv_range: [0,150]
+        input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID, SCAN_NUMBER]
         input_ms.select_fields: [0]
         input_model.recipe: '{recipe.model-column}'
