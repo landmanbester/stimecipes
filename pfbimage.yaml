@@ -266,7 +266,7 @@ kclean:
       dtype: float
     field-id:
       dtype: List[int]
-      default: 0
+      default: [1]
       info:
         Which field to image
     overwrite:
