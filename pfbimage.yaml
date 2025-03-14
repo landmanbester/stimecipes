@@ -46,6 +46,11 @@ image:
       # default: WEIGHT_SPECTRUM
       info:
         Weight column
+    field-id:
+      dtype: int
+      default: 0
+      info:
+        Which field to image
     gains:
       dtype: URI
       info:

@@ -317,7 +317,7 @@ opts:
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/b2.qc/B'
+        B.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/B'
 
     ####################################### REFINE #################################################
     phasecal:
