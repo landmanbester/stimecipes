@@ -265,7 +265,7 @@ kclean:
     l2-reweight-dof:
       dtype: float
     field-id:
-      dtype: int
+      dtype: List[int]
       default: 0
       info:
         Which field to image
@@ -308,7 +308,7 @@ kclean:
         overwrite: =recipe.overwrite
         check-ants: true
         product: =recipe.stokes
-        fields: = recipe.field-id
+        fields: =recipe.field-id
 
     grid:
       cab: pfb.grid
