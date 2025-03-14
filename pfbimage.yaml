@@ -328,7 +328,6 @@ kclean:
       info: Cleaning step
       params:
         niter: =recipe.niter
-        tol: 1e-3
         gamma: 0.99
         nthreads: 32
         rmsfactor: 3.0
