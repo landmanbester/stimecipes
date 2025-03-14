@@ -308,6 +308,7 @@ kclean:
         overwrite: =recipe.overwrite
         check-ants: true
         product: =recipe.stokes
+        fields: = recipe.field-id
 
     grid:
       cab: pfb.grid
