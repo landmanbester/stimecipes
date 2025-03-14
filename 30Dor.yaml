@@ -307,13 +307,13 @@ opts:
         G.type: diag_complex  #amp
         G.time_interval: 1
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gk2.qc/G'
+        G.load_from: '{recipe.basedir}/kg2.qc/G'
         G.interp_mode: amp
         K.type: delay
         K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gk2.qc/K'
+        K.load_from: '{recipe.basedir}/kg2.qc/K'
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
