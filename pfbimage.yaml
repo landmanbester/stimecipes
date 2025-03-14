@@ -182,4 +182,158 @@ image:
         outputs: iI
         product: =recipe.stokes
 
+kclean:
+  name: Image with kclean algorithm
+  info:
+    Example imaging recipe using pfb-imaging with stimela2
 
+  for_loop:
+    var: stokes
+    over: stokes-list  # can refer to any input by name here
+  
+  inputs:
+    stokes-list:
+      dtype: List[str]
+      default: [I]
+      element_choices: [I, Q, U, V]
+    ms:
+      dtype: List[URI]
+      required: true
+    imagename:
+      dtype: str
+      default: pfb_kclean
+      info:
+        A descriptive name for the outputs to be placed in basedir.
+    data-column:
+      dtype: str
+      default: DATA
+      info:
+        Column to image
+    weight-column:
+      dtype: str
+      # default: WEIGHT_SPECTRUM
+      info:
+        Weight column
+    gains:
+      dtype: URI
+      info:
+        Gain table to apply
+    robustness:
+      dtype: float
+      default: -0.3
+      info:
+        Briggs robustness level.
+        Less than -2 corresponds to uniform, larger than 2 or None to natural.
+    field-of-view:
+      dtype: float
+      default: 1.3
+    super-resolution-factor:
+      dtype: float
+      default: 2.0
+      info:
+        How much to oversample Nyquist by at the highest frequency
+    channels-per-image:
+      dtype: int
+      default: 256
+      info:
+        Number of channels to combine into an imaging band
+    integrations-per-image:
+      dtype: int
+      default: -1
+      info:
+        Number of time integrations per dataset
+    chan-average:
+      dtype: int
+      default: 4
+      info:
+        How many channels to average together
+    bda-decorr:
+      dtype: float
+      default: 0.95
+      info:
+        Amount of amplitude loss that can be tolerated at edge of field
+    niter:
+      dtype: int
+      default: 10
+      info:
+        Number of major cycles
+    l2-reweight-dof:
+      dtype: float
+    field-id:
+      dtype: int
+      default: 0
+      info:
+        Which field to image
+    overwrite:
+      default: false
+      aliases: ['*.overwrite']
+    basedir:
+      dtype: Directory
+      required: true
+      mkdir: true
+      info:
+        Base directory in which to place output data products.
+    output-filename:
+      default: '{recipe.basedir}/{recipe.imagename}'
+      aliases: ['*.output-filename']
+    fits-output-folder:
+      default: '{recipe.basedir}/fits'
+      aliases: ['*.fits-output-folder']
+    log-directory:
+      default: '{recipe.basedir}/logs'
+      aliases: ['*.log-directory']
+
+  steps:
+    init:
+      cab: pfb.init
+      info: 'Initialise imaging data products'
+      params:
+        ms: =recipe.ms
+        gain-table: =IFSET(recipe.gains)
+        nthreads: 2
+        nworkers: 32
+        data-column: =recipe.data-column
+        weight-column: =IFSET(recipe.weight-column)
+        channels-per-image: =recipe.channels-per-image
+        integrations-per-image: =recipe.integrations-per-image
+        chan-average: =recipe.chan-average
+        max-field-of-view: =recipe.field-of-view
+        bda-decorr: =recipe.bda-decorr
+        freq-range: =IFSET(recipe.freq-range)
+        overwrite: =recipe.overwrite
+        check-ants: true
+        product: =recipe.stokes
+
+    grid:
+      cab: pfb.grid
+      info: 'Setup grid for imaging'
+      params:
+        super-resolution-factor: =recipe.super-resolution-factor
+        field-of-view: =recipe.field-of-view
+        robustness: =recipe.robustness
+        nthreads: 8
+        nworkers: 8
+        psf-oversize: 1.4
+        overwrite: =recipe.overwrite
+        product: =recipe.stokes
+        l2-reweight-dof: =IFSET(recipe.l2-reweight-dof)
+
+    kclean:
+      cab: pfb.kclean
+      info: Cleaning step
+      params:
+        niter: =recipe.niter
+        tol: 1e-3
+        gamma: 0.99
+        nthreads: 32
+        rmsfactor: 3.0
+        product: =recipe.stokes
+
+    restore:
+      cab: pfb.restore
+      info: Produce restored image.
+      params:
+        nworkers: 8
+        nthreads: 8
+        outputs: iI
+        product: =recipe.stokes
