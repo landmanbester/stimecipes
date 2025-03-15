@@ -444,7 +444,7 @@ selfcal:
       default: DATA
     model-column:
       dtype: str
-      default: MODEL_DATA_MOPPED
+      default: MODEL_DATA_KCLEAN
     overwrite:
       dtype: bool
       default: false
@@ -469,25 +469,25 @@ selfcal:
         input_ms.freq_chunk: 512
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
-        input_ms.select_corr: [0, 3]
+        # input_ms.select_corr: [0, 3]
         input_model.recipe: =recipe.model-column
         input_model.apply_p_jones: false
-        solver.terms: [K,G]
-        solver.iter_recipe: [150,50,20,10,5]
+        solver.terms: [G,K]
+        solver.iter_recipe: [150,150,50,50,20,20,10,10,10,10]
         solver.propagate_flags: true
         solver.robust: true
         solver.threads: 2
         solver.reference_antenna: =recipe.ref-ant
-        output.gain_directory: 'outputs/{recipe.data-column}_{recipe.model-column}_selfcal1.qc'
+        output.gain_directory: 'outputs/{recipe.data-column}_{recipe.model-column}_selfcal_complex2x2.qc'
         output.log_directory: 'output/logs/logs.qc'
         output.overwrite: =recipe.overwrite
-        output.products: [corrected_residual]
-        output.columns: [CORRECTED_RESIDUAL_MOPPED]
+        output.products: [corrected_residual, corrected_weight]
+        output.columns: [CORRECTED_RESIDUAL_KCLEAN, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [K]
+        output.net_gains: [G,K]
         mad_flags.enable: true
-        mad_flags.threshold_bl: 9.5
+        mad_flags.threshold_bl: 7.5
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
         dask.threads: 24
@@ -498,7 +498,7 @@ selfcal:
         K.time_interval: =recipe.tint
         K.freq_interval: 0
         K.initial_estimate: true
-        G.type: diag_complex
+        G.type: complex
         G.interp_method: 2dlinear
         G.interp_mode: ampphase
         G.time_interval: 25
