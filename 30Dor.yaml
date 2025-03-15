@@ -573,7 +573,7 @@ cabs:
       print(f'Writing amplitudes to {Ga_table}')
       print(f'Writing delay_and_offtset to {D_table}')
       writes = []
-      writes.append(xds_to_zarr(G, Ga_table))
+      writes.append(xds_to_zarr(Ga, Ga_table))
       writes.append(xds_to_zarr(D, D_table))
       dask.compute(writes)
       print('Done')
