@@ -521,9 +521,6 @@ cabs:
       import dask.array as da
       from daskms.experimental.zarr import xds_to_zarr, xds_from_zarr
 
-      sourceG = '/data7/lbester/30Dor/outputs/kg2.qc/G'
-      sourceK = '/data7/lbester/30Dor/outputs/kg2.qc/K'
-
       G_table = '::'.join(sourceG.rsplit('/', 1))
       K_table = '::'.join(sourceK.rsplit('/', 1))
       G = xds_from_zarr(G_table)
