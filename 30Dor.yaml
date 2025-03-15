@@ -556,24 +556,33 @@ cabs:
           pnames = np.array(['phase_offset_XX', 'delay_XX', 'phase_offset_YY', 'delay_YY'], dtype='<U15')
           pfreq = k.param_freq.values
           ptime = k.param_time.values
+          pflag = k.param_flags.data
           # drop params to avoid conflicts
           d = k.drop_vars(['params', 'param_flags'])
           d = d.drop_dims(['param_freq', 'param_name', 'param_time'])
-          d = d.assign_coords({'param_freq': (('param_freq',), k.param_freq.values),
-                              'param_time': (('param_time',), k.param_time.values),
+          d = d.assign_coords({'param_freq': (('param_freq',), pfreq),
+                              'param_time': (('param_time',), ptime),
                               'param_name': (('param_name',), pnames)})
           d = d.assign({'gains': (k.gains.dims, gains),
                         'params': (('param_time', 'param_freq', 'antenna', 'direction', 'param_name'), params),
-                        'param_flags': (('param_time', 'param_freq', 'antenna', 'direction'), k.param_flags.data)})  # Need to or flags?
+                        'param_flags': (('param_time', 'param_freq', 'antenna', 'direction'), pflag)})  # Need to or flags?
           par_spec = k.PARAM_SPEC
           par_spec[-1] = [4]  # 2 -> 4 parameters
           d = d.assign_attrs({'TYPE': 'delay_and_offset',
                               'PARAM_AXES': ['param_time', 'param_freq', 'antenna', 'direction', 'param_name'],
                               'PARAM_SPEC': par_spec})
+          netp = (g.gains.data * k.gains.data).compute()
+          netf = (ga.gains.data * d.gains.data).compute()
+          try:
+            assert netp == netf
+          except:
+            import ipdb; ipdb.set_trace()
+            
+
           D.append(d)
 
-          Ga_table = G_table.rstrip('G') + 'Ga'
-          D_table = K_table.rstrip('K') + 'D'
+      Ga_table = G_table.rstrip('G') + 'Ga'
+      D_table = K_table.rstrip('K') + 'D'
       print(f'Writing amplitudes to {Ga_table}')
       print(f'Writing delay_and_offtset to {D_table}')
       writes = []
