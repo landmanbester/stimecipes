@@ -69,13 +69,20 @@ opts:
         K.freq_interval: 0
         K.initial_estimate: true
 
+    # convert G to abs and combine angle(G) into K
+    KG_to_DGa:
+      cab: KG2DGa
+      info: Replace G with abs(G) and combine angle(G) with K to make a delay_and_offset term
+      params:
+        sourceG: '{recipe.basedir}/kg1.qc/G'
+        sourceK: '{recipe.basedir}/kg1.qc/K'
 
     b1:
       cab: quartical
-      info: GKB on the primary where
-            G = time variable complex gain,
-            K = per scan delay
-            B = frequency variable complex gain (bandpass)
+      info: Bandpass given G and K round 1 where 
+            G = diagonal time variable complex gain,
+            K = delay
+            B = frequency variable complex 2x2 gain (bandpass + leakage)
       params:
         input_ms.path: =recipe.ms
         input_ms.time_chunk: 0
@@ -85,7 +92,7 @@ opts:
         input_ms.select_fields: [0]
         input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
-        solver.terms: [G,K,B]
+        solver.terms: [G,D,B]
         solver.iter_recipe: [0,0,50,0,0,25,0,0,15,0,0,5,0,0,5]
         solver.propagate_flags: false
         solver.robust: true
@@ -94,36 +101,37 @@ opts:
         output.gain_directory: '{recipe.basedir}/b1.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        output.flags: true
+        output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains:
-        mad_flags.enable: true
+        mad_flags.enable: false
         mad_flags.threshold_bl: 12
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
         dask.threads: 32
         dask.scheduler: threads
-        G.type: diag_complex
+        G.type: amplitude
         G.time_interval: 5
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/kg1.qc/G'
-        K.type: delay
-        K.time_interval: 5
-        K.freq_interval: 0
-        K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/kg1.qc/K'
+        G.load_from: '{recipe.basedir}/kg1.qc/Ga'
+        D.type: delay_and_offset
+        D.time_interval: 5
+        D.freq_interval: 0
+        D.initial_estimate: false
+        D.load_from: '{recipe.basedir}/kg1.qc/D'
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 16
         B.respect_scan_boundaries: false
 
+    # Need a step to zero bandpass slopes
 
     kg2:
       cab: quartical
-      info: GKB on the primary where
+      info: GK round 2 on the primary where
             G = time variable complex gain,
-            K = per scan delay
-            B = frequency variable complex gain (bandpass)
+            K = delay
+            B = frequency variable complex 2x2 gain (bandpass + leakage)
       params:
         input_ms.path: =recipe.ms
         input_ms.time_chunk: 0
@@ -145,7 +153,7 @@ opts:
         output.flags: true
         output.apply_p_jones_inv: false
         mad_flags.enable: true
-        mad_flags.threshold_bl: 8
+        mad_flags.threshold_bl: 10
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
         dask.threads: 9
@@ -153,21 +161,23 @@ opts:
         G.type: diag_complex
         G.time_interval: 0
         G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/kg1.qc/G'
         K.type: delay
         K.time_interval: 0
         K.freq_interval: 0
-        K.initial_estimate: true
+        K.load_from: '{recipe.basedir}/kg1.qc/K'
+        K.initial_estimate: false
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/B'
+        B.load_from: '{recipe.basedir}/b1.qc/B'
 
     b2:
       cab: quartical
-      info: GKB on the primary where
-            G = time variable complex gain,
-            K = per scan delay
-            B = frequency variable complex gain (bandpass)
+      info: Bandpass given G and K round 2 where 
+            G = diagonal time variable complex gain,
+            K = delay
+            B = frequency variable complex 2x2 gain (bandpass + leakage)
       params:
         input_ms.path: =recipe.ms
         input_ms.time_chunk: 0
@@ -210,28 +220,71 @@ opts:
         B.time_interval: 0
         B.freq_interval: 8
         B.respect_scan_boundaries: false
+        B.load_from: '{recipe.basedir}/b1.qc/B'
 
 
-    # convert G to abs
-    g_to_abs:
-      cab: G2abs
-      info: Replace G with abs(G) since we won't need the phase again
-      params:
-        source: '{recipe.basedir}/kg2.qc/G'
-
-    transfer_secondary:
+    secondary_amplitude:
       cab: quartical
-      info: Transfer solutions to target field
+      info: Solve for a global amplitude assuming unity model
+            This should approximate the spectrum of the secondary
       params:
         input_ms.path: =recipe.ms
         input_ms.time_chunk: 0
         input_ms.freq_chunk: 128
         input_ms.select_uv_range: [0,0]
+        input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
+        input_ms.select_fields: [1]
+        input_model.apply_p_jones: false
+        solver.terms: [G, K, B, A]
+        solver.iter_recipe: [0, 0, 0, 100, 0, 0, 0, 50, 0, 0, 0, 25, 0, 0, 0, 10, 0, 0, 0, 10]
+        solver.propagate_flags: false
+        solver.robust: true
+        solver.threads: 4
+        solver.reference_antenna: =recipe.ref-ant
+        output.gain_directory: '{recipe.basedir}/secondary_init_gloabl_amp.qc'
+        output.log_directory: '{recipe.basedir}/'
+        output.overwrite: true
+        output.flags: false
+        output.apply_p_jones_inv: false
+        output.net_gains: [G,K,B,D]
+        mad_flags.enable: false
+        dask.threads: 16
+        dask.scheduler: threads
+        G.type: diag_complex  #amp
+        G.time_interval: 1
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/kg2.qc/G'
+        G.interp_mode: ampphase
+        K.type: delay
+        K.time_interval: 1
+        K.freq_interval: 0
+        K.initial_estimate: false
+        K.load_from: '{recipe.basedir}/kg2.qc/K'
+        K.interp_mode: ampphase
+        B.type: complex
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.load_from: '{recipe.basedir}/b2.qc/B'
+        B.interp_mode: ampphase
+        A.type: amplitude
+        A.solve_per: array
+        A.time_interval: 0
+        A.freq_interval: 128
+        A.respect_scan_boundaries: false
+
+    secondary_phase_refinement:
+      cab: quartical
+      info: Refine phase and delay given approximate spectrum of secondary 
+      params:
+        input_ms.path: =recipe.ms
+        input_ms.time_chunk: 0
+        input_ms.freq_chunk: 0
+        input_ms.select_uv_range: [0,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_fields: [1]
         input_model.apply_p_jones: false
         solver.terms: [G, K, B, A, D]
-        solver.iter_recipe: [0, 0, 0, 100, 100, 0, 0, 0, 50, 50, 0, 0, 0, 25, 25, 0, 0, 0, 10, 10]
+        solver.iter_recipe: [0, 0, 0, 0, 100, 0, 0, 0, 0, 50, 0, 0, 0, 0, 25, 0, 0, 0, 0, 10]
         solver.propagate_flags: false
         solver.robust: false
         solver.threads: 1
@@ -269,6 +322,7 @@ opts:
         D.time_interval: 0
         D.freq_interval: 0
         D.initial_estimate: false
+
 
     ####################################### REFINE #################################################
     phasecal:
@@ -378,110 +432,6 @@ opts:
         # P.freq_interval: 0
 
 
-# movie:
-#   name: movie
-#   info: Make movies of the calibrated data
-
-#   assign:
-#     output-filename: '{recipe.basedir}/{recipe.obs}/stage0'
-#     fits-output-folder: '{recipe.basedir}/{recipe.obs}/fits'
-#     log-directory: '{recipe.basedir}/{recipe.obs}/logs'
-
-#   aliases:
-#     output-filename: '*.output-filename'
-#     fits-output-folder: '*.fits-output-folder'
-#     log-directory: '*.log-directory'
-#     nworkers: '*.nworkers'
-#     nthreads: '*.nthreads'
-
-#   inputs:
-#     ms:
-#       dtype: URI
-#       required: true
-#       info:
-#         Path to MS
-#     gain-table:
-#       dtype: URI
-#       info:
-#         Path to QuartiCal gain table
-#     product:
-#       dtype: str
-#       default: I
-#       info:
-#         Stokes parameter to image
-#     integrations-per-image:
-#       dtype: int
-#       default: 1
-#       info:
-#         Number of time integrations per image
-#     channels-per-image:
-#       dtype: int
-#       default: -1
-#       info:
-#         Number of frequency channels per image
-#     data-column:
-#       dtype: str
-#       default: DATA
-#       info:
-#         Name of column to image
-#     robustness:
-#       dtype: float
-#       default: -1.5
-#       info:
-#         Robustness value of Briggs weighting scheme
-#     output-format:
-#       dtype: float
-#       default: zarr
-#       info:
-#         Output images as fits or zarr
-#     field-of-view:
-#       dtype: float
-#       default: 1.2
-#       info:
-#         Field of view to image
-#     super-resolution-factor:
-#       dtype: float
-#       default: 1.2
-#       info:
-#         Factor to over-sample Nyquist by
-#     overwrite:
-#       dtype: bool
-#       default: false
-#       info:
-#         Allow overwriting output 
-#     fps:
-#       dtype: int
-#       default: 8
-#       info:
-#         Number of frames per second
-#     nworkers:
-#       dtype: int
-#       default: 4
-#       info:
-#         Number of Dask workers
-#     nthreads:
-#       dtype: int
-#       default: 8
-#       info:
-#         Number of threads per Dask worker
-
-#   steps:
-#     image:
-#       cab: pfb.hci
-#       info: Make high cadence images
-#       params:
-#         ms: =recipe.ms
-#         product: =recipe.product
-#         output-format: =recipe.output-format
-    
-#     movie:
-#       cab: pfb.smoovie
-#       info: Render images to movie
-#       params:
-#         product: =recipe.product
-#         fps: =recipe.fps
-
-
 selfcal:
   name: Tarantuala selfcal
   info: Self-calibration
@@ -558,31 +508,87 @@ selfcal:
 
 
 cabs:
-  G2abs:
-    name: G2abs
+  KG2DGa:
+    name: KG2GDa
     flavour: python-code
     backend:
       select: native
       native:
-        virtual_env: ~/.venv/pfbn
+        virtual_env: ~/.venv/pfb
     command: |
+      import numpy as np
       import dask
       import dask.array as da
       from daskms.experimental.zarr import xds_to_zarr, xds_from_zarr
-      gain_table = '::'.join(source.rsplit('/', 1))
-      G = xds_from_zarr(gain_table)
-      for g in G:
-        g['gains'] = (g.gains.dims, da.abs(g.gains.data))
-      abs_gain_table = gain_table.rstrip('G') + 'Ga'
-      print(f'Writing to {abs_gain_table}')
-      writes = xds_to_zarr(G, abs_gain_table)
+
+      sourceG = '/data7/lbester/30Dor/outputs/kg2.qc/G'
+      sourceK = '/data7/lbester/30Dor/outputs/kg2.qc/K'
+
+      G_table = '::'.join(sourceG.rsplit('/', 1))
+      K_table = '::'.join(sourceK.rsplit('/', 1))
+      G = xds_from_zarr(G_table)
+      K = xds_from_zarr(K_table)
+      Ga = []
+      D = []
+      for g, k in zip(G,K):
+          assert g.SCAN_NUMBER == k.SCAN_NUMBER
+          assert g.FIELD_ID == k.FIELD_ID
+          assert g.DATA_DESC_ID == k.DATA_DESC_ID 
+          amplitudes = da.abs(g.gains.data)
+          phases = da.angle(g.gains.data)
+          ga = g.assign_coords({'param_freq': (('param_freq',), g.gain_freq.values),
+                                      'param_time': (('param_time',), g.gain_time.values),
+                                      'param_name': (('param_name',), np.array(['amplitude_XX', 'amplitude_YY'], dtype='<U12'))})
+          ga = ga.assign({'gains': (g.gains.dims, amplitudes),
+                          'params': (('param_time', 'param_freq', 'antenna', 'direction', 'param_name'), da.take(amplitudes, [0, -1], axis=-1)),
+                          'param_flags': (('param_time', 'param_freq', 'antenna', 'direction'), g.gain_flags.data)})
+          ga = ga.assign_attrs({'TYPE': 'amplitude'})
+          Ga.append(ga)
+
+          delay = k.params.data
+          off_xx = phases[:, :, :, :, 0]
+          off_yy = phases[:, :, :, :, -1]
+          del_xx = delay[:, :, :, :, 0]
+          del_yy = delay[:, :, :, :, -1]
+          params = da.stack((off_xx, del_xx, off_yy, del_yy), axis=-1)
+          gains = k.gains.data * da.exp(1.0j*phases)
+          pnames = np.array(['phase_offset_XX', 'delay_XX', 'phase_offset_YY', 'delay_YY'], dtype='<U15')
+          pfreq = k.param_freq.values
+          ptime = k.param_time.values
+          # drop params to avoid conflicts
+          d = k.drop_vars(['params', 'param_flags'])
+          d = d.drop_dims(['param_freq', 'param_name', 'param_time'])
+          d = d.assign_coords({'param_freq': (('param_freq',), k.param_freq.values),
+                              'param_time': (('param_time',), k.param_time.values),
+                              'param_name': (('param_name',), pnames)})
+          d = d.assign({'gains': (k.gains.dims, gains),
+                        'params': (('param_time', 'param_freq', 'antenna', 'direction', 'param_name'), params),
+                        'param_flags': (('param_time', 'param_freq', 'antenna', 'direction'), k.param_flags.data)})  # Need to or flags?
+          par_spec = k.PARAM_SPEC
+          par_spec[-1] = [4]  # 2 -> 4 correlations
+          d = d.assign_attrs({'TYPE': 'delay_and_offset',
+                              'PARAM_AXES': ['param_time', 'param_freq', 'antenna', 'direction', 'param_name'],
+                              'PARAM_SPEC': par_spec})
+          D.append(d)
+
+          Ga_table = G_table.rstrip('G') + 'Ga'
+          D_table = K_table.rstrip('K') + 'D'
+      print(f'Writing amplitudes to {Ga_table}')
+      print(f'Writing delay_and_offtset to {D_table}')
+      writes = []
+      writes.append(xds_to_zarr(G, Ga_table))
+      writes.append(xds_to_zarr(D, D_table))
       dask.compute(writes)
       print('Done')
 
       
     inputs:
-      source:
+      sourceG:
         info: The location to fetch G term from
+        dtype: URI
+        required: true
+      sourceK:
+        info: The location to fetch K term from
         dtype: URI
         required: true
 
