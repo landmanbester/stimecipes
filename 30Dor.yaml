@@ -543,7 +543,7 @@ cabs:
           par_spec[-1] = [2]  # 4 correlations -> 2 parameters
           ga = ga.assign_attrs({'TYPE': 'amplitude',
                                 'PARAM_AXES': ['param_time', 'param_freq', 'antenna', 'direction', 'param_name'],
-                                'PARAM_SPEC': par_spec}})
+                                'PARAM_SPEC': par_spec})
           Ga.append(ga)
 
           delay = k.params.data
