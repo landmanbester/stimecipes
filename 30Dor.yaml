@@ -534,12 +534,16 @@ cabs:
           amplitudes = da.abs(g.gains.data)
           phases = da.angle(g.gains.data)
           ga = g.assign_coords({'param_freq': (('param_freq',), g.gain_freq.values),
-                                      'param_time': (('param_time',), g.gain_time.values),
-                                      'param_name': (('param_name',), np.array(['amplitude_XX', 'amplitude_YY'], dtype='<U12'))})
+                                'param_time': (('param_time',), g.gain_time.values),
+                                'param_name': (('param_name',), np.array(['amplitude_XX', 'amplitude_YY'], dtype='<U12'))})
           ga = ga.assign({'gains': (g.gains.dims, amplitudes),
                           'params': (('param_time', 'param_freq', 'antenna', 'direction', 'param_name'), da.take(amplitudes, [0, -1], axis=-1)),
                           'param_flags': (('param_time', 'param_freq', 'antenna', 'direction'), g.gain_flags.data)})
-          ga = ga.assign_attrs({'TYPE': 'amplitude'})
+          par_spec = g.GAIN_SPEC
+          par_spec[-1] = [2]  # 4 correlations -> 2 parameters
+          ga = ga.assign_attrs({'TYPE': 'amplitude',
+                                'PARAM_AXES': ['param_time', 'param_freq', 'antenna', 'direction', 'param_name'],
+                                'PARAM_SPEC': par_spec}})
           Ga.append(ga)
 
           delay = k.params.data
@@ -562,7 +566,7 @@ cabs:
                         'params': (('param_time', 'param_freq', 'antenna', 'direction', 'param_name'), params),
                         'param_flags': (('param_time', 'param_freq', 'antenna', 'direction'), k.param_flags.data)})  # Need to or flags?
           par_spec = k.PARAM_SPEC
-          par_spec[-1] = [4]  # 2 -> 4 correlations
+          par_spec[-1] = [4]  # 2 -> 4 parameters
           d = d.assign_attrs({'TYPE': 'delay_and_offset',
                               'PARAM_AXES': ['param_time', 'param_freq', 'antenna', 'direction', 'param_name'],
                               'PARAM_SPEC': par_spec})
