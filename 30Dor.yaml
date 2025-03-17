@@ -514,7 +514,7 @@ cabs:
     backend:
       select: native
       native:
-        virtual_env: ~/.venv/pfb
+        virtual_env: ~/.venv/qcal
     command: |
       import numpy as np
       import dask
