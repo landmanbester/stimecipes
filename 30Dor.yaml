@@ -581,9 +581,9 @@ cabs:
       Ga_table = G_table.rstrip('G') + 'Ga'
       D_table = K_table.rstrip('K') + 'D'    
       print(f'Writing amplitudes to {Ga_table}')
-      print(f'Writing delay_and_offtset to {D_table}')
       writes = []
       writes.append(xds_to_zarr(Ga, Ga_table))
+      print(f'Writing delay_and_offtset to {D_table}')
       writes.append(xds_to_zarr(D, D_table))
       dask.compute(writes)
       print('Done')
