@@ -531,12 +531,12 @@ cabs:
           assert g.SCAN_NUMBER == k.SCAN_NUMBER
           assert g.FIELD_ID == k.FIELD_ID
           assert g.DATA_DESC_ID == k.DATA_DESC_ID 
-          amplitudes = da.abs(g.gains.data).astype(g.gains.data.dtype)
+          amplitudes = da.abs(g.gains.data)
           phases = da.angle(g.gains.data)
           ga = g.assign_coords({'param_freq': (('param_freq',), g.gain_freq.values),
                                 'param_time': (('param_time',), g.gain_time.values),
                                 'param_name': (('param_name',), np.array(['amplitude_XX', 'amplitude_YY'], dtype='<U12'))})
-          ga = ga.assign({'gains': (g.gains.dims, amplitudes),
+          ga = ga.assign({'gains': (g.gains.dims, amplitudes.astype(g.gains.data.dtype)),
                           'params': (('param_time', 'param_freq', 'antenna', 'direction', 'param_name'), da.take(amplitudes, [0, -1], axis=-1)),
                           'param_flags': (('param_time', 'param_freq', 'antenna', 'direction'), g.gain_flags.data)})
           ga = ga.assign_attrs({'TYPE': 'amplitude'})
@@ -573,7 +573,6 @@ cabs:
           assert g.SCAN_NUMBER == k.SCAN_NUMBER
           assert g.FIELD_ID == k.FIELD_ID
           assert g.DATA_DESC_ID == k.DATA_DESC_ID 
-          import ipdb; ipdb.set_trace()
           gains1 = g.gains.values * k.gains.values
           gains2 = ga.gains.values * d.gains.values
           assert np.allclose(gains1, gains2)
