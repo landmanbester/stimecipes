@@ -582,6 +582,7 @@ cabs:
       D_table = K_table.rstrip('K') + 'D'    
       print(f'Writing amplitudes to {Ga_table}')
       writes = []
+      import ipdb; ipdb.set_trace()
       writes.append(xds_to_zarr(Ga, Ga_table))
       print(f'Writing delay_and_offtset to {D_table}')
       writes.append(xds_to_zarr(D, D_table))
