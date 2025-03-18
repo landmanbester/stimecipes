@@ -243,7 +243,7 @@ opts:
         solver.iter_recipe: [0, 0, 0, 100, 0, 0, 0, 50, 0, 0, 0, 25, 0, 0, 0, 10, 0, 0, 0, 10]
         solver.propagate_flags: false
         solver.robust: true
-        solver.threads: 4
+        solver.threads: 2
         solver.reference_antenna: =recipe.ref-ant
         output.gain_directory: '{recipe.basedir}/secondary_amp.qc'
         output.log_directory: '{recipe.basedir}/'
@@ -252,7 +252,7 @@ opts:
         output.apply_p_jones_inv: false
         output.net_gains: [G,D,B,A]
         mad_flags.enable: false
-        dask.threads: 16
+        dask.threads: 32
         dask.scheduler: threads
         G.type: amplitude  #amp
         G.time_interval: 1
@@ -292,7 +292,7 @@ opts:
         solver.iter_recipe: [0, 100, 0, 0, 0, 50, 0, 0, 0, 25, 0, 0, 0, 10, 0, 0, 0, 10]
         solver.propagate_flags: false
         solver.robust: true
-        solver.threads: 4
+        solver.threads: 2
         solver.reference_antenna: =recipe.ref-ant
         output.gain_directory: '{recipe.basedir}/secondary_phase.qc'
         output.log_directory: '{recipe.basedir}/'
