@@ -543,7 +543,10 @@ cabs:
           ga = ga.assign({'gains': (g.gains.dims, amplitudes.astype(g.gains.data.dtype)),
                           'params': (('param_time', 'param_freq', 'antenna', 'direction', 'param_name'), da.take(amplitudes, [0, -1], axis=-1)),
                           'param_flags': (('param_time', 'param_freq', 'antenna', 'direction'), g.gain_flags.data)})
-          ga = ga.assign_attrs({'TYPE': 'amplitude'})
+          par_spec = g.PARAM_SPEC
+          ga = ga.assign_attrs({'TYPE': 'amplitude'},
+                                'PARAM_AXES': ['param_time', 'param_freq', 'antenna', 'direction', 'param_name'],
+                                'PARAM_SPEC': par_spec})
           Ga.append(ga)
 
           delay = k.params.data
