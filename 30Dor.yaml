@@ -32,6 +32,8 @@ opts:
 
 
   steps:
+    # need crosshand phases from noise diode data. Is this with every obs?
+
     kg1:
       cab: quartical
       info: GK round 1 on the primary where
@@ -44,7 +46,7 @@ opts:
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID, SCAN_NUMBER]
         input_ms.select_fields: [0]
-        input_model.recipe: '{recipe.model-column}'
+        input_model.recipe: '{recipe.model-column}'  # compute on the fly or write as delta column
         input_model.apply_p_jones: false
         solver.terms: [G,K]
         solver.iter_recipe: [50,150,25,25,15,15,5,5,5,5]
@@ -68,6 +70,8 @@ opts:
         K.time_interval: 0
         K.freq_interval: 0
         K.initial_estimate: true
+        # F.type: feed_flip
+        # P.type: parallactic_angle
 
     # convert G to abs and combine angle(G) into K
     KG_to_DGa:
@@ -90,7 +94,7 @@ opts:
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_fields: [0]
-        input_model.recipe: '{recipe.model-column}'
+        input_model.recipe: '{recipe.model-column}'   # compute on the fly or write as delta column
         input_model.apply_p_jones: false
         solver.terms: [G,D,B]
         solver.iter_recipe: [0,0,50,0,0,25,0,0,15,0,0,5,0,0,5]
@@ -104,7 +108,7 @@ opts:
         output.flags: false
         output.apply_p_jones_inv: false
         output.net_gains:
-        mad_flags.enable: false
+        mad_flags.enable: true
         mad_flags.threshold_bl: 12
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
@@ -124,13 +128,13 @@ opts:
         B.freq_interval: 16
         B.respect_scan_boundaries: false
 
-    # Need a step to zero bandpass slopes
+    # Need a step to smooth bandpass and zero phase slopes
 
     kg2:
       cab: quartical
       info: GK round 2 on the primary where
-            G = time variable complex gain,
-            K = delay
+            G = time variable amplitude gain,
+            D = delay and offset
             B = frequency variable complex 2x2 gain (bandpass + leakage)
       params:
         input_ms.path: =recipe.ms
@@ -139,9 +143,9 @@ opts:
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID, SCAN_NUMBER]
         input_ms.select_fields: [0]
-        input_model.recipe: '{recipe.model-column}'
+        input_model.recipe: '{recipe.model-column}'  # compute on the fly or write as delta column
         input_model.apply_p_jones: false
-        solver.terms: [G,K,B]
+        solver.terms: [G,D,B]
         solver.iter_recipe: [50,150,0,25,25,0,15,15,0,5,5,0,5,5,0]
         solver.propagate_flags: false
         solver.robust: true
@@ -158,15 +162,15 @@ opts:
         mad_flags.max_deviation: 0
         dask.threads: 9
         dask.scheduler: threads
-        G.type: diag_complex
+        G.type: amplitude
         G.time_interval: 0
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/kg1.qc/G'
-        K.type: delay
-        K.time_interval: 0
-        K.freq_interval: 0
-        K.load_from: '{recipe.basedir}/kg1.qc/K'
-        K.initial_estimate: false
+        G.load_from: '{recipe.basedir}/kg1.qc/Ga'
+        D.type: delay_and_offset
+        D.time_interval: 0
+        D.freq_interval: 0
+        D.load_from: '{recipe.basedir}/kg1.qc/D'
+        D.initial_estimate: false
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
@@ -174,9 +178,9 @@ opts:
 
     b2:
       cab: quartical
-      info: Bandpass given G and K round 2 where 
-            G = diagonal time variable complex gain,
-            K = delay
+      info: Bandpass round 2 given G and D where 
+            G = diagonal time variable amplitude gain,
+            D = delay and offset
             B = frequency variable complex 2x2 gain (bandpass + leakage)
       params:
         input_ms.path: =recipe.ms
@@ -185,9 +189,9 @@ opts:
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_fields: [0]
-        input_model.recipe: '{recipe.model-column}'
+        input_model.recipe: '{recipe.model-column}'  # compute on the fly or write as delta column
         input_model.apply_p_jones: false
-        solver.terms: [G,K,B]
+        solver.terms: [G,D,B]
         solver.iter_recipe: [0,0,50,0,0,25,0,0,15,0,0,5,0,0,5]
         solver.propagate_flags: false
         solver.robust: true
@@ -200,22 +204,22 @@ opts:
         output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [G,K,B]
+        output.net_gains: [G,D,B]
         mad_flags.enable: true
         mad_flags.threshold_bl: 8
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
         dask.threads: 32
         dask.scheduler: threads
-        G.type: diag_complex
+        G.type: amplitude
         G.time_interval: 5
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/kg2.qc/G'
-        K.type: delay
-        K.time_interval: 5
-        K.freq_interval: 0
-        K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/kg2.qc/K'
+        D.type: delay_and_offset
+        D.time_interval: 5
+        D.freq_interval: 0
+        D.initial_estimate: false
+        D.load_from: '{recipe.basedir}/kg2.qc/D'
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 8
@@ -235,32 +239,32 @@ opts:
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_fields: [1]
         input_model.apply_p_jones: false
-        solver.terms: [G, K, B, A]
+        solver.terms: [G, D, B, A]
         solver.iter_recipe: [0, 0, 0, 100, 0, 0, 0, 50, 0, 0, 0, 25, 0, 0, 0, 10, 0, 0, 0, 10]
         solver.propagate_flags: false
         solver.robust: true
         solver.threads: 4
         solver.reference_antenna: =recipe.ref-ant
-        output.gain_directory: '{recipe.basedir}/secondary_init_gloabl_amp.qc'
+        output.gain_directory: '{recipe.basedir}/secondary_amp.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
         output.flags: false
         output.apply_p_jones_inv: false
-        output.net_gains: [G,K,B,D]
+        output.net_gains: [G,D,B,A]
         mad_flags.enable: false
         dask.threads: 16
         dask.scheduler: threads
-        G.type: diag_complex  #amp
+        G.type: amplitude  #amp
         G.time_interval: 1
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/kg2.qc/G'
         G.interp_mode: ampphase
-        K.type: delay
-        K.time_interval: 1
-        K.freq_interval: 0
-        K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/kg2.qc/K'
-        K.interp_mode: ampphase
+        D.type: delay_and_offset
+        D.time_interval: 1
+        D.freq_interval: 0
+        D.initial_estimate: false
+        D.load_from: '{recipe.basedir}/kg2.qc/D'
+        D.interp_mode: ampphase
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
@@ -269,7 +273,8 @@ opts:
         A.type: amplitude
         A.solve_per: array
         A.time_interval: 0
-        A.freq_interval: 128
+        A.freq_interval: 64
+        # A.scalar: true
         A.respect_scan_boundaries: false
 
     secondary_phase_refinement:
@@ -283,46 +288,49 @@ opts:
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_fields: [1]
         input_model.apply_p_jones: false
-        solver.terms: [G, K, B, A, D]
-        solver.iter_recipe: [0, 0, 0, 0, 100, 0, 0, 0, 0, 50, 0, 0, 0, 0, 25, 0, 0, 0, 0, 10]
+        solver.terms: [G, D, B, A]
+        solver.iter_recipe: [0, 100, 0, 0, 0, 50, 0, 0, 0, 25, 0, 0, 0, 10, 0, 0, 0, 10]
         solver.propagate_flags: false
-        solver.robust: false
-        solver.threads: 1
+        solver.robust: true
+        solver.threads: 4
         solver.reference_antenna: =recipe.ref-ant
-        output.gain_directory: '{recipe.basedir}/secondary_init_gloabl_amp.qc'
+        output.gain_directory: '{recipe.basedir}/secondary_phase.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
         output.flags: false
         output.apply_p_jones_inv: false
-        output.net_gains: [G,K,B,D]
-        mad_flags.enable: false
-        dask.threads: 64
+        output.net_gains: [G,D,B]
+        mad_flags.enable: true
+        mad_flags.threshold_bl: 8
+        mad_flags.threshold_global: 0
+        mad_flags.max_deviation: 0
+        dask.threads: 16
         dask.scheduler: threads
-        G.type: diag_complex  #amp
-        G.time_interval: 1
+        G.type: amplitude
+        G.time_interval: 0
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/kg2.qc/G'
         G.interp_mode: ampphase
-        K.type: delay
-        K.time_interval: 1
-        K.freq_interval: 0
-        K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/kg2.qc/K'
-        K.interp_mode: ampphase
-        B.type: complex
-        B.time_interval: 0
-        B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/B'
-        B.interp_mode: ampphase
-        A.type: amplitude
-        A.solve_per: array
-        A.time_interval: 0
-        A.freq_interval: 128
         D.type: delay_and_offset
         D.time_interval: 0
         D.freq_interval: 0
         D.initial_estimate: false
+        D.load_from: '{recipe.basedir}/kg2.qc/D'
+        D.interp_mode: ampphase
+        B.type: complex
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.load_from: '{recipe.basedir}/b2.qc/B'
+        B.interp_mode: ampphase
+        A.type: amplitude
+        A.solve_per: array
+        A.time_interval: 0
+        A.freq_interval: 1
+        A.respect_scan_boundaries: false 
+        A.load_from: '{recipe.basedir}/secondary_amp.qc/A'
 
+
+    # deconvolve secondary with known mask/souce locations
 
     ####################################### REFINE #################################################
     phasecal:
@@ -335,12 +343,12 @@ opts:
         input_ms.select_uv_range: [0,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_fields: [1]
-        input_model.recipe: '{recipe.model-column}'
+        input_model.recipe: '{recipe.model-column}'  # compute on the fly or write as delta column
         input_model.apply_p_jones: false
-        solver.terms: [G, K, B, D]
-        solver.iter_recipe: [0, 0, 0, 0, 100]
+        solver.terms: [G, D, B]
+        solver.iter_recipe: [0, 100, 0]
         solver.propagate_flags: false
-        solver.robust: false
+        solver.robust: true
         solver.threads: 2
         solver.reference_antenna: =recipe.ref-ant
         output.gain_directory: '{recipe.basedir}/delay_and_offset.qc'
@@ -350,30 +358,26 @@ opts:
         # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: false
         output.apply_p_jones_inv: false
-        output.net_gains: [G,K,B,D]
-        mad_flags.enable: false
+        output.net_gains: [G,D,B]
+        mad_flags.enable: true
+        mad_flags.threshold_bl: 8
+        mad_flags.threshold_global: 0
+        mad_flags.max_deviation: 0
         dask.threads: 16
         dask.scheduler: threads
-        G.type: diag_complex  #amp
-        G.time_interval: 1
+        G.type: amplitude
+        G.time_interval: 0
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/Ga'
-        K.type: delay
-        K.time_interval: 1
-        K.freq_interval: 0
-        K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/K'
+        G.load_from: '{recipe.basedir}/secondary_phase.qc/G'
+        D.type: delay_and_offset
+        D.time_interval: 1
+        D.freq_interval: 0
+        D.initial_estimate: false
+        D.load_from: '{recipe.basedir}/secondary_phase.qc/K'
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/B'
-        D.type: delay_and_offset  # phase to target
-        D.time_interval: 0
-        D.freq_interval: 0
-        D.initial_estimate: false
-        # P.type: parallactic_angle
-        # P.time_interval: 1
-        # P.freq_interval: 0
+        B.load_from: '{recipe.basedir}/b2.qc/B'
 
     transfer:
       cab: quartical
@@ -542,50 +546,49 @@ cabs:
           ga = ga.assign_attrs({'TYPE': 'amplitude'})
           Ga.append(ga)
 
-          # delay = k.params.data
-          # off_xx = phases[:, :, :, :, 0]
-          # off_yy = phases[:, :, :, :, -1]
-          # del_xx = delay[:, :, :, :, 0]
-          # del_yy = delay[:, :, :, :, -1]
-          # params = da.stack((off_xx, del_xx, off_yy, del_yy), axis=-1)
-          # gains = k.gains.data * da.exp(1.0j*phases)
-          # pnames = np.array(['phase_offset_XX', 'delay_XX', 'phase_offset_YY', 'delay_YY'], dtype='<U15')
-          # pfreq = k.param_freq.values
-          # ptime = k.param_time.values
-          # # drop params to avoid conflicts
-          # d = k.drop_vars(['params', 'param_flags'])
-          # d = d.drop_dims(['param_freq', 'param_name', 'param_time'])
-          # d = d.assign_coords({'param_freq': (('param_freq',), k.param_freq.values),
-          #                      'param_time': (('param_time',), k.param_time.values),
-          #                      'param_name': (('param_name',), pnames)})
-          # d = d.assign({'gains': (k.gains.dims, gains),
-          #               'params': (('param_time', 'param_freq', 'antenna', 'direction', 'param_name'), params),
-          #               'param_flags': (('param_time', 'param_freq', 'antenna', 'direction'), k.param_flags.data)})  # Need to or flags?
-          # par_spec = k.PARAM_SPEC
-          # par_spec[-1] = [4]  # 2 correlations -> 4 parameters
-          # d = d.assign_attrs({'TYPE': 'delay_and_offset',
-          #                     'PARAM_AXES': ['param_time', 'param_freq', 'antenna', 'direction', 'param_name'],
-          #                     'PARAM_SPEC': par_spec})
-          # D.append(d)
+          delay = k.params.data
+          off_xx = phases[:, :, :, :, 0]
+          off_yy = phases[:, :, :, :, -1]
+          del_xx = delay[:, :, :, :, 0]
+          del_yy = delay[:, :, :, :, -1]
+          params = da.stack((off_xx, del_xx, off_yy, del_yy), axis=-1)
+          gains = k.gains.data * da.exp(1.0j*phases)
+          pnames = np.array(['phase_offset_XX', 'delay_XX', 'phase_offset_YY', 'delay_YY'], dtype='<U15')
+          pfreq = k.param_freq.values
+          ptime = k.param_time.values
+          # drop params to avoid conflicts
+          d = k.drop_vars(['params', 'param_flags'])
+          d = d.drop_dims(['param_freq', 'param_name', 'param_time'])
+          d = d.assign_coords({'param_freq': (('param_freq',), k.param_freq.values),
+                               'param_time': (('param_time',), k.param_time.values),
+                               'param_name': (('param_name',), pnames)})
+          d = d.assign({'gains': (k.gains.dims, gains),
+                        'params': (('param_time', 'param_freq', 'antenna', 'direction', 'param_name'), params),
+                        'param_flags': (('param_time', 'param_freq', 'antenna', 'direction'), k.param_flags.data)})  # Need to or flags?
+          par_spec = k.PARAM_SPEC
+          par_spec[-1] = [4]  # 2 correlations -> 4 parameters
+          d = d.assign_attrs({'TYPE': 'delay_and_offset',
+                              'PARAM_AXES': ['param_time', 'param_freq', 'antenna', 'direction', 'param_name'],
+                              'PARAM_SPEC': par_spec})
+          D.append(d)
 
-      # # test
-      # for k, g, d, ga in zip(K, G, D, Ga):
-      #     assert g.SCAN_NUMBER == k.SCAN_NUMBER
-      #     assert g.FIELD_ID == k.FIELD_ID
-      #     assert g.DATA_DESC_ID == k.DATA_DESC_ID 
-      #     gains1 = g.gains.values * k.gains.values
-      #     gains2 = ga.gains.values * d.gains.values
-      #     assert np.allclose(gains1, gains2)
+      # test
+      for k, g, d, ga in zip(K, G, D, Ga):
+          assert g.SCAN_NUMBER == k.SCAN_NUMBER
+          assert g.FIELD_ID == k.FIELD_ID
+          assert g.DATA_DESC_ID == k.DATA_DESC_ID 
+          gains1 = g.gains.values * k.gains.values
+          gains2 = ga.gains.values * d.gains.values
+          assert np.allclose(gains1, gains2)
 
       # write
       Ga_table = G_table.rstrip('G') + 'Ga'
-      # D_table = K_table.rstrip('K') + 'D'    
+      D_table = K_table.rstrip('K') + 'D'    
       print(f'Writing amplitudes to {Ga_table}')
       writes = []
-      import ipdb; ipdb.set_trace()
       writes.append(xds_to_zarr(Ga, Ga_table))
-      # print(f'Writing delay_and_offtset to {D_table}')
-      # writes.append(xds_to_zarr(D, D_table))
+      print(f'Writing delay_and_offtset to {D_table}')
+      writes.append(xds_to_zarr(D, D_table))
       dask.compute(writes)
       print('Done')
 
