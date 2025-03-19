@@ -90,7 +90,7 @@ opts:
       params:
         input_ms.path: =recipe.ms
         input_ms.time_chunk: 0
-        input_ms.freq_chunk: 128
+        input_ms.freq_chunk: 0
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_fields: [0]
@@ -115,14 +115,16 @@ opts:
         dask.threads: 32
         dask.scheduler: threads
         G.type: amplitude
-        G.time_interval: 5
+        G.time_interval: 0
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/kg1.qc/Ga'
+        G.respect_scan_boundaries: true
         D.type: delay_and_offset
-        D.time_interval: 5
+        D.time_interval: 0
         D.freq_interval: 0
         D.initial_estimate: false
         D.load_from: '{recipe.basedir}/kg1.qc/D'
+        D.respect_scan_boundaries: true
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 16
