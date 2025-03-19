@@ -100,7 +100,7 @@ opts:
         solver.iter_recipe: [0,0,50,0,0,25,0,0,15,0,0,5,0,0,5]
         solver.propagate_flags: false
         solver.robust: true
-        solver.threads: 2
+        solver.threads: 32
         solver.reference_antenna: =recipe.ref-ant
         output.gain_directory: '{recipe.basedir}/b1.qc'
         output.log_directory: '{recipe.basedir}/'
@@ -112,7 +112,7 @@ opts:
         mad_flags.threshold_bl: 12
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
-        dask.threads: 32
+        dask.threads: 2
         dask.scheduler: threads
         G.type: amplitude
         G.time_interval: 0
