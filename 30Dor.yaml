@@ -159,7 +159,7 @@ opts:
         output.flags: true
         output.apply_p_jones_inv: false
         mad_flags.enable: true
-        mad_flags.threshold_bl: 10
+        mad_flags.threshold_bl: 8
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
         dask.threads: 9
@@ -187,7 +187,7 @@ opts:
       params:
         input_ms.path: =recipe.ms
         input_ms.time_chunk: 0
-        input_ms.freq_chunk: 128
+        input_ms.freq_chunk: 0
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_fields: [0]
@@ -197,7 +197,7 @@ opts:
         solver.iter_recipe: [0,0,50,0,0,25,0,0,15,0,0,5,0,0,5]
         solver.propagate_flags: false
         solver.robust: true
-        solver.threads: 2
+        solver.threads: 32
         solver.reference_antenna: =recipe.ref-ant
         output.gain_directory: '{recipe.basedir}/b2.qc'
         output.log_directory: '{recipe.basedir}/'
@@ -211,7 +211,7 @@ opts:
         mad_flags.threshold_bl: 8
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
-        dask.threads: 32
+        dask.threads: 2
         dask.scheduler: threads
         G.type: amplitude
         G.time_interval: 5
@@ -236,8 +236,8 @@ opts:
       params:
         input_ms.path: =recipe.ms
         input_ms.time_chunk: 0
-        input_ms.freq_chunk: 128
-        input_ms.select_uv_range: [0,0]
+        input_ms.freq_chunk: 0
+        input_ms.select_uv_range: [100,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_fields: [1]
         input_model.apply_p_jones: false
