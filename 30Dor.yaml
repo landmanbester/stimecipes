@@ -275,8 +275,8 @@ opts:
         A.type: amplitude
         A.solve_per: array
         A.time_interval: 0
-        A.freq_interval: 64
-        # A.scalar: true
+        A.freq_interval: 256
+        A.scalar: true
         A.respect_scan_boundaries: false
 
     secondary_phase_refinement:
@@ -316,8 +316,8 @@ opts:
         D.type: delay_and_offset
         D.time_interval: 0
         D.freq_interval: 0
-        D.initial_estimate: false
-        D.load_from: '{recipe.basedir}/kg2.qc/D'
+        D.initial_estimate: true
+        # D.load_from: '{recipe.basedir}/kg2.qc/D'
         D.interp_mode: ampphase
         B.type: complex
         B.time_interval: 0
