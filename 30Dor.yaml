@@ -102,7 +102,7 @@ opts:
         solver.robust: true
         solver.threads: 32
         solver.reference_antenna: =recipe.ref-ant
-        output.gain_directory: '{recipe.basedir}/b1_chunk.qc'
+        output.gain_directory: '{recipe.basedir}/b1.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
         output.flags: false
@@ -314,7 +314,7 @@ opts:
         G.load_from: '{recipe.basedir}/kg2.qc/G'
         G.interp_mode: ampphase
         D.type: delay_and_offset
-        D.time_interval: 0
+        D.time_interval: 1  # need for selfcal
         D.freq_interval: 0
         D.initial_estimate: true
         # D.load_from: '{recipe.basedir}/kg2.qc/D'
@@ -328,7 +328,6 @@ opts:
         A.solve_per: array
         A.time_interval: 0
         A.freq_interval: 1
-        A.respect_scan_boundaries: false 
         A.load_from: '{recipe.basedir}/secondary_amp.qc/A'
 
 
