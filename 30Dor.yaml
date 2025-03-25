@@ -97,7 +97,7 @@ opts:
         input_model.recipe: '{recipe.model-column}'   # compute on the fly or write as delta column
         input_model.apply_p_jones: false
         solver.terms: [G,D,B]
-        solver.iter_recipe: [0]  #[0,0,50,0,0,25,0,0,15,0,0,5,0,0,5]
+        solver.iter_recipe: [0,0,0]  #[0,0,50,0,0,25,0,0,15,0,0,5,0,0,5]
         solver.propagate_flags: false
         solver.robust: true
         solver.threads: 32
