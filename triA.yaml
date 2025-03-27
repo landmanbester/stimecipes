@@ -74,14 +74,17 @@ gotriA:
       cab: casa.flagsummary
       params:
         ms: '{recipe.ms_primary}'
+        percentage: 20
     flagsumsec0:
       cab: casa.flagsummary
       params:
         ms: '{recipe.ms_primary}'
+        percentage: 20
     flagsumtar0:
       cab: casa.flagsummary
       params:
         ms: '{recipe.ms_primary}'
+        percentage: 20
     # plotprimshirt:
     #   cab: casa.plotms
     #   params:
