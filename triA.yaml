@@ -1,6 +1,14 @@
 _include:
+  - (cultcargo.casa)bandpass.yml
+  - (cultcargo.casa)calibration.yml
+  - (cultcargo.casa)concat.yml
+  - (cultcargo.casa)flag.yml
+  - (cultcargo.casa)listobs.yml
+  - (cultcargo.casa)polcal.yml
+  - (cultcargo.casa)setjy.yml
+  - (cultcargo.casa)split.yml
+  - (cultcargo)breizorro.yml
   - casacabs.yaml
-  - lb-cabs.yaml
 
 opts:
   log:
@@ -16,14 +24,17 @@ gotriA:
       dtype: MS
       required: true
       abbreviation: msp
+      default: msdir/1559937657.PRIMARY.1.0.1.1.ghz.avg832khz32s.12ants.scan2.3.ms
     ms_secondary:
       dtype: MS
       required: true
       abbreviation: mss
+      default: msdir/1559937657.SECONDARY.1.0.1.1.ghz.avg832khz32s.12ants.ms
     ms_target:
       dtype: MS
       required: true
       abbreviation: mst
+      default: 1559937657.RXCJ1638.2-6420.1.0.1.1.ghz.avg832khz12s.12ants.scan2.ms
 
 
   steps:
@@ -40,25 +51,25 @@ gotriA:
       params:
         vis: '{recipe.ms_target}'
     bkpprim0:
-      cab: casa.flagmanager
+      cab: casa.flagman
       params:
         vis: '{recipe.ms_primary}'
         mode: save
         versionname: OBSERVATORY_FLAGS
     bkpsec0:
-      cab: casa.flagmanager
+      cab: casa.flagman
       params:
         vis: '{recipe.ms_secondary}'
         mode: save
         versionname: OBSERVATORY_FLAGS
     bkptar0:
-      cab: casa.flagmanager
+      cab: casa.flagman
       params:
         vis: '{recipe.ms_target}'
         mode: save
         versionname: OBSERVATORY_FLAGS
     lstprim0:
-      cab: casa.flagmanager
+      cab: casa.flagman
       params:
         vis: '{recipe.ms_primary}'
         mode: list
@@ -212,7 +223,7 @@ gotriA:
         vis: '{recipe.ms_target}'
         spw: "0:1.087~1.0915ghz"
     bkptarget1:
-      cab: casa.flagmanager
+      cab: casa.flagman
       params:
         vis: '{recipe.ms_target}'
         mode: save
@@ -291,7 +302,7 @@ gotriA:
         fitsimage: RXCJ1638.2-6420.1GC.usermasked.residual.fits
         overwrite: true
     restoretargetflags:
-      cab: casa.flagmanager
+      cab: casa.flagman
       params:
         vis: '{recipe.ms_target}'
         mode: restore

@@ -10,7 +10,7 @@ opts:
 
 goqcal:
   name: goqcal
-  info: Simple CASA recipe
+  info: QC + wsclean recipe
 
   inputs:
     ms_primary:
