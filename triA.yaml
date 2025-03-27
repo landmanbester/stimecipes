@@ -8,7 +8,7 @@ _include:
   - (cultcargo.casa)setjy.yml
   - (cultcargo.casa)split.yml
   - (cultcargo)breizorro.yml
-  - (.)casacabs.yaml
+  - casacabs.yaml
 
 opts:
   log:
