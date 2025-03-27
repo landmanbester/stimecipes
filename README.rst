@@ -7,6 +7,13 @@ stimecipes is a collection of unsorted stimela cabs and recipes. Use at your own
 Install apptainer with suid
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Get the ppa:
+
+.. code:: bash
+
+  sudo add-apt-repository -y ppa:apptainer/ppa
+  sudo apt update
+
 To remove apptainer from your system, run the following command:
 
 .. code:: bash
