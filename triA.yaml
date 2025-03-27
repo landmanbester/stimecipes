@@ -71,20 +71,17 @@ gotriA:
         ms: '{recipe.ms_primary}'
         mode: list
     flagsumprim0:
-      cab: casa.flagdata
+      cab: casa.flagsummary
       params:
         ms: '{recipe.ms_primary}'
-        mode: summary
     flagsumsec0:
-      cab: casa.flagdata
+      cab: casa.flagsummary
       params:
         ms: '{recipe.ms_primary}'
-        mode: summary
     flagsumtar0:
-      cab: casa.flagdata
+      cab: casa.flagsummary
       params:
         ms: '{recipe.ms_primary}'
-        mode: summary
     plotprimshirt:
       cab: casa.plotms
       params:
