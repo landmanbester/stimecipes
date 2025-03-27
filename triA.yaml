@@ -22,17 +22,14 @@ gotriA:
   inputs:
     ms_primary:
       dtype: MS
-      required: true
       abbreviation: msp
       default: msdir/1559937657.PRIMARY.1.0.1.1.ghz.avg832khz32s.12ants.scan2.3.ms
     ms_secondary:
       dtype: MS
-      required: true
       abbreviation: mss
       default: msdir/1559937657.SECONDARY.1.0.1.1.ghz.avg832khz32s.12ants.ms
     ms_target:
       dtype: MS
-      required: true
       abbreviation: mst
       default: 1559937657.RXCJ1638.2-6420.1.0.1.1.ghz.avg832khz12s.12ants.scan2.ms
 
