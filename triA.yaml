@@ -104,127 +104,127 @@ gotriA:
       params:
         ms: '{recipe.ms_primary}'
         spw: "0:1.087~1.0915ghz"
-    # setflux:
-    #   cab: casa.setjy
-    #   params:
-    #     ms: '{recipe.ms_primary}'
-    #     standard: Stevens-Reynolds 2016
-    #     field: J1939-6342
-    # primK:
-    #   cab: casa.gaincal
-    #   params:
-    #     ms: '{recipe.ms_primary}'
-    #     # ms: =recipe.ms_primary
-    #     field: J1939-6342
-    #     caltable: prim.K0
-    #     gaintype: K
-    #     refant: m000
-    # primG:
-    #   cab: casa.gaincal
-    #   params:
-    #     ms: '{recipe.ms_primary}'
-    #     field: J1939-6342
-    #     caltable: prim.G0
-    #     gaintype: G
-    #     refant: m000
-    #     interp: nearest
-    #     gaintable: prim.K0
-    #     gainfield: J1939-6342
-    # bandpass:
-    #   cab: casa.bandpass
-    #   params:
-    #     ms: '{recipe.ms_primary}'
-    #     field: '{recipe.field_primary}' #J1939-6342
-    #     caltable: prim.B0
-    #     refant: m000
-    #     interp: [nearest, linear]
-    #     gaintable: [prim.K0, prim.G0]
-    #     gainfield: [J1939-6342, J1939-6342]
-    #     combine: scan
-    #     fillgaps: 50
-    # transferprim:
-    #   cab: casa.applycal
-    #   params:
-    #     ms: '{recipe.ms_primary}'
-    #     field: J1939-6342
-    #     interp: [nearest, linear, linear]
-    #     gaintable: [prim.K0, prim.G0, prim.B0]
-    #     gainfield: [J1939-6342, J1939-6342, J1939-6342]
-    # transfersec0:
-    #   cab: casa.applycal
-    #   params:
-    #     ms: '{recipe.ms_secondary}'
-    #     field: J1859-6615
-    #     interp: [nearest, linear, linear]
-    #     gaintable: [prim.K0, prim.G0, prim.B0]
-    #     gainfield: [J1939-6342, J1939-6342, J1939-6342]
-    # flagsec0:
-    #   cab: casa.flagdata
-    #   params:
-    #     ms: '{recipe.ms_secondary}'
-    #     spw: "0:1.087~1.0915ghz"
-    # primGabs:
-    #   cab: casa.gaincal
-    #   params:
-    #     ms: '{recipe.ms_primary}'
-    #     field: J1939-6342
-    #     caltable: prim.F0
-    #     gaintype: G
-    #     refant: m000
-    #     calmode: a
-    #     interp: nearest
-    #     gaintable: prim.K0
-    #     gainfield: J1939-6342
-    # secK:
-    #   cab: casa.gaincal
-    #   params:
-    #     ms: '{recipe.ms_secondary}'
-    #     field: J1859-6615
-    #     caltable: sec.K0
-    #     gaintype: K
-    #     refant: m000
-    #     interp: [linear, linear]
-    #     gaintable: [prim.B0, prim.F0]
-    #     gainfield: [J1939-6342, J1939-6342]
-    # secG:
-    #   cab: casa.gaincal
-    #   params:
-    #     ms: '{recipe.ms_secondary}'
-    #     field: J1859-6615
-    #     caltable: sec.G0
-    #     gaintype: G
-    #     calmode: p
-    #     refant: m000
-    #     interp: [linear, linear, nearest]
-    #     gaintable: [prim.B0, prim.F0, sec.K0]
-    #     gainfield: [J1939-6342, J1939-6342, J1859-6615]
-    # transfersec1:
-    #   cab: casa.applycal
-    #   params:
-    #     ms: '{recipe.ms_secondary}'
-    #     field: J1859-6615
-    #     interp: [nearest, linear, linear, linear]
-    #     gaintable: [prim.B0, prim.F0, sec.K0, sec.G0]
-    #     gainfield: [J1939-6342, J1939-6342, J1859-6615, J1859-6615]
-    # transfertarget0:
-    #   cab: casa.applycal
-    #   params:
-    #     ms: '{recipe.ms_target}'
-    #     field: RXCJ1638.2-6420
-    #     interp: [nearest, linear, linear, linear]
-    #     gaintable: [prim.B0, prim.F0, sec.K0, sec.G0]
-    #     gainfield: [J1939-6342, J1939-6342, J1859-6615, J1859-6615]
-    # flagtarget0:
-    #   cab: casa.flagdata
-    #   params:
-    #     ms: '{recipe.ms_target}'
-    #     spw: "0:1.087~1.0915ghz"
-    # bkptarget1:
-    #   cab: casa.flagman
-    #   params:
-    #     ms: '{recipe.ms_target}'
-    #     mode: save
-    #     versionname: TRANSFER_CAL_FLAGS
+    setflux:
+      cab: casa.setjy
+      params:
+        ms: '{recipe.ms_primary}'
+        standard: Stevens-Reynolds 2016
+        field: J1939-6342
+    primK:
+      cab: casa.gaincal
+      params:
+        ms: '{recipe.ms_primary}'
+        # ms: =recipe.ms_primary
+        field: J1939-6342
+        caltable: prim.K0
+        gaintype: K
+        refant: m000
+    primG:
+      cab: casa.gaincal
+      params:
+        ms: '{recipe.ms_primary}'
+        field: J1939-6342
+        caltable: prim.G0
+        gaintype: G
+        refant: m000
+        interp: nearest
+        gaintable: prim.K0
+        gainfield: J1939-6342
+    bandpass:
+      cab: casa.bandpass
+      params:
+        ms: '{recipe.ms_primary}'
+        field: '{recipe.field_primary}' #J1939-6342
+        caltable: prim.B0
+        refant: m000
+        interp: [nearest, linear]
+        gaintable: [prim.K0, prim.G0]
+        gainfield: [J1939-6342, J1939-6342]
+        combine: scan
+        fillgaps: 50
+    transferprim:
+      cab: casa.applycal
+      params:
+        ms: '{recipe.ms_primary}'
+        field: J1939-6342
+        interp: [nearest, linear, linear]
+        gaintable: [prim.K0, prim.G0, prim.B0]
+        gainfield: [J1939-6342, J1939-6342, J1939-6342]
+    transfersec0:
+      cab: casa.applycal
+      params:
+        ms: '{recipe.ms_secondary}'
+        field: J1859-6615
+        interp: [nearest, linear, linear]
+        gaintable: [prim.K0, prim.G0, prim.B0]
+        gainfield: [J1939-6342, J1939-6342, J1939-6342]
+    flagsec0:
+      cab: casa.flagdata
+      params:
+        ms: '{recipe.ms_secondary}'
+        spw: "0:1.087~1.0915ghz"
+    primGabs:
+      cab: casa.gaincal
+      params:
+        ms: '{recipe.ms_primary}'
+        field: J1939-6342
+        caltable: prim.F0
+        gaintype: G
+        refant: m000
+        calmode: a
+        interp: nearest
+        gaintable: prim.K0
+        gainfield: J1939-6342
+    secK:
+      cab: casa.gaincal
+      params:
+        ms: '{recipe.ms_secondary}'
+        field: J1859-6615
+        caltable: sec.K0
+        gaintype: K
+        refant: m000
+        interp: [linear, linear]
+        gaintable: [prim.B0, prim.F0]
+        gainfield: [J1939-6342, J1939-6342]
+    secG:
+      cab: casa.gaincal
+      params:
+        ms: '{recipe.ms_secondary}'
+        field: J1859-6615
+        caltable: sec.G0
+        gaintype: G
+        calmode: p
+        refant: m000
+        interp: [linear, linear, nearest]
+        gaintable: [prim.B0, prim.F0, sec.K0]
+        gainfield: [J1939-6342, J1939-6342, J1859-6615]
+    transfersec1:
+      cab: casa.applycal
+      params:
+        ms: '{recipe.ms_secondary}'
+        field: J1859-6615
+        interp: [nearest, linear, linear, linear]
+        gaintable: [prim.B0, prim.F0, sec.K0, sec.G0]
+        gainfield: [J1939-6342, J1939-6342, J1859-6615, J1859-6615]
+    transfertarget0:
+      cab: casa.applycal
+      params:
+        ms: '{recipe.ms_target}'
+        field: RXCJ1638.2-6420
+        interp: [nearest, linear, linear, linear]
+        gaintable: [prim.B0, prim.F0, sec.K0, sec.G0]
+        gainfield: [J1939-6342, J1939-6342, J1859-6615, J1859-6615]
+    flagtarget0:
+      cab: casa.flagdata
+      params:
+        ms: '{recipe.ms_target}'
+        spw: "0:1.087~1.0915ghz"
+    bkptarget1:
+      cab: casa.flagman
+      params:
+        ms: '{recipe.ms_target}'
+        mode: save
+        versionname: TRANSFER_CAL_FLAGS
     # clean0:
     #   cab: casa.tclean
     #   params:
