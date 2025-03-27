@@ -86,7 +86,7 @@ Clone the repository with the following command and change into the directory:
 
 .. code:: bash
 
-  git clone --single-branch --branch nassp git@github.com:landmanbester/stimecipes.git
+  git clone --single-branch --branch nassp https://github.com/landmanbester/stimecipes.git
   cd stimecipes
 
 We'll do all our experiments in here for now. Please do not push back to the branch.
