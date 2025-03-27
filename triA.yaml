@@ -126,7 +126,7 @@ gotriA:
         caltable: prim.G0
         gaintype: G
         refant: m000
-        interp: nearest
+        interp: [nearest]
         gaintable: [prim.K0]
         # gainfield: J1939-6342
     bandpass:
@@ -171,7 +171,7 @@ gotriA:
         gaintype: G
         refant: m000
         calmode: a
-        interp: nearest
+        interp: [nearest]
         gaintable: [prim.K0]
         # gainfield: J1939-6342
     secK:
