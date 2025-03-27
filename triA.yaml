@@ -133,7 +133,7 @@ gotriA:
       cab: casa.bandpass
       params:
         ms: '{recipe.ms_primary}'
-        field: '{recipe.field_primary}' #J1939-6342
+        field: J1939-6342
         caltable: prim.B0
         refant: m000
         interp: [nearest, linear]
