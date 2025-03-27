@@ -85,25 +85,25 @@ gotriA:
       params:
         ms: '{recipe.ms_primary}'
         percentage: 20
-    plotprimshirt:
-      cab: casa.plotms
-      params:
-        ms: '{recipe.ms_primary}'
-        xaxis: frequency
-        yaxis: amp
-        correlation: XY,YX
-        ydatacolumn: data
-        coloraxis: corr
-        avgbaseline: false
-        uvrange: 1~100m
-        plotfile: primary.short.raw.ampfreq.png
-        showgui: false
-        # overwrite: True
-    # flagprim0:
-    #   cab: casa.flagdata
+    # plotprimshirt:
+    #   cab: casa.plotms
     #   params:
     #     ms: '{recipe.ms_primary}'
-    #     spw: "0:1.087~1.0915ghz"
+    #     xaxis: frequency
+    #     yaxis: amp
+    #     correlation: XY,YX
+    #     ydatacolumn: data
+    #     coloraxis: corr
+    #     avgbaseline: false
+    #     uvrange: 1~100m
+    #     plotfile: primary.short.raw.ampfreq.png
+    #     showgui: false
+    #     # overwrite: True
+    flagprim0:
+      cab: casa.flagdata
+      params:
+        ms: '{recipe.ms_primary}'
+        spw: "0:1.087~1.0915ghz"
     # setflux:
     #   cab: casa.setjy
     #   params:

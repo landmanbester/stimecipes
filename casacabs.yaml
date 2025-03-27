@@ -25,7 +25,7 @@ cabs:
   #     _include: casa/flagdata.yaml
 
   casa.plotms:
-    command: casatasks.visualization.plotms
+    command: casatasks.plotms
     _use: lib.misc.casa6.command-data
     # flavour:
     #   kind: casa-task
