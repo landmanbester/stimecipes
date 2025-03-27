@@ -91,3 +91,9 @@ Download the test data from the following link:
 
 `Test data <https://drive.google.com/file/d/1ONW5JtDbz5-0fjxgG0e-By5RYUfYNkRy/view?usp=sharing>`_
 
+Extract the data into a subdirectory called `msdir` in the `stimecipes` directory:
+
+.. code:: bash
+
+  mkdir msdir
+  tar -xvf /path/to/ARIWS.INTROFIMAGING.TriA.1559937657.tar.gz -C msdir
