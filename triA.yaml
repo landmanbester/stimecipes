@@ -127,7 +127,7 @@ gotriA:
         gaintype: G
         refant: m000
         interp: nearest
-        gaintable: prim.K0
+        gaintable: [prim.K0]
         # gainfield: J1939-6342
     bandpass:
       cab: casa.bandpass
@@ -172,7 +172,7 @@ gotriA:
         refant: m000
         calmode: a
         interp: nearest
-        gaintable: prim.K0
+        gaintable: [prim.K0]
         # gainfield: J1939-6342
     secK:
       cab: casa.gaincal
