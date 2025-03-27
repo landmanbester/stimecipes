@@ -1,4 +1,4 @@
-vis:
+ms:
   info: Input MS or CalTable (blank for none)
   required: true
   default: ''
