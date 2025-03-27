@@ -3,6 +3,7 @@ stimecipes is a collection of unsorted stimela cabs and recipes. Use at your own
 27 March commands
 =================
 
+
 Install apptainer with suid
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -50,6 +51,7 @@ And make sure it has the correct permissions:
 
   chmod 700 ~/.singularity
 
+
 Install ``refactor-0.2.0`` branch of ``cult-cargo`` package
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -67,3 +69,25 @@ Now install the package:
 .. code:: bash
 
   pip install git+https://github.com/caracal-pipeline/cult-cargo.git@refactor-0.2.0
+
+
+Get recipes and cabs
+~~~~~~~~~~~~~~~~~~~~
+
+We'll be using the ``nassp`` branch of the ``stimecipes`` repository.
+Clone the repository with the following command and change into the directory:
+
+.. code:: bash
+
+  git clone --single-branch --branch nassp git@github.com:landmanbester/stimecipes.git
+  cd stimecipes
+
+We'll do all our experiments in here for now. Please do not push back to the branch.
+
+Downloading test data
+~~~~~~~~~~~~~~~~~~~~~
+
+Download the test data from the following link:
+
+`Test data <https://drive.google.com/file/d/1ONW5JtDbz5-0fjxgG0e-By5RYUfYNkRy/view?usp=sharing>`_
+
