@@ -1,0 +1,54 @@
+_include:
+  - (cultcargo)aimfast.yml
+  - (cultcargo)bdsf.yml
+  - (cultcargo)breizorro.yml
+  - (cultcargo)crystalball.yml
+  - (cultcargo)cubical.yml
+  - (cultcargo)fitstool.yml
+  - (cultcargo)meqtree-pipeliner.yml
+  - (cultcargo)mosaic-queen.yml
+  - (cultcargo)msutils.yml
+  - (cultcargo)pfb-imaging.yml
+  - (cultcargo)quartical.yml
+  - (cultcargo)rfinder.yml
+  - (cultcargo)shadems.yml
+  - (cultcargo)smops.yml
+  - (cultcargo)spimple-spifit.yml
+  - (cultcargo)sunblocker.yml
+  - (cultcargo)taql.yml
+  - (cultcargo)tigger-convert.yml
+  - (cultcargo)tigger.yml
+  - (cultcargo)tricolour.yml
+  - (cultcargo)wsclean.yml
+  - (cultcargo.casa)bandpass.yml
+  - (cultcargo.casa)calibration.yml
+  - (cultcargo.casa)concat.yml
+  - (cultcargo.casa)flag.yml
+  - (cultcargo.casa)listobs.yml
+  - (cultcargo.casa)polcal.yml
+  - (cultcargo.casa)setjy.yml
+  - (cultcargo.casa)split.yml
+
+# ccall:
+#   info: import all cult-cargo cabs
+
+#   inputs:
+#     who:
+#       default: 'World'
+
+#   steps:
+#     hello:
+#       cab: cab1
+#       params:
+#         who: =recipe.who
+
+# cabs:
+#   cab1:
+#     flavour: python-code
+#     backend:
+#       select: native
+#     command: |
+#       print(f"Hello World!")
+#     inputs:
+#       who:
+#         default: "World"
