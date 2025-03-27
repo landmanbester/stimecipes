@@ -31,7 +31,7 @@ gotriA:
     ms_target:
       dtype: MS
       abbreviation: mst
-      default: 1559937657.RXCJ1638.2-6420.1.0.1.1.ghz.avg832khz12s.12ants.scan2.ms
+      default: msdir/1559937657.RXCJ1638.2-6420.1.0.1.1.ghz.avg832khz12s.12ants.scan2.ms
 
 
   steps:
