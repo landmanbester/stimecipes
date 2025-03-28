@@ -253,8 +253,8 @@ gotriA:
     mask0:
       cab: breizorro
       params:
-        restored_image: RXCJ1638.2-6420.1GC.image.fits
-        outfile: RXCJ1638.2-6420.1GC.FITSMASK.fits
+        restored-image: RXCJ1638.2-6420.1GC.image.fits
+        mask: RXCJ1638.2-6420.1GC.FITSMASK.fits
     importmask:
       cab: casa.importfits
       params:
