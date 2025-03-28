@@ -1,6 +1,6 @@
 _include:
   - casacabs.yaml
-  - lb-cabs.yaml
+  - (cultcargo)breizorro.yml
 
 opts:
   log:
