@@ -1,77 +1,70 @@
 
-_include:
-  - (cultcargo):
-    - genesis/cult-cargo-base.yml
-    - genesis/casa/casa-inputs.yml
-
 
 cabs:
-  # casa.listobs:
-  #   command: listobs
-  #   flavour: casa-task
-  #   inputs:
-  #     _include: casa/listobs.yaml
+  casa.listobs:
+    command: listobs
+    flavour: casa-task
+    inputs:
+      _include: casa/listobs.yaml
 
-  # casa.flagmanager:
-  #   command: flagmanager
-  #   flavour: casa-task
-  #   inputs:
-  #     _include: casa/flagmanager.yaml
+  casa.flagmanager:
+    command: flagmanager
+    flavour: casa-task
+    inputs:
+      _include: casa/flagmanager.yaml
 
-  # casa.flagdata:
-  #   command: flagdata
-  #   flavour: casa-task
-  #   inputs:
-  #     _include: casa/flagdata.yaml
+  casa.flagdata:
+    command: flagdata
+    flavour: casa-task
+    inputs:
+      _include: casa/flagdata.yaml
 
   casa.plotms:
-    command: casatasks.plotms
-    _use: lib.misc.casa6.command-data
-    # flavour:
-    #   kind: casa-task
-    #   casa: xvfb-run -a casa
+    command: plotms
+    flavour:
+      kind: casa-task
     inputs:
       _include: casa/plotms.yaml
 
-  # casa.setjy:
-  #   command: setjy
-  #   flavour: casa-task
-  #   inputs:
-  #     _include: casa/setjy.yaml
+  casa.setjy:
+    command: setjy
+    flavour: casa-task
+    inputs:
+      _include: casa/setjy.yaml
 
-  # casa.gaincal:
-  #   command: gaincal
-  #   flavour: casa-task
-  #   inputs:
-  #     _include: casa/gaincal.yaml
+  casa.gaincal:
+    command: gaincal
+    flavour: casa-task
+    inputs:
+      _include: casa/gaincal.yaml
 
-  # casa.bandpass:
-  #   command: bandpass
-  #   flavour: casa-task
-  #   inputs:
-  #     _include: casa/bandpass.yaml
+  casa.bandpass:
+    command: bandpass
+    flavour: casa-task
+    inputs:
+      _include: casa/bandpass.yaml
 
-  # casa.applycal:
-  #   command: applycal
-  #   flavour: casa-task
-  #   inputs:
-  #     _include: casa/applycal.yaml
+  casa.applycal:
+    command: applycal
+    flavour: casa-task
+    inputs:
+      _include: casa/applycal.yaml
 
   casa.exportfits:
-    command: casatasks.exportfits
-    _use: lib.misc.casa6.command-data
+    command: exportfits
+    flavour: casa-task
     inputs:
       _include: casa/exportfits.yaml
 
   casa.tclean:
-    command: casatasks.tclean
-    _use: lib.misc.casa6.command-data
+    command: tclean
+    flavour: casa-task
     inputs:
       _include: casa/tclean.yaml
 
   casa.importfits:
-    command: casatasks.importfits
-    _use: lib.misc.casa6.command-data
+    command: importfits
+    flavour: casa-task
     inputs:
       _include: casa/importfits.yaml
 
