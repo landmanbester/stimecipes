@@ -10,7 +10,10 @@ opts:
     singularity:
       rebuild: true
       bind_dirs:
-        /home/lbester/numba_cache: rw
+        numba_cache:
+          host: /home/lbester/numba_cache
+          target: /home/lbester/numba_cache
+          mode: rw
       env:
         NUMBA_CACHE_DIR: /home/lbester/numba_cache
 

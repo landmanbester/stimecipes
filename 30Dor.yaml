@@ -202,8 +202,8 @@ opts:
         output.gain_directory: '{recipe.basedir}/b2.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        output.products: [corrected_data, corrected_weight]
-        output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
+        # output.products: [corrected_data, corrected_weight]
+        # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [G,D,B]
@@ -331,7 +331,7 @@ opts:
         A.load_from: '{recipe.basedir}/secondary_amp.qc/A'
 
 
-    # deconvolve secondary with known mask/souce locations
+    # deconvolve secondary with known mask/source locations
 
     ####################################### REFINE #################################################
     phasecal:
