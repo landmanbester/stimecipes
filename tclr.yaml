@@ -1,6 +1,11 @@
 _include:
   - (cultcargo)tricolour.yml
 
+cabs:
+  tricolour:
+    image:
+      version: latest
+
 opts:
   log:
     dir: logs
