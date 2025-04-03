@@ -1,13 +1,13 @@
 _include:
-  # - (cultcargo)pfb-imaging.yml
-  - (pfb)stimela_cabs.yml
+  - (cultcargo)pfb-imaging.yml
+  # - (pfb)stimela_cabs.yml
 
 opts:
   log:
     dir: logs
     nest: 2
   backend:
-    select: native
+    select: singularity
     # singularity:
     #   bind_dirs:
     #     /home/bester/numba_cache: rw
