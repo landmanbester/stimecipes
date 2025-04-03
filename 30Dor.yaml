@@ -390,10 +390,9 @@ opts:
         input_ms.select_uv_range: [0,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
         input_ms.select_fields: [2]
-        input_ms.sigma_column: SIGMA_SPECTRUM
         input_model.apply_p_jones: false
         solver.terms: [G, D, B]
-        solver.iter_recipe: [0, 0, 0, 0, 0]
+        solver.iter_recipe: [0, 0, 0]
         solver.propagate_flags: false
         solver.robust: false
         solver.threads: 2
