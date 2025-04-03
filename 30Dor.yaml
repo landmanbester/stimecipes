@@ -384,7 +384,7 @@ opts:
       cab: quartical
       info: Transfer solutions to target field
       params:
-        input_ms.path: =recipe.ms_target
+        input_ms.path: =recipe.ms
         input_ms.time_chunk: 0
         input_ms.freq_chunk: 256
         input_ms.select_uv_range: [0,0]
