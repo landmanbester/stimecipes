@@ -408,12 +408,12 @@ opts:
         mad_flags.enable: false
         dask.threads: 16
         dask.scheduler: threads
-        G.type: diag_complex  #amp
+        G.type: amplitude
         G.time_interval: 1
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/secondary_phase.qc/G'
         G.interp_mode: amp
-        D.type: delay
+        D.type: delay_and_offset
         D.time_interval: 1
         D.freq_interval: 0
         D.initial_estimate: false
