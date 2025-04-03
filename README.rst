@@ -75,7 +75,7 @@ Now install the package:
 
 .. code:: bash
 
-  pip install git+https://github.com/caracal-pipeline/cult-cargo.git@refactor-0.2.0
+  pip install git+https://github.com/caracal-pipeline/cult-cargo.git
 
 
 Get recipes and cabs
@@ -104,3 +104,12 @@ Extract the data into a subdirectory called `msdir` in the `stimecipes` director
 
   mkdir msdir
   tar -xvf /path/to/ARIWS.INTROFIMAGING.TriA.1559937657.tar.gz -C msdir
+
+Running stimela
+~~~~~~~~~~~~~~~
+
+Since all the paths are hardcoded in this recipe you should now be able to run the recipe with
+
+.. code:: bash
+
+  stimela run triA.yaml
