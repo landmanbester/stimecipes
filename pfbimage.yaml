@@ -1,7 +1,6 @@
 _include:
   # - (cultcargo)pfb-imaging.yml
   - (pfb)stimela_cabs.yml
-  - (quartical)stimela_cabs.yml
 
 opts:
   log:
