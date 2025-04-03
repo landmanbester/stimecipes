@@ -392,7 +392,7 @@ opts:
         input_ms.select_fields: [2]
         input_ms.sigma_column: SIGMA_SPECTRUM
         input_model.apply_p_jones: false
-        solver.terms: [G, K, B, D]
+        solver.terms: [G, D, B]
         solver.iter_recipe: [0, 0, 0, 0, 0]
         solver.propagate_flags: false
         solver.robust: false
@@ -405,7 +405,7 @@ opts:
         # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
         output.flags: false
         output.apply_p_jones_inv: false
-        output.net_gains: [G,K,B,D]
+        output.net_gains: [G,D,B]
         mad_flags.enable: false
         dask.threads: 16
         dask.scheduler: threads
@@ -414,11 +414,11 @@ opts:
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/secondary_phase.qc/G'
         G.interp_mode: amp
-        K.type: delay
-        K.time_interval: 1
-        K.freq_interval: 0
-        K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/secondary_phase.qc/K'
+        D.type: delay
+        D.time_interval: 1
+        D.freq_interval: 0
+        D.initial_estimate: false
+        D.load_from: '{recipe.basedir}/secondary_phase.qc/D'
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
@@ -427,18 +427,13 @@ opts:
         # C.time_interval: 0
         # C.freq_interval: 1
         # C.load_from: '{recipe.basedir}/crosshand_phase.qc/C'
-        D.type: delay_and_offset  # phase to target
-        D.time_interval: 1
-        D.freq_interval: 0
-        D.initial_estimate: false
-        D.load_from: '{recipe.basedir}/secondary_phase.qc/D'
         # P.type: parallactic_angle  # not tracking non-sidereal source
         # P.time_interval: 1
         # P.freq_interval: 0
 
 
 selfcal:
-  name: Tarantuala selfcal
+  name: Tarantula selfcal
   info: Self-calibration
 
   assign:
