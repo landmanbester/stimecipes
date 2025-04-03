@@ -412,17 +412,17 @@ opts:
         G.type: diag_complex  #amp
         G.time_interval: 1
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/Ga'
+        G.load_from: '{recipe.basedir}/secondary_phase.qc/G'
         G.interp_mode: amp
         K.type: delay
         K.time_interval: 1
         K.freq_interval: 0
         K.initial_estimate: false
-        K.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/K'
+        K.load_from: '{recipe.basedir}/secondary_phase.qc/K'
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/gkb_coarse_binf.qc/B'
+        B.load_from: '{recipe.basedir}/secondary_phase.qc/B'
         # C.type: crosshand_phase_null_v
         # C.time_interval: 0
         # C.freq_interval: 1
@@ -431,7 +431,7 @@ opts:
         D.time_interval: 1
         D.freq_interval: 0
         D.initial_estimate: false
-        D.load_from: '{recipe.basedir}/delay_and_offset.qc/D'
+        D.load_from: '{recipe.basedir}/secondary_phase.qc/D'
         # P.type: parallactic_angle  # not tracking non-sidereal source
         # P.time_interval: 1
         # P.freq_interval: 0
