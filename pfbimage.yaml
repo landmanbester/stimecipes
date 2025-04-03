@@ -46,9 +46,8 @@ image:
       # default: WEIGHT_SPECTRUM
       info:
         Weight column
-    field-id:
-      dtype: int
-      default: 0
+    fields:
+      dtype: List[int]
       info:
         Which field to image
     gains:
@@ -143,6 +142,7 @@ image:
         overwrite: =recipe.overwrite
         check-ants: true
         product: =recipe.stokes
+        fields: =IFSET(recipe.fields)
 
     grid:
       cab: pfb.grid
