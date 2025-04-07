@@ -142,7 +142,7 @@ meerkat-l-band-target-flagging:
       cab: tricolour
       params:
         ms: =recipe.ms-name
-        config: /home/kenyon/git_packages/lightcurve-pipeline/lightcurve_pipeline/flagging_strategies/target_flagging_1_narrow.yaml  # We need a recipe.__PATH__ style construct.
+        config: target_flagging_1_narrow.yaml
         flagging-strategy: polarisation
         data-column: DATA
 

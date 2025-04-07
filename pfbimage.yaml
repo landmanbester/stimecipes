@@ -1,18 +1,13 @@
 _include:
-  - (cultcargo)pfb-imaging.yml
-  # - (pfb)stimela_cabs.yml
+  # - (cultcargo)pfb-imaging.yml
+  - (pfb)stimela_cabs.yml
 
 opts:
   log:
     dir: logs
     nest: 2
   backend:
-    select: singularity
-    # singularity:
-    #   bind_dirs:
-    #     /home/bester/numba_cache: rw
-    #   env:
-    #     NUMBA_CACHE_DIR: /home/bester/numba_cache
+    select: native
 
 image:
   name: pfb-image
@@ -264,9 +259,8 @@ kclean:
         Number of major cycles
     l2-reweight-dof:
       dtype: float
-    field-id:
+    fields:
       dtype: List[int]
-      default: [1]
       info:
         Which field to image
     overwrite:
@@ -308,7 +302,7 @@ kclean:
         overwrite: =recipe.overwrite
         check-ants: true
         product: =recipe.stokes
-        fields: =recipe.field-id
+        fields: =IFSET(recipe.fields)
 
     grid:
       cab: pfb.grid
