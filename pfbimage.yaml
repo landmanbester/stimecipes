@@ -13,16 +13,8 @@ image:
   name: pfb-image
   info:
     Example imaging recipe using pfb-imaging with stimela2
-
-  for_loop:
-    var: stokes
-    over: stokes-list  # can refer to any input by name here
   
   inputs:
-    stokes-list:
-      dtype: List[str]
-      default: [I]
-      element_choices: [I, Q, U, V]
     ms:
       dtype: List[URI]
       required: true
@@ -31,6 +23,12 @@ image:
       default: pfb_sara
       info:
         A descriptive name for the outputs to be placed in basedir.
+    product:
+      default: I
+      aliases: ['*.product']
+      info:
+        Imaging products to produce.
+        DS and FS correspond to Diagonal and Full Stokes, respectively.
     data-column:
       dtype: str
       default: DATA
@@ -116,6 +114,11 @@ image:
     log-directory:
       default: '{recipe.basedir}/logs'
       aliases: ['*.log-directory']
+    check-ants:
+      dtype: bool
+      default: true
+      info:
+        Check for antennas with no data
 
   steps:
     init:
@@ -135,9 +138,9 @@ image:
         bda-decorr: =recipe.bda-decorr
         freq-range: =IFSET(recipe.freq-range)
         overwrite: =recipe.overwrite
-        check-ants: true
-        product: =recipe.stokes
+        check-ants: =recipe.check-ants
         fields: =IFSET(recipe.fields)
+        product: =recipe.product
 
     grid:
       cab: pfb.grid
@@ -150,8 +153,8 @@ image:
         nworkers: 8
         psf-oversize: 1.4
         overwrite: =recipe.overwrite
-        product: =recipe.stokes
         l2-reweight-dof: =IFSET(recipe.l2-reweight-dof)
+        product: =recipe.product
 
     sara:
       cab: pfb.sara
@@ -171,7 +174,7 @@ image:
         eta: 1e-3
         positivity: =IF( recipe.stokes == 'I', 1, 0)
         nthreads: 64
-        product: =recipe.stokes
+        product: =recipe.product
 
     restore:
       cab: pfb.restore
@@ -180,22 +183,14 @@ image:
         nworkers: 8
         nthreads: 8
         outputs: iI
-        product: =recipe.stokes
+        product: =recipe.product
 
 kclean:
   name: Image with kclean algorithm
   info:
     Example imaging recipe using pfb-imaging with stimela2
-
-  for_loop:
-    var: stokes
-    over: stokes-list  # can refer to any input by name here
   
   inputs:
-    stokes-list:
-      dtype: List[str]
-      default: [I]
-      element_choices: [I, Q, U, V]
     ms:
       dtype: List[URI]
       required: true
@@ -204,6 +199,12 @@ kclean:
       default: pfb_kclean
       info:
         A descriptive name for the outputs to be placed in basedir.
+    product:
+      default: I
+      aliases: ['*.product']
+      info:
+        Imaging products to produce.
+        DS and FS correspond to Diagonal and Full Stokes, respectively.
     data-column:
       dtype: str
       default: DATA
@@ -281,6 +282,11 @@ kclean:
     log-directory:
       default: '{recipe.basedir}/logs'
       aliases: ['*.log-directory']
+    check-ants:
+      dtype: bool
+      default: true
+      info:
+        Check for antennas with no data
 
   steps:
     init:
@@ -300,9 +306,9 @@ kclean:
         bda-decorr: =recipe.bda-decorr
         freq-range: =IFSET(recipe.freq-range)
         overwrite: =recipe.overwrite
-        check-ants: true
-        product: =recipe.stokes
+        check-ants: =recipe.check-ants
         fields: =IFSET(recipe.fields)
+        product: =recipe.product
 
     grid:
       cab: pfb.grid
@@ -315,8 +321,8 @@ kclean:
         nworkers: 8
         psf-oversize: 1.4
         overwrite: =recipe.overwrite
-        product: =recipe.stokes
         l2-reweight-dof: =IFSET(recipe.l2-reweight-dof)
+        product: =recipe.product
 
     kclean:
       cab: pfb.kclean
@@ -326,7 +332,7 @@ kclean:
         gamma: 0.99
         nthreads: 32
         rmsfactor: 3.0
-        product: =recipe.stokes
+        product: =recipe.product
 
     restore:
       cab: pfb.restore
@@ -335,4 +341,4 @@ kclean:
         nworkers: 8
         nthreads: 8
         outputs: iI
-        product: =recipe.stokes
+        product: =recipe.product
