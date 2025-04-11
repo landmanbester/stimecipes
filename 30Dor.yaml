@@ -435,10 +435,15 @@ selfcal:
   name: Tarantula selfcal
   info: Self-calibration
 
-  assign:
-    ms-target: /home/bester/projects/30Dor/msdir/Tarantula_HI_8s4ch.ms
-
   inputs:
+    ms:
+      dtype: MS
+      required: true
+    basedir:
+      dtype: str
+      default: outputs
+      info:
+        Base directory in which to place output data products.
     data-column:
       default: DATA
     model-column:
@@ -474,7 +479,7 @@ selfcal:
       cab: quartical
       info: Perform a round of phase + delay selfcal + MAD flagging
       params:
-        input_ms.path: =recipe.ms-target
+        input_ms.path: =recipe.ms
         input_ms.data_column: =recipe.data-column
         input_ms.sigma_column: =IFSET(recipe.sigma-column)
         input_ms.weight_column: =IFSET(recipe.weight-column)
@@ -491,8 +496,8 @@ selfcal:
         solver.robust: true
         solver.threads: 2
         solver.reference_antenna: =recipe.ref-ant
-        output.gain_directory: 'outputs/{recipe.data-column}_{recipe.model-column}_selfcal{recipe.epoch}_delay_and_offset.qc'
-        output.log_directory: 'outputs/logs/logs.qc'
+        output.gain_directory: '{recipe.basedir}/{recipe.data-column}_{recipe.model-column}_selfcal{recipe.epoch}_delay_and_offset.qc'
+        output.log_directory: '{recipe.basedir}/logs.qc'
         output.overwrite: =recipe.overwrite
         # output.products: [corrected_residual, corrected_weight]
         # output.columns: [CORRECTED_RESIDUAL, WEIGHT_SPECTRUM]
