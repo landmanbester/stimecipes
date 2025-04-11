@@ -443,7 +443,20 @@ selfcal:
       default: DATA
     model-column:
       dtype: str
-      default: MODEL_DATA_KCLEAN
+      default: MODEL_DATA
+    sigma-column:
+      dtype: str
+      info:
+        Column containing data standard devaitions
+    weight-column:
+      dtype: str
+      info:
+        Column containing data weights
+    epoch:
+      dtype: int
+      default: 0
+      info:
+        Selfcal epoch
     overwrite:
       dtype: bool
       default: false
@@ -463,46 +476,49 @@ selfcal:
       params:
         input_ms.path: =recipe.ms-target
         input_ms.data_column: =recipe.data-column
-        # input_ms.sigma_column:   #=recipe.sigma-column
-        input_ms.time_chunk: 50
-        input_ms.freq_chunk: 512
+        input_ms.sigma_column: =IFSET(recipe.sigma-column)
+        input_ms.weight_column: =IFSET(recipe.weight-column)
+        input_ms.time_chunk: 25
+        input_ms.freq_chunk: 0
         input_ms.select_uv_range: [150,0]
+        input_ms.select_fields: [2]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
-        # input_ms.select_corr: [0, 3]
         input_model.recipe: =recipe.model-column
         input_model.apply_p_jones: false
-        solver.terms: [G,K]
-        solver.iter_recipe: [150,150,50,50,20,20,10,10,10,10]
+        solver.terms: [G,D,B]
+        solver.iter_recipe: [0,150,0,0,50,0,0,20,0,0,10,0]
         solver.propagate_flags: true
         solver.robust: true
         solver.threads: 2
         solver.reference_antenna: =recipe.ref-ant
-        output.gain_directory: 'outputs/{recipe.data-column}_{recipe.model-column}_selfcal_complex2x2.qc'
-        output.log_directory: 'output/logs/logs.qc'
+        output.gain_directory: 'outputs/{recipe.data-column}_{recipe.model-column}_selfcal{recipe.epoch}_delay_and_offset.qc'
+        output.log_directory: 'outputs/logs/logs.qc'
         output.overwrite: =recipe.overwrite
-        output.products: [corrected_residual, corrected_weight]
-        output.columns: [CORRECTED_RESIDUAL_KCLEAN, WEIGHT_SPECTRUM]
+        # output.products: [corrected_residual, corrected_weight]
+        # output.columns: [CORRECTED_RESIDUAL, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [G,K]
+        output.net_gains: [G,D,B]
         mad_flags.enable: true
-        mad_flags.threshold_bl: 7.5
+        mad_flags.threshold_bl: 10
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
-        dask.threads: 24
+        dask.threads: 32
         dask.scheduler: threads
-        K.type: delay_and_offset
-        K.interp_method: 2dlinear
-        K.interp_mode: ampphase
-        K.time_interval: =recipe.tint
-        K.freq_interval: 0
-        K.initial_estimate: true
-        G.type: complex
-        G.interp_method: 2dlinear
-        G.interp_mode: ampphase
-        G.time_interval: 25
-        G.freq_interval: 128
-        G.initial_estimate: false
+        G.type: amplitude
+        G.time_interval: 1
+        G.freq_interval: 0
+        G.load_from: '{recipe.basedir}/target_init.qc/G'
+        G.interp_mode: amp
+        D.type: delay_and_offset
+        D.time_interval: 1
+        D.freq_interval: 0
+        D.initial_estimate: false
+        D.load_from: '{recipe.basedir}/target_init.qc/D'
+        B.type: complex
+        B.time_interval: 0
+        B.freq_interval: 1
+        B.load_from: '{recipe.basedir}/target_init.qc/B'
 
 
 
