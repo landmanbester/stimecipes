@@ -73,7 +73,7 @@ image:
         Number of time integrations per dataset
     chan-average:
       dtype: int
-      default: 1
+      default: 4
       info:
         How many channels to average together
     bda-decorr:
@@ -172,7 +172,7 @@ image:
         gamma: 0.99
         rmsfactor: =recipe.rmsfactor
         eta: 1e-3
-        positivity: =IF( recipe.stokes == 'I', 1, 0)
+        positivity: =IF( recipe.product == 'I', 1, 0)
         nthreads: 64
         product: =recipe.product
 
