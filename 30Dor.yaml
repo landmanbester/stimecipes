@@ -518,17 +518,17 @@ selfcal:
         G.type: amplitude
         G.time_interval: 1
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/{recipe.data-column}_{recipe.model-column}_selfcal{recipe.epoch}_delay_and_offset.qc/G'
+        G.load_from: '{recipe.basedir}/{recipe.data-column}_{recipe.model-column}_selfcal0_delay_and_offset.qc/G'
         G.interp_mode: amp
         D.type: delay_and_offset
         D.time_interval: 1
         D.freq_interval: 0
         D.initial_estimate: false
-        D.load_from: '{recipe.basedir}/{recipe.data-column}_{recipe.model-column}_selfcal{recipe.epoch}_delay_and_offset.qc/D'
+        D.load_from: '{recipe.basedir}/{recipe.data-column}_{recipe.model-column}_selfcal0_delay_and_offset.qc/D'
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/{recipe.data-column}_{recipe.model-column}_selfcal{recipe.epoch}_delay_and_offset.qc/B'
+        B.load_from: '{recipe.basedir}/{recipe.data-column}_{recipe.model-column}_selfcal0_delay_and_offset.qc/B'
 
 
 
