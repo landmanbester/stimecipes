@@ -23,7 +23,6 @@ cabs:
     command: plotms
     flavour:
       kind: casa-task
-      casa: xvfb-run -a casa
     inputs:
       _include: casa/plotms.yaml
 

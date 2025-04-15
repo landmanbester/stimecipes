@@ -1,6 +1,6 @@
 _include:
   - casacabs.yaml
-  - lb-cabs.yaml
+  # - lb-cabs.yaml
 
 opts:
   log:
@@ -248,11 +248,11 @@ gotriA:
         imagename: RXCJ1638.2-6420.1GC.residual
         fitsimage: RXCJ1638.2-6420.1GC.residual.fits
         overwrite: true
-    mask0:
-      cab: breizorro
-      params:
-        restored_image: RXCJ1638.2-6420.1GC.image.fits
-        outfile: RXCJ1638.2-6420.1GC.FITSMASK.fits
+    # mask0:
+    #   cab: breizorro
+    #   params:
+    #     restored_image: RXCJ1638.2-6420.1GC.image.fits
+    #     outfile: RXCJ1638.2-6420.1GC.FITSMASK.fits
     importmask:
       cab: casa.importfits
       params:

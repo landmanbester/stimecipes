@@ -459,9 +459,10 @@ selfcal:
         Column containing data weights
     epoch:
       dtype: int
-      default: 0
+      required: true
       info:
-        Selfcal epoch
+        Selfcal epoch. 
+        Required in an attempt to gaurd against overwriting.
     overwrite:
       dtype: bool
       default: false
@@ -473,6 +474,10 @@ selfcal:
     ref-ant:
       dtype: int
       default: 43
+    mad-bl:
+      dtype: float
+      info:
+        MAD flagging threshold for baseline
 
   steps:
     selfcal1:
@@ -485,7 +490,7 @@ selfcal:
         input_ms.weight_column: =IFSET(recipe.weight-column)
         input_ms.time_chunk: 25
         input_ms.freq_chunk: 0
-        input_ms.select_uv_range: [150,0]
+        input_ms.select_uv_range: [0,0]
         input_ms.select_fields: [2]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
         input_model.recipe: =recipe.model-column
@@ -504,8 +509,8 @@ selfcal:
         output.flags: true
         output.apply_p_jones_inv: false
         output.net_gains: [G,D,B]
-        mad_flags.enable: true
-        mad_flags.threshold_bl: 10
+        mad_flags.enable: =IFSET(recipe.mad-bl, true, false)
+        mad_flags.threshold_bl: =IFSET(recipe.mad-bl)
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
         dask.threads: 32
@@ -513,17 +518,17 @@ selfcal:
         G.type: amplitude
         G.time_interval: 1
         G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/target_init.qc/G'
+        G.load_from: '{recipe.basedir}/{recipe.data-column}_{recipe.model-column}_selfcal{recipe.epoch}_delay_and_offset.qc/G'
         G.interp_mode: amp
         D.type: delay_and_offset
         D.time_interval: 1
         D.freq_interval: 0
         D.initial_estimate: false
-        D.load_from: '{recipe.basedir}/target_init.qc/D'
+        D.load_from: '{recipe.basedir}/{recipe.data-column}_{recipe.model-column}_selfcal{recipe.epoch}_delay_and_offset.qc/D'
         B.type: complex
         B.time_interval: 0
         B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/target_init.qc/B'
+        B.load_from: '{recipe.basedir}/{recipe.data-column}_{recipe.model-column}_selfcal{recipe.epoch}_delay_and_offset.qc/B'
 
 
 
