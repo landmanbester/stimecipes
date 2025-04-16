@@ -119,6 +119,10 @@ image:
       default: true
       info:
         Check for antennas with no data
+    transfer-model-from:
+      dtype: str
+      info:
+        Model to start from
 
   steps:
     init:
@@ -155,6 +159,7 @@ image:
         overwrite: =recipe.overwrite
         l2-reweight-dof: =IFSET(recipe.l2-reweight-dof)
         product: =recipe.product
+        transfer-model-from: =IFSET(recipe.transfer-model-from)
 
     sara:
       cab: pfb.sara
