@@ -96,6 +96,11 @@ image:
       default: 1.0
       info:
         Multiple of the rms to threshold by
+    alpha:
+      dtype: float
+      default: 2.0
+      info:
+        Alpha parameter for the l1 reweighting
     overwrite:
       default: false
       aliases: ['*.overwrite']
@@ -176,6 +181,7 @@ image:
         tol: 1e-3
         gamma: 0.99
         rmsfactor: =recipe.rmsfactor
+        alpha: =recipe.alpha
         eta: 1e-3
         positivity: =IF( recipe.product == 'I', 1, 0)
         nthreads: 64
