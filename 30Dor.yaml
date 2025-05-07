@@ -597,7 +597,7 @@ peel:
         input_ms.select_uv_range: [0,0]
         input_ms.select_fields: [2]
         input_ms.group_by: [SCAN_NUMBER,FIELD_ID,DATA_DESC_ID]
-        input_model.recipe: '{recipe.model_column}:{recipe.decol}'
+        input_model.recipe: '{recipe.model-column}:{recipe.decol}'
         input_model.apply_p_jones: false
         solver.terms: [G,D,B,E]
         solver.iter_recipe: [0,150,0,150,0,50,0,50,0,20,0,20,0,10,0,10]
