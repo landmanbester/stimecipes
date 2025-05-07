@@ -4,7 +4,8 @@ _include:
 
 opts:
   log:
-    dir: logs
+    dir: logs/log-{config.run.datetime}
+    name: log-{info.fqname}
     nest: 2
   backend:
     select: native
@@ -353,3 +354,7 @@ kclean:
         nthreads: 8
         outputs: iI
         product: =recipe.product
+
+
+degrid:
+
