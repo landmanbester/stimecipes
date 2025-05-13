@@ -355,6 +355,3 @@ kclean:
         outputs: iI
         product: =recipe.product
 
-
-degrid:
-
