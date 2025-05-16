@@ -582,6 +582,11 @@ peel:
       dtype: float
       info:
         MAD flagging threshold for baseline
+    robuts:
+      dtype: bool
+      default: false
+      info:
+        Use robust solver
 
   steps:
     peel1:
@@ -602,7 +607,7 @@ peel:
         solver.terms: [G,D,B,E]
         solver.iter_recipe: [0,150,0,150,0,50,0,50,0,20,0,20,0,10,0,10]
         solver.propagate_flags: true
-        solver.robust: true
+        solver.robust: =recipe.robust
         solver.threads: 2
         solver.reference_antenna: =recipe.ref-ant
         output.gain_directory: '{recipe.basedir}/{recipe.data-column}_{recipe.model-column}_selfcal{recipe.epoch}_dpeel.qc'
