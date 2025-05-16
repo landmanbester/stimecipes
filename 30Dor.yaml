@@ -582,7 +582,7 @@ peel:
       dtype: float
       info:
         MAD flagging threshold for baseline
-    robuts:
+    robust:
       dtype: bool
       default: false
       info:
