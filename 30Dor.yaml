@@ -639,9 +639,9 @@ peel:
         B.time_interval: 0
         B.freq_interval: 1
         B.load_from: '{recipe.basedir}/{recipe.data-column}_{recipe.model-column}_selfcal1_delay_and_offset.qc/B'
-        E.type: complex
+        E.type: diag_complex
         E.direction_dependent: true
-        E.time_interval: 5
+        E.time_interval: 25
         E.freq_interval: 128
         E.initial_estimate: false
 

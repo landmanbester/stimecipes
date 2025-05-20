@@ -129,6 +129,16 @@ image:
       dtype: str
       info:
         Model to start from
+    nworkers:
+      dtype: int
+      default: 8
+      info:
+        Number of workers
+    nthreads:
+      dtype: int
+      default: 8
+      info:
+        Number of threads
 
   steps:
     init:
@@ -137,8 +147,8 @@ image:
       params:
         ms: =recipe.ms
         gain-table: =IFSET(recipe.gains)
-        nthreads: 2
-        nworkers: 32
+        nthreads: =recipe.nthreads
+        nworkers: =recipe.nworkers
         data-column: =recipe.data-column
         weight-column: =IFSET(recipe.weight-column)
         channels-per-image: =recipe.channels-per-image
@@ -159,8 +169,8 @@ image:
         super-resolution-factor: =recipe.super-resolution-factor
         field-of-view: =recipe.field-of-view
         robustness: =recipe.robustness
-        nthreads: 8
-        nworkers: 8
+        nthreads: =recipe.nthreads
+        nworkers: =recipe.nworkers
         psf-oversize: 1.4
         overwrite: =recipe.overwrite
         l2-reweight-dof: =IFSET(recipe.l2-reweight-dof)
