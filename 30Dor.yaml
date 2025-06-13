@@ -1,6 +1,6 @@
 _include:
   - (quartical)stimela_cabs.yaml
-  # - (pfb)stimela_cabs.yaml
+  - casacabs.yaml
 
 
 
@@ -589,6 +589,15 @@ peel:
         Use robust solver
 
   steps:
+    flag_backup:
+      cab: casa.flagmanager
+      info: |
+        Create a backup of the flags on the dataset.
+      params:
+        vis: =recipe.ms
+        mode: save
+        versionname: pre-peel-flags-{config.run.datetime}
+
     peel1:
       cab: quartical
       info: Perform a round of phase and delay selfcal with peeling
