@@ -13,7 +13,7 @@ sgraimage:
 
   # make them all the same size
   assign:
-    cell-size: 2.5
+    cell-size: 2.0
     nx: 6720
     ny: 6720
 
