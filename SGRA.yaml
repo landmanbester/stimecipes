@@ -146,7 +146,7 @@ sgraimage:
       default: '{recipe.basedir}/{recipe.obs}/fits'
       aliases: ['*.fits-output-folder']
     log-directory:
-      default: '*.{recipe.basedir}/{recipe.obs}/logs'
+      default: '{recipe.basedir}/{recipe.obs}/logs'
       aliases: ['*.log-directory']
 
   steps:
