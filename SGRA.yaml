@@ -109,7 +109,7 @@ sgraimage:
       dtype: int
     rmsfactor:
       dtype: float
-      default: 0.5  # 3 -> just after cal transfer, 0.5 -> minimum before getting crap in the model
+      default: 0.75  # 3 -> just after cal transfer, 0.5 -> minimum before getting crap in the model
       info:
         Multiple of the rms to threshold by
     alpha:
@@ -204,6 +204,7 @@ sgraimage:
         positivity: 1
         nthreads: 48  # nthreads_per_basis = floor(nthreads//nband)
         diverge-count: =recipe.diverge-count
+        init-factor: =IFSET(recipe.tmf, 1.0, 0.5)
 
     restore:
       cab: pfb.restore
