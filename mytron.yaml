@@ -3,6 +3,7 @@
 opts:
   log:
     dir: logs/log-{config.run.datetime}
+    name: log-{info.fqname}
     nest: 2
   backend:
     select: native
@@ -11,10 +12,13 @@ opts:
 vars:
   bands:
     UHF:
-      primary-beam-band: UHF
-      htc.field-of-view: 1.5
-      htc.super-resolution-factor: 1.2
+      primary-beam-band: U
+      htc.nx: 3072
+      htc.ny: 3072
+      htc.cell-size: 4.8
       htc.robustness: 0.0
+      # htc.psf-out: true
+      # htc.psf-relative-size: 1.0
       lightcurves-within: 1deg
       breifast.max-distance: 2
       breifast.candidate-threshold: 6
@@ -27,18 +31,24 @@ vars:
 
     L:
       primary-beam-band: L
-      htc.field-of-view: 1.0
-      htc.super-resolution-factor: 1.2
+      htc.nx: 3072
+      htc.ny: 3072
+      htc.cell-size: 2.4
       htc.robustness: 0.0
+      # htc.psf-out: true
+      # htc.psf-relative-size: 1.0
       lightcurves-within: 1deg
       breifast.max-distance: 1
       breifast.candidate-threshold: 6
       breifast.detection-threshold: 7
+      breifast.repeater-threshold: 6
       flag-cube.flag-excess-rms: 1.5
       breifast.reject-flux-threshold: 0.1
       breifast.reject-mean-threshold: 0.1
+      breifast.procres.beam-size: true
+      # breifast.procres.default-beam-size: 6arcsec
+      breifast.procres.crossmatch-radius: 1bm
       breifast.procres.detect-stokes-p: true
-      lightcurves.interesting-regions: {'parrot': interesting-sources.reg}
 
 tron:
   name: tron with custom selections
@@ -46,8 +56,7 @@ tron:
   assign:
     # some more default directory assignments
     dirs:
-      ms: ../msdir       # MSs live here
-      temp: ./tmp        # "{config.run.env.HOME}/tmp"   # temp files go here
+      temp: /tmp        # "{config.run.env.HOME}/tmp"   # temp files go here
       cubes: '{recipe.dir-out}/cubes'
 
   assign_based_on:
@@ -69,6 +78,42 @@ tron:
         deep-image: output/fits/stage9/stage9_combined_bda_I_main_image_mfs.fits
         column.data: DATA
         column.weight: WEIGHT_SPECTRUM
+        nlc: 100
+
+      47TUC:
+        _use: vars.bands.L
+        ms: /net/sinatra/vault2/oms/breifast-reference/1529209968_sdp_l0_1024ch_47Tuc.ms
+        dir-out: obs-47tuc
+        deep-image: reference/47tuc/img_1529209968_sdp_l0_1024ch_47Tuc.ms_DDFkMS.app.restored.fits
+        column.data: CORRECTED_DATA-MODEL_DATA
+        column.weight: WEIGHT_SPECTRUM
+        nlc: 100
+        stokes: I
+
+      OMCEN:
+        _use: vars.bands.L
+        ms: /net/sinatra/vault2/oms/breifast-reference/1541903773_sdp_l0_1024ch_OmegaCen.ms
+        dir-out: obs-omcen-pfb
+        deep-image: reference/omcen/img_1541903773_sdp_l0_1024ch_OmegaCen.ms_DDFkMS.app.restored.fits
+        breifast.avoid-mask: reference/omcen/avoid.fits
+        stokes: I
+        lightcurves.interesting-regions: reference/omcen/OmegaCen_MSPs.reg
+        column.data: CORRECTED_DATA-MODEL_DATA
+        column.weight: WEIGHT_SPECTRUM
+        nlc: 100
+
+      L2:
+        _use: vars.bands.L
+        ms: /net/sinatra/vault2/oms/breifast-reference/parrot-l2.ms
+        dir-out: obs-l2-qc2
+        stokes: IV
+        deep-image:  reference/parrotl2/im3-MFS-image.fits
+        column.data: DATA
+        breifast.avoid-mask: reference/parrotl2/parrot-avoid-mask.fits
+        breifast.procres.beam-size: true
+        breifast.procres.detect-stokes-p: false
+        lightcurves.interesting-regions: reference/parrotl2/interesting-sources.reg
+        nlc: 100
 
   inputs:
     obs:
