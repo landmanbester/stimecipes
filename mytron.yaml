@@ -5,8 +5,6 @@ opts:
     dir: logs/log-{config.run.datetime}
     name: log-{info.fqname}
     nest: 2
-  backend:
-    select: native
 
 # common band settings
 vars:
