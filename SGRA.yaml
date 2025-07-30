@@ -43,7 +43,12 @@ sgraimage:
     imagename:
       default: run1
       info:
-        Image will be named 
+        Image will be named
+    data-column:
+      default: CORRECTED_DATA
+      info:
+        Which column to image. 
+        Also allows simple arithmetic e.g. CORRECTED_DATA-MODEL_DATA 
     model-column:
       default: MODEL_DATA_PFB
       info:

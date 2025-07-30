@@ -37,6 +37,17 @@ image:
         scale: 1.68524asec
         nchan: 12
         multiscale-max-scales: 6
+      
+      gcx30:
+        ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_SGRA.ms]
+        basedir: /home/bester/projects/GC/output/sgra/wsclean
+        prefix: sgra_run1
+        channel-range: [51, 876]
+        column: DATA
+        size: 6720
+        scale: 2asec
+        nchan: 7
+        multiscale-max-scales: 6
 
       smc:
         ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_SGRA.ms]
@@ -63,6 +74,22 @@ image:
     weight:
       dtype: Tuple[str, float]
       default: [briggs,-0.3]
+    update-model:
+      dtype: bool
+      default: false
+      info:
+        Whther to predict the visibilities back to the MS
+    niter:
+      dtype: int
+      default: 100000
+      info:
+        Maximum number of minor cycle iterations
+    nmiter:
+      dtype: int
+      default: 10
+      info:
+        Maximum number of major cycles
+    
 
   steps:
     image:
@@ -88,11 +115,11 @@ image:
         auto-mask: 3.5
         gain: 0.1
         mgain: 0.85
-        join-channels: true
+        join-channels: false
         fit-spectral-pol: 4
         padding: 2.0
-        use-wgridder: true
-        no-update-model-required: true
+        gridder: wgridder
+        no-update-model-required: =~recipe.update-model
         log-time: true
         temp-dir: =recipe.basedir
 
