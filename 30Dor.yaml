@@ -86,7 +86,7 @@ opts:
       cab: quartical
       info: Bandpass given G and K round 1 where 
             G = diagonal time variable complex gain,
-            K = delay
+            D = delay and offset
             B = frequency variable complex 2x2 gain (bandpass + leakage)
       params:
         input_ms.path: =recipe.ms
@@ -192,7 +192,7 @@ opts:
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_fields: [0]
-        input_model.recipe: '{recipe.model-column}'  # compute on the fly or write as delta column
+        input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
         solver.terms: [G,D,B]
         solver.iter_recipe: [0,0,50,0,0,25,0,0,15,0,0,5,0,0,5]
