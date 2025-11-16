@@ -93,9 +93,9 @@ esoimage:
         robustness: =recipe.robustness
         nthreads: 32
         nworkers: 1
-        do-psf: false
-        do-beam: false
-        do-noise: true
+        psf: false
+        beam: false
+        noise: true
         overwrite: false
         suffix: =recipe.suffix
       tags: [image]
