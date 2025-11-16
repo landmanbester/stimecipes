@@ -107,6 +107,12 @@ sgraimage:
       default: 15
       info:
         Number of major cycles
+    nkcleaniter:
+      dtype: int
+      defaut: 5
+      info:
+        Number of kclean major cycles to perform after SARA.
+        Mainly useful for point source reconstruction.
     l1-reweight-from:
       dtype: int
       default: 7
@@ -191,7 +197,7 @@ sgraimage:
 
     sara:
       cab: pfb.sara
-      info: Cleaning step
+      info: Wavelet deconvolution step
       params:
         niter: =recipe.niter
         bases: =recipe.bases
@@ -210,6 +216,16 @@ sgraimage:
         nthreads: 48  # nthreads_per_basis = floor(nthreads//nband)
         diverge-count: =recipe.diverge-count
         init-factor: =IFSET(recipe.tmf, 1.0, 0.5)
+
+    kclean:
+      cab: pfb.kclean
+      info: Cleaning step for point sources
+      params:
+        niter: =recipe.nkcleaniter
+        gamma: 0.15
+        nthreads: 48
+        rmsfactor: =recipe.rmsfactor
+      skip: =recipe.nkcleaniter==0
 
     restore:
       cab: pfb.restore

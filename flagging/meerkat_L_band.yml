@@ -142,7 +142,7 @@ meerkat-l-band-target-flagging:
       cab: tricolour
       params:
         ms: =recipe.ms-name
-        config: target_flagging_1_narrow.yaml
+        config: "${self:dirname}/meerkat_target_narrow.tri.yml"
         flagging-strategy: polarisation  # set to residual then flag tricolour will flag on CORRECTED_DATA-MODEL_DATA
         data-column: DATA
 

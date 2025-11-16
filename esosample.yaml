@@ -1,0 +1,105 @@
+_include:
+  # - (cultcargo)pfb-imaging.yml
+  - (pfb)stimela_cabs.yml
+
+opts:
+  log:
+    dir: logs
+    nest: 2
+  backend:
+    select: native
+    # select: singularity
+    # singularity:
+    #   rebuild: true
+    #   bind_dirs:
+    #     /home/bester/numba_cache: rw
+    #   env:
+    #     NUMBA_CACHE_DIR: /home/bester/numba_cache
+
+
+
+esoimage:
+  name: esoimage
+  info: ESO137 imaging recipe
+
+  assign:
+    ms: [msdir/ms1_target_ave4chan_bdafov2d98.ms,msdir/ms2_target_ave4chan_bdafov2d98.ms]
+
+  inputs:
+    fits-output-folder:
+      dtype: str
+      aliases: ['*.fits-output-folder']
+      info:
+        Directory to place fits files
+    log-directory:
+      dtype: str
+      aliases: ['*.log-directory']
+      info:
+        Directory in which to place logs
+    integrations-per-image:
+      default: -1
+      info:
+        Number of integrations per image.
+    robustness:
+      dtype: float
+      default: -3
+      info:
+        Briggs robustness level.
+        Less than -2 corresponds to uniform, larger than 2 to natural.
+    field-of-view:
+      dtype: float
+      default: 2.0
+    super-resolution-factor:
+      dtype: float
+      default: 2.5
+      info:
+        How much to oversample Nyquist by at the highest frequency
+    suffix:
+      dtype: str
+      default: '0'
+      info:
+        Sample number
+
+  outputs:
+    basedir:
+      dtype: Directory
+      required: true
+      info:
+        Base directory in which to place output data products.
+
+  steps:
+    init:
+      cab: pfb.init
+      info: 'Initialise imaging data products'
+      params:
+        ms: =recipe.ms
+        output-filename: '{recipe.basedir}/sample'
+        nthreads: 1
+        nworkers: 32
+        data-column: DATA
+        weight-column: WEIGHT_SPECTRUM
+        channels-per-image: -1
+        integrations-per-image: -1
+        max-field-of-view: =recipe.field-of-view
+      tags: [init]
+
+    grid:
+      cab: pfb.grid
+      info: 'Setup grid for imaging'
+      params:
+        output-filename: '{recipe.basedir}/sample'
+        super-resolution-factor: =recipe.super-resolution-factor
+        field-of-view: =recipe.field-of-view
+        robustness: =recipe.robustness
+        nthreads: 32
+        nworkers: 1
+        do-psf: false
+        do-beam: false
+        do-noise: true
+        overwrite: false
+        suffix: =recipe.suffix
+      tags: [image]
+
+    
+
+

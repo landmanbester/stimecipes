@@ -1,3 +1,15 @@
+
+opts:
+  backend:
+    select: null
+    slurm:
+      config: 
+        dtype: File
+        required: true
+        info: Your slurm config
+
+
+
 cabs:
   print_inputs:
     flavour: python-code
