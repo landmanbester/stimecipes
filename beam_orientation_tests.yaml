@@ -46,11 +46,11 @@ predict_model:
       cab: crystalball
       params:
         ms: =recipe.ms
-        output_column: =recipe.output-column
-        sky_model: =recipe.sky-model
-        num_sources: =recipe.num-sources
-        memory_fraction: =recipe.memory-fraction
-        num_workers: =recipe.num-workers
+        output-column: =recipe.output-column
+        sky-model: =recipe.sky-model
+        num-sources: =recipe.num-sources
+        memory-fraction: =recipe.memory-fraction
+        num-workers: =recipe.num-workers
 
 1GC:
   name: 1gc
