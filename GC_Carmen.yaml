@@ -1,0 +1,116 @@
+opts:
+  log:
+    dir: logs
+    nest: 2
+  backend:
+    select: native
+
+sgraimage:
+  info: SGRA imaging recipe
+
+  assign_based_on:
+    obs:
+      'sgra':
+        ms: [/home/bester/projects/GC/msdir/1590089458_sdp_l0_1024ch_SGRA.ms]
+      'gc14':
+        ms: [/net/sinatra/vault2/cchoza/GC14/1529521526_sdp_l0_1024ch_GC14.ms]
+      'gc25':
+        ms: [/net/sinatra/vault2/cchoza/GC25/1528824954_sdp_l0_1024ch_GC25.ms]
+      'gc16_briggs-1.5_rhorms_1.4_3deg':
+        ms: [/mnt/pi2/cgchoza/GC16/data_only_GC16.ms]
+      'gc23_briggs-1.5_rhorms_1.4_3deg':
+        ms: [/home/chozac/GC_L-band/GC23_multiscale/1528480450_sdp_l0_1024ch_GC23.ms]
+      'TARGET_high_rho':
+        ms: [/net/sinatra/vault2/cchoza/TARGET/1525645867_sdp_l0_1024ch_TARGET.ms]
+      'gc15_briggs-1.5_rhorms_1.4_3deg':
+        ms: [/home/chozac/GC_L-band/GC15_multiscale/1528652884_sdp_l0_1024ch_GC15.ms]
+      'gc16_post_selfcal':
+        ms: [/mnt/pi2/cgchoza/GC16/selfcal_GC16.ms]
+
+  assign:
+    output-filename: '{recipe.basedir}/{recipe.obs}/run1'
+    fits-output-folder: '{recipe.basedir}/{recipe.obs}/fits'
+    log-directory: '{recipe.basedir}/{recipe.obs}/logs'
+
+  aliases:
+    output-filename: '*.output-filename'
+    fits-output-folder: '*.fits-output-folder'
+    log-directory: '*.log-directory'
+
+  inputs:
+    basedir:
+      default: '/net/sinatra/vault2/cchoza/pfb_imager_outputs'
+      info:
+        Base directory in which to place output data products.
+    obs:
+      default: sgra
+      choices: ['sgra','gc14','gc25','gcx15B', 'TARGET_high_rho', 'gc21']
+    # freq-range:
+      # default: '877230468.75:1709042968.75'  # clip fully flagged parts
+    channels-per-image:
+      default: 128  # 69 results in 12 bands for UHF (14 for L-band), determines the number of channels in each imaging band. 8 or 10 bands for L-band GC?
+      info:
+        Number of channels per image.
+        Determines number of output bands.
+    integrations-per-image:
+      default: -1
+      info:
+        Number of integrations per image.
+    robustness:
+      dtype: float
+      default: -1.5  # -1, -0.3, 0.0
+      info:
+        Briggs robustness level.
+        Less than -2 corresponds to uniform, larger than 2 to natural.
+    field-of-view:
+      dtype: float
+      default: 3.0 # max of 2.5, 3.5 for the UHF fields Landman was working with before
+    super-resolution-factor:
+      dtype: float
+      default: 2.5  # this brings the image size down, could bring this down as far as 1.5?
+      info:
+        How much to oversample Nyquist by at the highest frequency
+    # npix:
+    #   dtype: int
+    # cell-size:
+    #   dtype: float
+    chan-average:
+      dtype: int
+      default: 4 # may be wise to average down if 4k
+      info:
+        How many channels to average together
+    bda-decorr:
+      dtype: float
+      default: 0.95
+      info:
+        Amount of amplitude loss that can be tolerated at edge of field
+    niter:
+      dtype: int
+      default: 15
+      info:
+        Number of major cycles
+    l1-reweight-from:
+      dtype: int
+      default: 7
+    rmsfactor:
+      dtype: float
+      default: 1.8  # 3 -> just after cal transfer, 0.5 -> minimum before getting crap in the model
+      info:
+        Multiple of the rms to threshold by
+    alpha:
+      dtype: float
+      default: 4
+      info:
+        How aggressively to reweight
+    overwrite:
+      default: true
+      aliases: ['*.overwrite']
+    transfer-model-from:
+      dtype: str
+      info:
+        Transfer model from this component model
+
+  steps:
+    initialize:
+      params:
+        wgt-mode: minvar
