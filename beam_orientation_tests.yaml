@@ -92,7 +92,7 @@ predict_model:
         solver.iter_recipe: [50,150,25,25]  #,15,15,5,5,5,5]
         solver.propagate_flags: false
         solver.robust: true
-        solver.threads: 7
+        solver.threads: 2
         solver.reference_antenna: =recipe.ref-ant
         output.gain_directory: '{recipe.basedir}/kg1.qc'
         output.log_directory: '{recipe.basedir}/'
@@ -101,7 +101,7 @@ predict_model:
         output.apply_p_jones_inv: false
         output.net_gains: 
         mad_flags.enable: false
-        dask.threads: 9
+        dask.threads: 26
         dask.scheduler: threads
         G.type: diag_complex
         G.time_interval: 0
@@ -140,7 +140,7 @@ predict_model:
         solver.iter_recipe: [0,0,50,0,0,25,0,0,15,0,0,5,0,0,5]
         solver.propagate_flags: false
         solver.robust: true
-        solver.threads: 32
+        solver.threads: 2
         solver.reference_antenna: =recipe.ref-ant
         output.gain_directory: '{recipe.basedir}/b1.qc'
         output.log_directory: '{recipe.basedir}/'
@@ -152,7 +152,7 @@ predict_model:
         mad_flags.threshold_bl: 12
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
-        dask.threads: 2
+        dask.threads: 32
         dask.scheduler: threads
         G.type: amplitude
         G.time_interval: 0
@@ -184,14 +184,13 @@ predict_model:
         input_ms.freq_chunk: 0
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID, SCAN_NUMBER]
-        input_ms.select_fields: [0]
-        input_model.recipe: '{recipe.model-column}'  # compute on the fly or write as delta column
+        input_model.recipe: '{recipe.model-column}'
         input_model.apply_p_jones: false
         solver.terms: [G,D,B]
         solver.iter_recipe: [50,150,0,25,25,0,15,15,0,5,5,0,5,5,0]
         solver.propagate_flags: false
         solver.robust: true
-        solver.threads: 7
+        solver.threads: 2
         solver.reference_antenna: =recipe.ref-ant
         output.gain_directory: '{recipe.basedir}/kg2.qc'
         output.log_directory: '{recipe.basedir}/'
@@ -199,10 +198,10 @@ predict_model:
         output.flags: true
         output.apply_p_jones_inv: false
         mad_flags.enable: true
-        mad_flags.threshold_bl: 8
+        mad_flags.threshold_bl: 10
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
-        dask.threads: 9
+        dask.threads: 26
         dask.scheduler: threads
         G.type: amplitude
         G.time_interval: 0
@@ -227,7 +226,7 @@ predict_model:
       params:
         input_ms.path: =recipe.ms
         input_ms.time_chunk: 0
-        input_ms.freq_chunk: 0
+        input_ms.freq_chunk: 32
         input_ms.select_uv_range: [150,0]
         input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
         input_ms.select_fields: [0]
@@ -237,28 +236,28 @@ predict_model:
         solver.iter_recipe: [0,0,50,0,0,25,0,0,15,0,0,5,0,0,5]
         solver.propagate_flags: false
         solver.robust: true
-        solver.threads: 32
+        solver.threads: 2
         solver.reference_antenna: =recipe.ref-ant
         output.gain_directory: '{recipe.basedir}/b2.qc'
         output.log_directory: '{recipe.basedir}/'
         output.overwrite: true
-        # output.products: [corrected_data, corrected_weight]
-        # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
+        output.products: [corrected_data, corrected_weight]
+        output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
         output.flags: true
         output.apply_p_jones_inv: false
-        output.net_gains: [G,D,B]
+        # output.net_gains: [G,D,B]
         mad_flags.enable: true
         mad_flags.threshold_bl: 8
         mad_flags.threshold_global: 0
         mad_flags.max_deviation: 0
-        dask.threads: 2
+        dask.threads: 32
         dask.scheduler: threads
         G.type: amplitude
-        G.time_interval: 5
+        G.time_interval: 0
         G.freq_interval: 0
         G.load_from: '{recipe.basedir}/kg2.qc/G'
         D.type: delay_and_offset
-        D.time_interval: 5
+        D.time_interval: 0
         D.freq_interval: 0
         D.initial_estimate: false
         D.load_from: '{recipe.basedir}/kg2.qc/D'
@@ -269,156 +268,16 @@ predict_model:
         B.load_from: '{recipe.basedir}/b1.qc/B'
 
 
-    secondary_amplitude:
-      cab: quartical
-      info: Solve for a global amplitude assuming unity model
-            This should approximate the spectrum of the secondary
-      params:
-        input_ms.path: =recipe.ms
-        input_ms.time_chunk: 0
-        input_ms.freq_chunk: 0
-        input_ms.select_uv_range: [100,0]
-        input_ms.group_by: [FIELD_ID,DATA_DESC_ID]
-        input_ms.select_fields: [1]
-        input_model.apply_p_jones: false
-        solver.terms: [G, D, B, A]
-        solver.iter_recipe: [0, 0, 0, 100, 0, 0, 0, 50, 0, 0, 0, 25, 0, 0, 0, 10, 0, 0, 0, 10]
-        solver.propagate_flags: false
-        solver.robust: true
-        solver.threads: 2
-        solver.reference_antenna: =recipe.ref-ant
-        output.gain_directory: '{recipe.basedir}/secondary_amp.qc'
-        output.log_directory: '{recipe.basedir}/'
-        output.overwrite: true
-        output.flags: false
-        output.apply_p_jones_inv: false
-        output.net_gains: [G,D,B,A]
-        mad_flags.enable: false
-        dask.threads: 32
-        dask.scheduler: threads
-        G.type: amplitude  #amp
-        G.time_interval: 1
-        G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/kg2.qc/G'
-        G.interp_mode: ampphase
-        D.type: delay_and_offset
-        D.time_interval: 1
-        D.freq_interval: 0
-        D.initial_estimate: false
-        D.load_from: '{recipe.basedir}/kg2.qc/D'
-        D.interp_mode: ampphase
-        B.type: complex
-        B.time_interval: 0
-        B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/b2.qc/B'
-        B.interp_mode: ampphase
-        A.type: amplitude
-        A.solve_per: array
-        A.time_interval: 0
-        A.freq_interval: 256
-        A.scalar: true
-        A.respect_scan_boundaries: false
-
-    secondary_phase_refinement:
-      cab: quartical
-      info: Refine phase and delay given approximate spectrum of secondary 
-      params:
-        input_ms.path: =recipe.ms
-        input_ms.time_chunk: 0
-        input_ms.freq_chunk: 0
-        input_ms.select_uv_range: [0,0]
-        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
-        input_ms.select_fields: [1]
-        input_model.apply_p_jones: false
-        solver.terms: [G, D, B, A]
-        solver.iter_recipe: [0, 100, 0, 0, 0, 50, 0, 0, 0, 25, 0, 0, 0, 10, 0, 0, 0, 10]
-        solver.propagate_flags: false
-        solver.robust: true
-        solver.threads: 2
-        solver.reference_antenna: =recipe.ref-ant
-        output.gain_directory: '{recipe.basedir}/secondary_phase.qc'
-        output.log_directory: '{recipe.basedir}/'
-        output.overwrite: true
-        output.flags: false
-        output.apply_p_jones_inv: false
-        output.net_gains: [G,D,B]
-        mad_flags.enable: true
-        mad_flags.threshold_bl: 8
-        mad_flags.threshold_global: 0
-        mad_flags.max_deviation: 0
-        dask.threads: 16
-        dask.scheduler: threads
-        G.type: amplitude
-        G.time_interval: 0
-        G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/kg2.qc/G'
-        G.interp_mode: ampphase
-        D.type: delay_and_offset
-        D.time_interval: 1  # need for selfcal
-        D.freq_interval: 0
-        D.initial_estimate: true
-        # D.load_from: '{recipe.basedir}/kg2.qc/D'
-        D.interp_mode: ampphase
-        B.type: complex
-        B.time_interval: 0
-        B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/b2.qc/B'
-        B.interp_mode: ampphase
-        A.type: amplitude
-        A.solve_per: array
-        A.time_interval: 0
-        A.freq_interval: 1
-        A.load_from: '{recipe.basedir}/secondary_amp.qc/A'
-
-
-    # deconvolve secondary with known mask/source locations
-
-    ####################################### REFINE #################################################
-    phasecal:
-      cab: quartical
-      info: Delay and offset on the secondary
-      params:
-        input_ms.path: =recipe.ms
-        input_ms.time_chunk: 0
-        input_ms.freq_chunk: 0
-        input_ms.select_uv_range: [0,0]
-        input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
-        input_ms.select_fields: [1]
-        input_model.recipe: '{recipe.model-column}'  # compute on the fly or write as delta column
-        input_model.apply_p_jones: false
-        solver.terms: [G, D, B]
-        solver.iter_recipe: [0, 100, 0]
-        solver.propagate_flags: false
-        solver.robust: true
-        solver.threads: 2
-        solver.reference_antenna: =recipe.ref-ant
-        output.gain_directory: '{recipe.basedir}/delay_and_offset.qc'
-        output.log_directory: '{recipe.basedir}/'
-        output.overwrite: true
-        # output.products: [corrected_data, corrected_weight]
-        # output.columns: [CORRECTED_DATA_QCAL, WEIGHT_SPECTRUM]
-        output.flags: false
-        output.apply_p_jones_inv: false
-        output.net_gains: [G,D,B]
-        mad_flags.enable: true
-        mad_flags.threshold_bl: 8
-        mad_flags.threshold_global: 0
-        mad_flags.max_deviation: 0
-        dask.threads: 16
-        dask.scheduler: threads
-        G.type: amplitude
-        G.time_interval: 0
-        G.freq_interval: 0
-        G.load_from: '{recipe.basedir}/secondary_phase.qc/G'
-        D.type: delay_and_offset
-        D.time_interval: 1
-        D.freq_interval: 0
-        D.initial_estimate: false
-        D.load_from: '{recipe.basedir}/secondary_phase.qc/K'
-        B.type: complex
-        B.time_interval: 0
-        B.freq_interval: 1
-        B.load_from: '{recipe.basedir}/b2.qc/B'
+transfer_sols:
+  name: Transfer solutions
+  info: Transfer solutions to target fields
+  inputs:
+    ms:
+      dtype: MS
+      required: true
+    basedir:
+      dtype: str
+      default: outputs
 
     transfer:
       cab: quartical
