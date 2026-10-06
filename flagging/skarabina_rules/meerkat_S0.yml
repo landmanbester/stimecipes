@@ -1,0 +1,11 @@
+# Known MeerKAT S-band (S0 sub-band) RFI, for skarabina's "spectral-window"
+# flag verb.
+#
+# Transcribed from the BAD_FREQS block in lightcurve-pipeline's
+# meerkat_1k_basic.yml (which follows oxkat's oxkat/config.py).
+# Ranges are in MHz.  This band has no baseline-dependent ranges.
+
+# --- All baselines ---
+- spw:
+    - [1700, 1800]
+    - [2500, 2650]

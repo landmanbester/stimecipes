@@ -1,0 +1,32 @@
+# Known MeerKAT L-band RFI, for skarabina's "spectral-window" flag verb.
+#
+# Transcribed from the CAL_1GC_BAD_FREQS / CAL_1GC_BL_BAD_FREQS blocks in
+# oxkat's oxkat/config.py (via lightcurve-pipeline's meerkat_1k_basic.yml).
+# Check against that block when updating.  Ranges are in MHz.
+
+# --- All baselines ---
+# Lower band edge, upper bandpass edge, Galactic HI
+- spw:
+    - [850, 900]
+    - [1658, 1800]
+    - [1419.8, 1421.3]
+
+# --- Short baselines only (uvrange < 600 m) ---
+# GSM/LTE, GPS, GLONASS, Galileo and friends, which dominate on short spacings
+- spw:
+    - [900, 915]
+    - [925, 960]
+    - [1080, 1095]
+    - [1565, 1585]
+    - [1217, 1237]
+    - [1375, 1387]
+    - [1166, 1186]
+    - [1592, 1610]
+    - [1242, 1249]
+    - [1191, 1217]
+    - [1260, 1300]
+    - [1453, 1490]
+    - [1616, 1626]
+    - [1526, 1554]
+    - [1600, 1600]   # single-frequency spike
+  uv_below: 600

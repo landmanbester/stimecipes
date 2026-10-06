@@ -1,0 +1,133 @@
+# Basic MeerKAT target flagging, with skarabina in place of the CASA steps.
+#
+# Derived from lightcurve-pipeline's meerkat_1k_basic.yml
+# (https://github.com/JSKenyon/lightcurve-pipeline), which in turn follows
+# oxkat (https://github.com/IanHeywood/oxkat).  The six casa.flagdata /
+# casa.flagman steps of that recipe collapse into a single skarabina run:
+#
+#   casa.flagman save/restore            -> save: / restore: markers
+#   flagdata(mode=manual, spw=...)       -+
+#   flagdata(mode=manual, spw=..., uv)   -+-> spectral-window <band rules>.yml
+#   flagdata(mode=manual, autocorr)      -> autos
+#   flagdata(mode=clip, clipzeros)       -+
+#   flagdata(mode=clip, clipminmax)      -+-> clip 0 100
+#
+# clip flags |V| <= lo as well as |V| >= hi, so "clip 0 100" covers both of
+# CASA's clip steps.  The tricolour step is unchanged: skarabina does not
+# replace it.
+#
+# The recipe leaves two flag versions behind:
+# meerkat-<band>-band-basic-flagging (the skarabina pass alone, the version to
+# compare against a CASA run) and meerkat-<band>-band-target-flagging (the
+# whole recipe, tricolour included).
+#
+# The RFI ranges live in skarabina_rules/meerkat_<band>.yml rather than in
+# CASA spw strings.  NOTE: that path is embedded in a --flag argument, so
+# stimela cannot recognise it as a File and will not mount it into a
+# container.  Run this recipe with the native backend (as configured below),
+# or arrange the mount yourself.
+
+_include:
+  - (skarabina_cargo)skarabina.yml
+  - (cultcargo)tricolour.yml
+
+opts:
+  log:
+    dir: logs/log-{config.run.datetime}
+    name: log-{info.fqname}
+    nest: 2
+    symlink: log
+  backend:
+    select: native
+    rlimits:
+      NOFILE: 100000
+
+meerkat-skarabina-target-flagging:
+  name: meerkat-skarabina-target-flagging
+  info: |
+    Basic flagging of a MeerKAT target dataset: known RFI bands (globally and
+    on short baselines), autocorrelations, zero and extreme visibilities --
+    all in a single pass over the data with skarabina -- followed by
+    tricolour's polarisation-based flagging.
+
+  inputs:
+    ms-path:
+      dtype: MS
+      required: true
+    band:
+      dtype: str
+      choices: [UHF, L, S0, S1, S2, S3, S4]
+      required: true
+    prior:
+      dtype: str
+      choices: [save, restore]
+      default: save
+      info: |
+        What to do with the pre-flagging flag version at the start of the run.
+        'save' (the default) takes the backup, which is what a first pass
+        wants.  'restore' puts the original flags back before flagging again,
+        which is what a rerun wants -- re-saving on a rerun would back up
+        flags that have already been flagged.
+    tricolour-config:
+      dtype: File
+      default: "${self:dirname}/meerkat_target_narrow.tri.yml"
+
+  outputs:
+    updated-flag-versionname:
+      dtype: str
+      default: 'meerkat-{current.band}-band-target-flagging'
+
+  steps:
+    flag-basic:
+      info: |
+        Known RFI bands, autocorrelations, zeros and extreme values, in one
+        pass.  --apply writes only the FLAG column back to the input MS.
+      cab: skarabina
+      params:
+        ms: =recipe.ms-path
+        apply: true
+        clobber: true
+        summary: true
+        flag:
+          - "{recipe.prior}:pre-meerkat-{recipe.band}-band-target-flagging"
+          - "autos"
+          - "clip 0 100"
+          - "spectral-window ${self:dirname}/skarabina_rules/meerkat_{recipe.band}.yml"
+
+    flag-save-basic:
+      info: |
+        Back up the basic flags before tricolour adds to them, so the two
+        stages stay separately inspectable: comparing this recipe's basic pass
+        against a CASA run then compares like with like, and the version saved
+        at the end of the recipe is not mistaken for it.
+
+        This is a step of its own rather than a 'save:' marker at the end of
+        flag-basic's list, because save_flag_version reads the flags from the
+        MS on disk and --apply does not write them until the run ends -- a
+        trailing marker silently backs up the PRE-flagging state instead.
+      cab: skarabina
+      params:
+        ms: =recipe.ms-path
+        apply: true
+        clobber: true
+        flag:
+          - "save:meerkat-{recipe.band}-band-basic-flagging"
+
+    flag-polarisation:
+      info: Tricolour's polarisation flagging. Not replaced by skarabina.
+      cab: tricolour
+      params:
+        ms: =recipe.ms-path
+        config: =recipe.tricolour-config
+        flagging-strategy: polarisation
+        data-column: DATA
+
+    flag-save-post:
+      info: Back up the flags once the whole recipe has run.
+      cab: skarabina
+      params:
+        ms: =recipe.ms-path
+        apply: true
+        clobber: true
+        flag:
+          - "save:meerkat-{recipe.band}-band-target-flagging"
