@@ -1,0 +1,82 @@
+input_ms:
+  path: msdir/1790414245_sdp_l0.full_1024ch_ESO137-006.ms
+  data_column: DATA
+  sigma_column:
+  weight_column:
+  time_chunk: '0'
+  freq_chunk: '0'
+  is_bda: false
+  group_by:
+  - SCAN_NUMBER
+  - FIELD_ID
+  - DATA_DESC_ID
+  select_corr:
+  select_fields: []
+  select_ddids: []
+  select_uv_range:
+  - 150.0
+  - 0.0
+input_model:
+  recipe: MODEL_DATA
+  beam:
+  beam_l_axis: X
+  beam_m_axis: Y
+  invert_uvw: true
+  source_chunks: 500
+  apply_p_jones: false
+output:
+  gain_directory: output/gains.qc
+  log_directory: output/logs.qc
+  log_to_terminal: true
+  overwrite: true
+  products:
+  - corrected_data
+  - corrected_residual
+  columns:
+  - CORRECTED_DATA
+  - CORRECTED_RESIDUAL
+  flags: true
+  apply_p_jones_inv: false
+  subtract_directions:
+  net_gains: [K]
+  compute_baseline_corrections: false
+  apply_baseline_corrections: false
+mad_flags:
+  enable: true
+  whitening: disabled
+  threshold_bl: 12.0
+  threshold_global: 0.0
+  max_deviation: 0.0
+  use_off_diagonals: false
+solver:
+  terms:
+  - K
+  iter_recipe: [150, 50, 10, 10]
+  propagate_flags: true
+  collapse_chain: true
+  robust: true
+  threads: 4
+  convergence_fraction: 0.99
+  convergence_criteria: 1e-06
+  reference_antenna: 49
+dask:
+  threads: 4
+  workers: 1
+  address:
+  scheduler: threads
+  scheduler_plugin: true
+K:
+  type: delay_and_offset
+  solve_per: antenna
+  scalar: false
+  direction_dependent: false
+  pinned_directions:
+  - 0
+  time_interval: 5
+  freq_interval: 0
+  load_from:
+  interp_mode: reim
+  interp_method: 2dlinear
+  respect_scan_boundaries: true
+  initial_estimate: true
+  referenced: true
